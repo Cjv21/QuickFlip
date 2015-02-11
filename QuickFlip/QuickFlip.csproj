@@ -259,9 +259,7 @@
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
-    <None Include="Properties\PublishProfiles\quickflip - FTP %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\quickflip - FTP.pubxml" />
-    <None Include="Properties\PublishProfiles\quickflip - Web Deploy %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\quickflip - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
     <Content Include="Images\IU.png" />
