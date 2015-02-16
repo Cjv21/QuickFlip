@@ -1,24 +1,27 @@
 ===============================================================================
 
-			SETTING UP THE DEV ENVIRONMENT
+					SETTING UP THE DEV ENVIRONMENT
 
 ===============================================================================
 
 Necessary Software:
 
 	-Microsoft Visual Studio
-		Download: 
+		Download: https://www.dropbox.com/sh/1h6f92tata24vts/AADcIsSl3tgqneG83Stg-Guia?dl=0
 		Key: BWG7X-J98B3-W34RT-33B3R-JVYW9
 
 	-SQL Server 2012 Express
-		Download: 
+		Download: https://www.dropbox.com/s/spjfh49bq421ljf/SQL%20Server%202012%20Express.exe?dl=0
 
 	-SQL Server Management Studio 2012
-		Download: 
+		Download: https://www.dropbox.com/s/3ul3oiy5k5j6bkx/SQL%20Server%20Management%20Studio%202012.exe?dl=0
 
 
 
 Connecting to Database: 
+
+	Download and install SQL Server 2012 Express and SQL Server
+	Management Studio
 
 	Open up SQL Server Management Studio (ssms).
 
@@ -30,6 +33,8 @@ Connecting to Database:
 
 
 Connecting to version control (via Github):
+
+	Download and install Visual Studio
 
 	Open up Visual Studio
 
@@ -59,6 +64,8 @@ Connecting to version control (via Github):
 	From now on you can open the solution from the "Recent" list from the
 	Start Page. Alternatively, you can find the source in "C:\Users\(UserName)\Source\Repos\QuickFlip"
 
+	Change solution configuration from "Debug" to "Release"
+
 	
 
 Commiting to version control:
@@ -78,6 +85,8 @@ Commiting to version control:
 
 
 Publishing to live site:
+
+	Make sure solution configuration is on "Release"
 
 	Press F5 to build and run (make sure the build is not broken!) -> Stop Debugging (Shift + F5)
 	
@@ -101,13 +110,20 @@ Publishing to live site:
 
 ===============================================================================
 
-				GENERAL NOTES
+							GENERAL NOTES
 
 ===============================================================================
 	
 
 	- If you are modifying the DB Schema, adjust the code in 
-	  "Files/CreateQuickFlip.sql" to correspond with the changes
+	  "Files/CreateQuickFlip.sql" to correspond with the changes.
+	  The SQL database is hosted on Azure right now as a 30 day free trial.
+	  After the 30 days, we can just open up another trial with a different email.
+	  We don't want to have to recreate everything every 30 days, so 
+	  keeping this create query up to date will let us reinstate the DB 
+	  instantly. 
+
+	- Always pull before you commit
 
 	- Make sure to route all data access code through the Business Layer
 
@@ -117,7 +133,7 @@ Publishing to live site:
 
 ===============================================================================
 
-				QuickFlip Tables
+							QuickFlip Tables
 
 ===============================================================================
 
