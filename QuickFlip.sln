@@ -7,6 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuickFlip", "QuickFlip\Quic
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{C2EF7B84-9A8B-41AC-9C82-C95B4163612C}"
 	ProjectSection(SolutionItems) = preProject
+		Files\CreateQuickflip.sql = Files\CreateQuickflip.sql
 		Files\Information.txt = Files\Information.txt
 		Files\quickflip.azurewebsites.net.PublishSettings = Files\quickflip.azurewebsites.net.PublishSettings
 	EndProjectSection

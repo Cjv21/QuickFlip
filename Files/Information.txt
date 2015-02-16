@@ -8,13 +8,14 @@ Necessary Software:
 
 	-Microsoft Visual Studio
 		Download: 
-		Key: 
+		Key: BWG7X-J98B3-W34RT-33B3R-JVYW9
 
 	-SQL Server 2012 Express
 		Download: 
 
 	-SQL Server Management Studio 2012
 		Download: 
+
 
 
 Connecting to Database: 
@@ -25,6 +26,7 @@ Connecting to Database:
 	Authentication: SQL Server Authentication
 	Login: owner
 	Password: Quickflip411
+
 
 
 Connecting to version control (via Github):
@@ -58,6 +60,7 @@ Connecting to version control (via Github):
 	Start Page. Alternatively, you can find the source in "C:\Users\(UserName)\Source\Repos\QuickFlip"
 
 	
+
 Commiting to version control:
 
 	Under "Team Explorer", select "Changes"
@@ -67,13 +70,48 @@ Commiting to version control:
 	Enter Github User Name and Email Address -> "Update"
 
 	Enter commit message
+
+	Click "Sync" in the "Commit XYZ created locally. Sync to share your changes with the server" prompt -> Sync
+
+	Enter Github credentials
+
+
+
+Publishing to live site:
+
+	Press F5 to build and run (make sure the build is not broken!) -> Stop Debugging (Shift + F5)
 	
+	Highlight the QuickFlip project in the "Solution Explorer"
+
+	"Build" -> "Publish QuickFlip"
+
+	Go to "Profile" -> "Manage Profiles"
+
+	Remove all profiles
+
+	"Import" -> "Import from a published profile"
+
+	Select  "C:\Users\(UserName)\Source\Repos\QuickFlip\Files\quickflip.azurewebsites.net.PublishSettings" -> "Okay"
+
+	"Publish Method" should be set to "QuickFlip - Web Deploy*"
+
+	Click "Publish" to finish
+
+
+
+===============================================================================
+
+				GENERAL NOTES
+
+===============================================================================
 	
 
-	
+	- If you are modifying the DB Schema, adjust the code in 
+	  "Files/CreateQuickFlip.sql" to correspond with the changes
 
+	- Make sure to route all data access code through the Business Layer
 
-
+	- Put all Enum declarations in "Enums.cs"
 
 
 

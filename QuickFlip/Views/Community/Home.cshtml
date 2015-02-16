@@ -1,9 +1,7 @@
-﻿@{
-    ViewBag.Title = "Home";
-}
+﻿@model QuickFlip.Models.Community
 
 
+<img src="@Model.Logo.Src" style="max-height:100px; max-width:100px" />
 
-    <img src=@ViewBag.Logo style="max-height:100px; max-width:100px"/> <br />
-    <h2> @ViewBag.School</h2>
-
+<h2>@Model.CommunityName</h2>
+<hr />
