@@ -5,6 +5,12 @@ VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuickFlip", "QuickFlip\QuickFlip.csproj", "{9905CC61-9E26-4E54-9E39-12A02EF4EBDF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{C2EF7B84-9A8B-41AC-9C82-C95B4163612C}"
+	ProjectSection(SolutionItems) = preProject
+		Files\Information.txt = Files\Information.txt
+		Files\quickflip.azurewebsites.net.PublishSettings = Files\quickflip.azurewebsites.net.PublishSettings
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

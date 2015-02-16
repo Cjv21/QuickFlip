@@ -1,0 +1,178 @@
+===============================================================================
+
+			SETTING UP THE DEV ENVIRONMENT
+
+===============================================================================
+
+Necessary Software:
+
+	-Microsoft Visual Studio
+		Download: 
+		Key: 
+
+	-SQL Server 2012 Express
+		Download: 
+
+	-SQL Server Management Studio 2012
+		Download: 
+
+
+Connecting to Database: 
+
+	Open up SQL Server Management Studio (ssms).
+
+	Server name: qeqc5ragp7.database.windows.net,1433
+	Authentication: SQL Server Authentication
+	Login: owner
+	Password: Quickflip411
+
+
+Connecting to version control (via Github):
+
+	Open up Visual Studio
+
+	If you haven't entered the Product Key, do so now...
+	(Help -> Register Product -> Enter a product key -> "BWG7X-J98B3-W34RT-33B3R-JVYW9")
+	
+	"Open from Source Control..." in the Start Page
+
+	"Clone" under Local Git Repositories in the Team Explorer tab
+	
+	Enter "https://github.com/jamesmaila/QuickFlip.git" for the URL to clone
+
+	Double click the newly appearing icon below when Clone finishes
+
+	Click the "Install" link in the "Install 3rd-party Git command prompt tools" prompt
+
+	Install -> Run the newly downloaded "msysgitVS.exe" file
+
+	Install "Git for Windows"
+
+	"Finish" -> "Exit"
+
+	Exit and restart Visual Studio
+
+	In Team Explorer, double click QuickFlip.sln to open
+
+	From now on you can open the solution from the "Recent" list from the
+	Start Page. Alternatively, you can find the source in "C:\Users\(UserName)\Source\Repos\QuickFlip"
+
+	
+Commiting to version control:
+
+	Under "Team Explorer", select "Changes"
+
+	Click the "Configure" link in the "Configure your user name and email address before commiting changes" prompt
+
+	Enter Github User Name and Email Address -> "Update"
+
+	Enter commit message
+	
+	
+
+	
+
+
+
+
+
+
+===============================================================================
+
+				QuickFlip Tables
+
+===============================================================================
+
+	Community	
+		CommunityId
+		CommunityName
+		City
+		State
+		DefaultMeetingLocation
+	
+	UserProfile	
+		UserId
+		UserName
+		
+	UserReviews
+		UserId
+		ReviewerUserId
+		PostId
+		Rating
+		ReviewDescription
+
+	ReportedUsers
+		UserId
+		ReporterUserId
+		Reason
+		Description
+		CreateDate
+		
+	Webpages_Membership
+		UserId
+		CreateDate
+		ConfirmationToken
+		IsConfirmed
+		LastPasswordFailureDate
+		PasswordFailuresSinceLastSuccess
+		Password
+		PasswordChangeDate
+		PasswordSalt	
+		PasswordVerification
+		PasswordVerificationTokenExperiationDate
+
+	Posts
+		PostId
+		CommunityId
+		CreateDate
+		ExpirationDate
+		PostTitle
+		Description
+		RequiredPrice
+		PostType
+		AuctionType
+		TransactionType
+
+	PostMedia
+		PostMediaId
+		PostId
+		B64EncodedImage
+
+	Auto, Books, CameraPhoto, CellPhones, ClothingShoe, Computers, 
+	Electronics, HealthBeauty, Home, Jobs, Movies, Music, MusicalInstruments, 
+	Pets, RealEstate, SportingGoods, VideoGames
+		PostId
+		Tag
+
+	Offers
+		OfferId
+		OfferAmount
+		OfferTitle
+		OfferDescription
+		PostId
+		UserId
+		CreateDate
+	
+	OfferMedia
+		OfferMediaId
+		OfferId
+		B64EncodedImage		
+
+	Alerts	
+		AlertId
+		OfferId
+		Type
+		CreateDate
+
+	AcceptedOffers
+		OfferId
+		CreateDate
+
+	SuccessfulTransactions
+		PostId
+		CreateDate
+
+	FailedTransactions
+		PostId
+		CreateDate
+	
