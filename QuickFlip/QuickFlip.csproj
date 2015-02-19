@@ -203,6 +203,8 @@
     </Compile>
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\CommunityModel.cs" />
+    <Compile Include="Models\PostMediaModel.cs" />
+    <Compile Include="Models\PostModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -337,6 +339,7 @@
     <Content Include="Views\Web.config" />
     <Content Include="Views\Community\Home.cshtml" />
     <Content Include="Views\Buy\Index.cshtml" />
+    <Content Include="Views\Buy\MakeBuyPost.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

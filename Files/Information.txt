@@ -194,9 +194,8 @@ Publishing to live site:
 
 	Auto, Books, CameraPhoto, CellPhones, ClothingShoe, Computers, 
 	Electronics, HealthBeauty, Home, Jobs, Movies, Music, MusicalInstruments, 
-	Pets, RealEstate, SportingGoods, VideoGames
+	Pets, RealEstate, SportingGoods
 		PostId
-		Tag
 
 	Offers
 		OfferId

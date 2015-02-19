@@ -1,0 +1,66 @@
+﻿@model QuickFlip.Models.Community
+
+
+<img src="@Model.Logo.Src" style="max-height:100px; max-width:100px" />
+
+<h2>Buy @@ @((CommunityAbbrev)Model.CommunityId) </h2>
+<hr />
+
+<br />
+
+
+<form method="POST" action="SubmitPost">
+
+    <h3>Type:</h3>
+    <select>
+        <option value="Auction">Auction</option>
+        <option value="FavoriteOffer">Favorite Offer</option>
+    </select>
+    <br />
+
+    <h3>Local meetup only?</h3>
+    <select>
+        <option value="True">True</option>
+        <option value="False">False</option>
+    </select>
+    <br />
+
+    <h3>Title:</h3>
+    <input type="text" name="PostTitle" />
+    <br>
+
+    <h3>Max price willing to pay (optional):</h3>
+     $ <input type="number" name="MaxPrice" />
+    <br>
+
+    <h3>Description:</h3>
+    <textarea name="PostDescription" rows="10" style="width:600px;"> </textarea>
+    <br>
+
+    <h3>Picture of what you're looking for (optional):</h3>
+    @Html.TextBox("PostMedia", "", new { type = "file" })
+    <br />
+
+    <h3>Categories:</h3>
+    <ul class="checkbox-grid">
+        <li><input type="checkbox" name="Category" value="Auto"> Auto </li>
+        <li><input type="checkbox" name="Category" value="Books"> Books </li>
+        <li><input type="checkbox" name="Category" value="CameraPhoto"> Camera & Photo </li>
+        <li><input type="checkbox" name="Category" value="CellPhones"> Cell Phones </li>
+        <li><input type="checkbox" name="Category" value="ClothingShoe"> Clothing & Shoe </li>
+        <li><input type="checkbox" name="Category" value="Computers"> Computers </li>
+        <li><input type="checkbox" name="Category" value="Electronics"> Electronics </li>
+        <li><input type="checkbox" name="Category" value="HealthBeauty"> Health & Beauty </li>
+        <li><input type="checkbox" name="Category" value="Home"> Home </li>
+        <li><input type="checkbox" name="Category" value="Jobs"> Jobs </li>
+        <li><input type="checkbox" name="Category" value="Movies"> Movies </li>
+        <li><input type="checkbox" name="Category" value="Music"> Music </li>
+        <li><input type="checkbox" name="Category" value="MusicalInstruments"> Musical Instruments </li>
+        <li><input type="checkbox" name="Category" value="Pets"> Pets </li>
+        <li><input type="checkbox" name="Category" value="RealEstate"> Real Estate </li>
+        <li><input type="checkbox" name="Category" value="SportingGoods"> Sporting Goods </li>
+    </ul>
+
+    <input value="Post" type="submit" style="position:relative; top:20px"/>
+    
+</form>

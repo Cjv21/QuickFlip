@@ -6,3 +6,17 @@
 <h2>Buy @@ @((CommunityAbbrev)Model.CommunityId) </h2>
 <hr />
 
+<br />
+
+@if (Request.IsAuthenticated)
+{
+    <a href="@Url.Action("MakeBuyPost", "Buy", new { id = (CommunityAbbrev)Model.CommunityId })" style=" font-size:larger">
+        Post to Buy section
+    </a>
+}
+else
+{
+    <a href=@Url.Action("Login", "Account") style=" font-size:larger">
+        Login to Make a Post
+    </a>
+}

@@ -924,3 +924,12 @@ img.uwm {
         top:-332.5px;
         height:75px;
     }
+
+
+
+/*    OTHER RANDOM SHIT    */
+.checkbox-grid li {
+    display: block;
+    float: left;
+    width: 25%;
+}
