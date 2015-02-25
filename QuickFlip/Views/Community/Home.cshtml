@@ -10,45 +10,45 @@
 <ul style="list-style-type:none;">
 
     <li style="margin-bottom:70px;">
-        <a href="@Url.Action("Index", "Buy", new { id = (CommunityAbbrev)Model.CommunityId })" style="display: block; float: left; top:-20px;  width: 75px; height: 75px; padding: 0px; border: 3px solid #021a40; border-radius: 20px; ">
-            <img src="~/Images/BuyIcon.png" style="display: block; top: -20px; width: 75px; height: 75px; " />
-        </a>   
+       
+        <a href="@Url.Action("Index", "Buy", new { id = (CommunityAbbrev)Model.CommunityId })" style="display: block; float: left; position:relative; height: 75px; border: 3px solid #021a40; border-radius: 20px; ">
+            <img src="~/Images/BuyIcon.png" style="display: block; width: 75px; height: 75px; " />
+        </a> 
 
-        <p style="position:relative; top:20px; left:20px; font-size:x-large">
+        <div style="position:relative; text-align:left; margin-left:90px; top:20px; left:20px; font-size:x-large">
             <b>Buy:</b> People here are looking for...
-        </p>
+        </div>
     </li>
-
+    
     <li style="margin-bottom: 70px;">
-        <a style="display: block; float: left; top:-20px;  width: 75px; height: 75px; padding: 0px; border: 3px solid #021a40; border-radius: 20px; ">
-            <img src="~/Images/SellIcon.png" style="display: block; top: -20px; width: 75px; height: 75px; " />
+        <a style="display: block; float: left; position:relative; height: 75px; border: 3px solid #021a40; border-radius: 20px; ">
+            <img src="~/Images/SellIcon.png" style ="display: block; width: 75px; height: 75px;;" />
         </a>
 
-        <p style="position:relative; top:20px; left:20px; font-size:x-large">
+        <div style="position:relative; text-align:left; margin-left:90px; top:20px; left:20px; font-size:x-large">
             <b>Sell:</b> People here are selling...
-        </p>
+         </div>
     </li>
 
     <li style="margin-bottom: 70px;">
-        <a style="display: block; float: left; top:-20px;  width: 75px; height: 75px; padding: 0px; border: 3px solid #021a40; border-radius: 20px; ">
-            <img src="~/Images/UsersIcon.png" style="display: block; top: -20px; width: 75px; height: 75px; " />
+        <a style="display: block; float: left; position:relative; height: 75px; border: 3px solid #021a40; border-radius: 20px; ">
+            <img src="~/Images/UsersIcon.png" style="display: block; width: 75px; height: 75px;;" />
         </a>
 
-        <p style="position:relative; top:20px; left:20px; font-size:x-large">
+        <div style="position:relative; text-align:left; margin-left:90px; top:20px; left:20px; font-size:x-large">
             <b>Users:</b> People in this community
-        </p>
+        </div>
     </li>
 
     <li style="margin-bottom: 70px;">
-        <a style="display: block; float: left; top:-20px;  width: 75px; height: 75px; padding: 0px; border: 3px solid #021a40; border-radius: 20px; ">
-            <img src="~/Images/SearchIcon.png" style="display: block; top: -20px; width: 75px; height: 75px; " />
+        <a style="display: block; float: left; position:relative; height: 75px; border: 3px solid #021a40; border-radius: 20px; ">
+            <img src="~/Images/SearchIcon.png" style="display: block; width: 75px; height: 75px;;" />
         </a>
 
-        <p style="position:relative; top:20px; left:20px; font-size:x-large">
+        <div style="position:relative; text-align:left; margin-left:90px; top:20px; left:20px; font-size:x-large">
             <b>Search:</b> Search for content in @((CommunityAbbrev)Model.CommunityId)
-        </p>
+        </div>
     </li>
-
 </ul>
 
 
