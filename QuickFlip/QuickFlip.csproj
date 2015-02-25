@@ -339,6 +339,7 @@
     <Content Include="Views\Community\Home.cshtml" />
     <Content Include="Views\Buy\Index.cshtml" />
     <Content Include="Views\Buy\MakeBuyPost.cshtml" />
+    <Content Include="Views\Buy\Post.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

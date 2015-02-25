@@ -1,0 +1,69 @@
+﻿@using System.Linq
+@using QuickFlip.Models
+
+<img src="@ViewBag.Community.Logo.Src" style="max-height:100px; max-width:100px" />
+
+<h2>Buy @@ @((CommunityAbbrev)ViewBag.Community.CommunityId) </h2>
+<hr />
+
+<div id="PostBody" style="margin-top:20px; margin-left:20px;">
+
+    <div id="Title" style="font-size:xx-large">
+        @(String.IsNullOrWhiteSpace(Model.Title) ? "Untitled" : @Model.Title)
+    </div>
+
+    <div id="CreateDate">
+        Created: @Model.CreateDate.ToShortDateString()
+    </div>
+
+    <ul style="margin-top:20px;">
+        @foreach (var category in Model.Categories)
+        {
+            <li>@category</li>
+        }
+    </ul>
+
+    @if (Model.PostMedia != null)
+    {
+        <br /><img src="@String.Format("data:image/png;base64,{0}", Model.PostMedia.B64EncodedImage)" style="max-width:500px; width:auto; max-height:500px; height:auto;" /> <br />
+    } 
+
+    <b style="font-size:medium">Description:</b><br />
+    <textarea readonly style="resize:none"> @Model.Description </textarea>
+
+    <br /><b style="font-size:medium">Max Price:</b> @(Model.RequiredPrice == null ? "None" : "$" + Model.RequiredPrice.ToString())<br />
+
+    <br /><b style="font-size:medium">Current Offer:</b><br />
+
+    @if (Request.IsAuthenticated)
+    {
+        if (WebSecurity.CurrentUserId != @Model.UserId)
+        {
+            <input type="button" id="offerButton" value="Make offer!" style="position:relative; top:20px;">
+
+            @*
+                <div id="dialog" title="Make Offer">
+                    <form method="POST" enctype="multipart/form-data" action="~/Sell/MakeOffer">
+                        $<input type="number" name="OfferAmount" min=@( @Model.Offers.Count == 0 ? @Model.RequiredPrice : @Model.BestOffer.Amount + 1) required="required" />
+
+                        <br /><br />
+
+                        <input type="number" name="PostId" hidden="hidden" value="@Model.PostId" />
+                        <input value="Save" type="submit" />
+                    </form>
+                </div> *@
+        }
+    }
+    else
+    {
+        <a href=@Url.Action("Login", "Account", new { returnUrl = Url.Action("Post", "Buy", new { id = Model.PostId }) }) style="position:relative; top:20px;">
+            Login to make an Offer
+        </a>
+    }
+</div>
+
+
+
+
+
+

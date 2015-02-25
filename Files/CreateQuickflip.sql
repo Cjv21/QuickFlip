@@ -204,6 +204,14 @@ CREATE TABLE [SportingGoods]
 	FOREIGN KEY (PostId) REFERENCES Post(PostId)
 )
 
+CREATE TABLE [PostMedia]
+(
+	PostMediaId INT NOT NULL IDENTITY,
+	Postid INT NOT NULL,
+	B64EncodedImage NVARCHAR(MAX),
+	PRIMARY KEY (PostMediaId),
+	FOREIGN KEY (PostId) REFERENCES Post(PostId)
+)
 
 GO
 

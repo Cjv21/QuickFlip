@@ -31,6 +31,17 @@ namespace QuickFlip.BusinessLayer
             return newPost;
         }
 
+        public static Post GetPostByPostId(int postId)
+        {
+            DataAccess da = new DataAccess();
+
+            Post post = da.GetPostByPostId(postId);
+
+            da.Dispose();
+
+            return post;
+        }
+
         public static PostMedia CreatePostMedia(PostMedia newPostMedia)
         {
             DataAccess da = new DataAccess();

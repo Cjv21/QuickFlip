@@ -25,6 +25,7 @@ namespace QuickFlip.Controllers
 {
     public class BuyController : Controller
     {
+        // GET: /Buy/id
         [InitializeSimpleMembership]
         public ActionResult Index(CommunityAbbrev id)
         {
@@ -36,6 +37,19 @@ namespace QuickFlip.Controllers
             return View(buyPosts);
         }
 
+        // GET: /Buy/Post/id
+        [InitializeSimpleMembership]
+        public ActionResult Post(int id)
+        {
+            Post post = BusinessLogic.GetPostByPostId(id);
+
+            Community comm = BusinessLogic.GetCommunityByCommunityId(post.CommunityId);
+            ViewBag.Community = comm;
+
+            return View(post);
+        }
+
+        // GET: /Buy/MakeBuyPost
         public ActionResult MakeBuyPost(CommunityAbbrev id)
         {
             Community comm = BusinessLogic.GetCommunityByCommunityId((int)id);
@@ -44,6 +58,7 @@ namespace QuickFlip.Controllers
             return View();
         }
 
+        // POST: /Buy/SubmitPost
         [HttpPost]
         [InitializeSimpleMembership]
         public ActionResult SubmitPost(HttpPostedFileBase postImage)

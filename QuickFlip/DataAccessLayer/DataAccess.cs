@@ -194,8 +194,7 @@ namespace QuickFlip.DataAccessLayer
                     //      post.BestOffer = post.Offers.OrderByDescending(x => x.Amount);
                     // }
                     // 
-                    // post.Categories = GetCategoriesByPostId(post.PostId);
-                    // post.PostMedia = GetPostMediaByPostId(post.PostId);
+                    post.PostMedia = GetPostMediaByPostId(post.PostId);
 
                     return post;
                 }
@@ -208,6 +207,103 @@ namespace QuickFlip.DataAccessLayer
             return null;
         }
 
+        public Post GetPostByPostId(int postId)
+        {
+            try
+            {
+                // form query
+                SqlCommand command = new SqlCommand(
+                    "SELECT * FROM [Post] " +
+                    "WHERE PostId = @PostId",
+                    Connection);
+
+                // add parameters
+                command.Parameters.AddWithValue("@PostId", postId);
+
+                // execute
+                SqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Post post = new Post()
+                    {
+                        PostId = Convert.ToInt32(reader["PostId"]),
+                        CommunityId = Convert.ToInt32(reader["CommunityId"]),
+                        UserId = Convert.ToInt32(reader["UserId"]),
+                        CreateDate = Convert.ToDateTime(reader["CreateDate"]),
+                        ExpirationDate = Convert.ToDateTime(reader["ExpirationDate"]),
+                        Title = reader["Title"] == DBNull.Value
+                            ? String.Empty : reader["Title"].ToString(),
+                        Description = reader["Description"] == DBNull.Value
+                            ? String.Empty : reader["Description"].ToString(),
+                        RequiredPrice = reader["RequiredPrice"] == DBNull.Value
+                            ? (int?)null : Convert.ToInt32(reader["RequiredPrice"]),
+                        PostType = (PostType)reader["PostType"],
+                        AuctionType = (AuctionType)reader["AuctionType"],
+                        TransactionType = (TransactionType)reader["TransactionType"]
+                    };
+
+                    reader.Close();
+
+                    // post.Offers = GetOffersByPostId(post.PostId);
+                    // if (post.AuctionType == AuctionType.Auction)
+                    // {
+                    //      post.BestOffer = post.Offers.OrderByDescending(x => x.Amount);
+                    // }
+                    // 
+                    post.Categories = GetCategoriesByPostId(post.PostId);
+                    post.PostMedia = GetPostMediaByPostId(post.PostId);
+
+                    return post;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
+            return null;
+        }
+
+        public List<Category> GetCategoriesByPostId(int postId)
+        {
+            List<Category> categories = new List<Category>();
+
+            for (int i = 0; i < Enum.GetNames(typeof(Category)).Length; i++)
+            {
+                Category cat = (Category)i;
+
+                try
+                {
+                    // form query
+                    SqlCommand command = new SqlCommand(
+                        "SELECT * FROM [" + cat.ToString() + "] " +
+                        "WHERE PostId = @PostId",
+                        Connection);
+
+                    // add parameters
+                    command.Parameters.AddWithValue("@PostId", postId);
+
+                    // execute
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        if (reader["PostId"] != null) { categories.Add(cat); }
+                    }
+
+                    reader.Close();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                }
+            }
+
+            return categories;
+        }
+
+       
         public void AddPostToCategory(Post post, Category category)
         {
             try
@@ -283,8 +379,9 @@ namespace QuickFlip.DataAccessLayer
                     //      post.BestOffer = post.Offers.OrderByDescending(x => x.Amount);
                     // }
                     // 
-                    // post.Categories = GetCategoriesByPostId(post.PostId);
-                    // post.PostMedia = GetPostMediaByPostId(post.PostId);
+
+                    post.Categories = GetCategoriesByPostId(post.PostId);
+                    post.PostMedia = GetPostMediaByPostId(post.PostId);
                 }
 
                 return posts;
@@ -307,7 +404,61 @@ namespace QuickFlip.DataAccessLayer
         {
             try
             {
+                // form query
+                SqlCommand command = new SqlCommand(
+                    "INSERT INTO [PostMedia] " +
+                    "(PostId, B64EncodedImage) " +
+                    "VALUES (@PostId, @B64EncodedImage)",
+                    Connection);
 
+                // add parameters
+                command.Parameters.AddWithValue("@PostId", newPostMedia.PostId);
+                command.Parameters.AddWithValue("@B64EncodedImage", newPostMedia.B64EncodedImage); 
+
+                // execute
+                command.ExecuteNonQuery();
+
+                return GetPostMediaByPostId(newPostMedia.PostId);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
+            return null;
+        }
+
+        public PostMedia GetPostMediaByPostId(int postId)
+        {
+            try
+            {
+                // form query
+                SqlCommand command = new SqlCommand(
+                    "SELECT * FROM [PostMedia] " +
+                    "WHERE PostId = @PostId",
+                    Connection);
+
+                // add parameters
+                command.Parameters.AddWithValue("@PostId", postId);
+
+                // execute
+                SqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    PostMedia postMedia = new PostMedia()
+                    {
+                        PostMediaId = Convert.ToInt32(reader["PostMediaId"]),
+                        PostId = Convert.ToInt32(reader["PostId"]),
+                        B64EncodedImage = reader["B64EncodedImage"].ToString()
+                    };
+
+                    reader.Close();
+
+                    return postMedia;
+                }
+
+                reader.Close();
             }
             catch (Exception e)
             {
