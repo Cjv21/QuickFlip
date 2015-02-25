@@ -22,15 +22,14 @@ public enum PostType
 
 public enum AuctionType
 {
-    Forward,
-    Reverse,
+    Auction,
     FavoriteOffer
 }
 
 public enum TransactionType
 {
     Local,
-    LongDistance
+    LocalOrLongDistance
 }
 
 public enum Category

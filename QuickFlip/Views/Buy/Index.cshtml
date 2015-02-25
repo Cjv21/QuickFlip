@@ -1,22 +1,67 @@
-﻿@model QuickFlip.Models.Community
+﻿@using System.Linq
+@using QuickFlip.Models
 
+<img src="@ViewBag.Community.Logo.Src" style="max-height:100px; max-width:100px" />
 
-<img src="@Model.Logo.Src" style="max-height:100px; max-width:100px" />
-
-<h2>Buy @@ @((CommunityAbbrev)Model.CommunityId) </h2>
+<h2>Buy @@ @((CommunityAbbrev)ViewBag.Community.CommunityId) </h2>
 <hr />
 
 <br />
 
+
 @if (Request.IsAuthenticated)
 {
-    <a href="@Url.Action("MakeBuyPost", "Buy", new { id = (CommunityAbbrev)Model.CommunityId })" style=" font-size:larger">
+    <a href="@Url.Action("MakeBuyPost", "Buy", new { id = (CommunityAbbrev)ViewBag.Community.CommunityId })" style=" font-size:larger">
         Post to Buy section
     </a>
 }
 else
 {
-    <a href=@Url.Action("Login", "Account") style=" font-size:larger">
+    <a href=@Url.Action("Login", "Account", new { returnUrl = Url.Action("MakeBuyPost", "Buy", new { id = (CommunityAbbrev)ViewBag.Community.CommunityId }) })  style=" font-size:larger">
         Login to Make a Post
     </a>
 }
+
+
+<br /><br /><br /><br />
+
+@using QuickFlip.Models
+@{
+    var grid = new WebGrid(
+        Model, canSort: false, rowsPerPage: 30, selectionFieldName: "selectedRow", ajaxUpdateContainerId: "gridContent");
+}
+<div id="gridContent">
+    @grid.GetHtml(tableStyle: "webGrid",
+        headerStyle: "webGridHeader",
+        rowStyle: "rows",
+        selectedRowStyle: "select",
+        columns: grid.Columns(
+            grid.Column(columnName: "Title", style: "titleColumn", format: (item) =>
+                Html.ActionLink((String.IsNullOrWhiteSpace((string)item.Title) ? "Untitled" : (string)item.Title), "Post", new { id = item.PostId }, new { style = "text-decoration:none;" })),
+            grid.Column(columnName: "Current Bid", style: "currentColumn", format: (item) =>
+                        {
+                            //if (item.Offers.Count == 0)
+                            //{
+                                return "-";
+                            //}
+                            //else
+                            //{
+                            //    return "$" + item.Offers[0].Amount.ToString();
+                            //}
+                        }),
+            grid.Column(columnName: "Max Price", style: "minMaxColumn", format: (item) =>
+                        (item.RequiredPrice == null ? "-" : "$" + item.RequiredPrice.ToString())),
+            grid.Column(style: "deleteColumn", format: (item) =>
+                {
+                    //if (WebSecurity.CurrentUserId == item.UserId)
+                    //{
+                    //    return Html.ActionLink(" ", "DeleteBuyPost", new { id = item.PostId }, new { @class = "deleteButton" });
+                    //}
+                    //else
+                    //{
+                        return String.Empty;
+                    //}
+                })
+         ))
+</div>
+

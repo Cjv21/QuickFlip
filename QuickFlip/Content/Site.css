@@ -933,3 +933,78 @@ img.uwm {
     float: left;
     width: 25%;
 }
+
+
+
+/* GRID SHIT */
+
+
+    .webGrid {
+        margin: 4px;
+        border-collapse: collapse;
+        width: 500px;
+        background-color: #FFFFFF;
+        margin: auto;
+        width: 650px;
+    }
+
+    .webGridHeader {
+        background-color: #C1D4E6;
+        font-weight:lighter;
+        color: #000;
+    }
+
+    .rows {
+        text-decoration: none;
+    }
+
+
+    .webGrid th, .webGrid td {
+        border: 1px solid #C0C0C0;
+        padding: 5px;
+    }
+
+
+    .gridHead a:hover {
+        text-decoration: none;
+    }
+
+    .description {
+        width: auto;
+    }
+
+    .select {
+        background-color: #71857C;
+    }
+
+    .deleteButton {
+        background: url(../Images/deleteIcon.png) no-repeat center;
+        display: block;
+        width: 20px;
+        height: 20px;
+        text-indent: -9999px; /* hides the link text */
+    }
+
+    .deleteColumn {
+        width: 20px;
+    }
+
+    .currentColumn {
+        width: 100px;
+    }
+
+    .currentColumn2 {
+        width: 90px;
+    }
+
+    .statusColumn {
+        width:80px;
+    }
+
+    .minMaxColumn {
+        width: 100px;
+    }
+
+    .titleColumn {
+        width: 300px;
+    }

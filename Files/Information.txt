@@ -147,6 +147,7 @@ Publishing to live site:
 	UserProfile	
 		UserId
 		UserName
+		Email
 		
 	UserReviews
 		UserId
@@ -214,7 +215,7 @@ Publishing to live site:
 	Alerts	
 		AlertId
 		OfferId
-		Type
+		AlertType
 		CreateDate
 
 	AcceptedOffers

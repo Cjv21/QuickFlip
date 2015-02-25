@@ -1,27 +1,26 @@
-﻿@model QuickFlip.Models.Community
+﻿@using System.Linq
+@using QuickFlip.Models
 
+<img src="@ViewBag.Community.Logo.Src" style="max-height:100px; max-width:100px" />
 
-<img src="@Model.Logo.Src" style="max-height:100px; max-width:100px" />
-
-<h2>Buy @@ @((CommunityAbbrev)Model.CommunityId) </h2>
+<h2>Buy @@ @((CommunityAbbrev)ViewBag.Community.CommunityId) </h2>
 <hr />
-
 <br />
 
+<form method="POST" enctype="multipart/form-data" action=@Url.Action("SubmitPost", "Buy")>
 
-<form method="POST" action="SubmitPost">
 
     <h3>Type:</h3>
-    <select>
+    <select name="Type">
         <option value="Auction">Auction</option>
         <option value="FavoriteOffer">Favorite Offer</option>
     </select>
     <br />
 
     <h3>Local meetup only?</h3>
-    <select>
-        <option value="True">True</option>
-        <option value="False">False</option>
+    <select name="LocalOnly">
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
     </select>
     <br />
 
@@ -30,37 +29,60 @@
     <br>
 
     <h3>Max price willing to pay (optional):</h3>
-     $ <input type="number" name="MaxPrice" />
+    $ <input type="number" name="MaxPrice" />
     <br>
 
     <h3>Description:</h3>
-    <textarea name="PostDescription" rows="10" style="width:600px;"> </textarea>
+    <textarea name="PostDescription" rows="10" style="width:600px; resize:none"> </textarea>
     <br>
 
     <h3>Picture of what you're looking for (optional):</h3>
-    @Html.TextBox("PostMedia", "", new { type = "file" })
+    @Html.TextBox("postImage", "", new { type = "file" })
     <br />
 
     <h3>Categories:</h3>
     <ul class="checkbox-grid">
-        <li><input type="checkbox" name="Category" value="Auto"> Auto </li>
-        <li><input type="checkbox" name="Category" value="Books"> Books </li>
-        <li><input type="checkbox" name="Category" value="CameraPhoto"> Camera & Photo </li>
-        <li><input type="checkbox" name="Category" value="CellPhones"> Cell Phones </li>
-        <li><input type="checkbox" name="Category" value="ClothingShoe"> Clothing & Shoe </li>
-        <li><input type="checkbox" name="Category" value="Computers"> Computers </li>
-        <li><input type="checkbox" name="Category" value="Electronics"> Electronics </li>
-        <li><input type="checkbox" name="Category" value="HealthBeauty"> Health & Beauty </li>
-        <li><input type="checkbox" name="Category" value="Home"> Home </li>
-        <li><input type="checkbox" name="Category" value="Jobs"> Jobs </li>
-        <li><input type="checkbox" name="Category" value="Movies"> Movies </li>
-        <li><input type="checkbox" name="Category" value="Music"> Music </li>
-        <li><input type="checkbox" name="Category" value="MusicalInstruments"> Musical Instruments </li>
-        <li><input type="checkbox" name="Category" value="Pets"> Pets </li>
-        <li><input type="checkbox" name="Category" value="RealEstate"> Real Estate </li>
-        <li><input type="checkbox" name="Category" value="SportingGoods"> Sporting Goods </li>
+        <li><input type="checkbox" name="Categories" value="Auto"> Auto </li>
+        <li><input type="checkbox" name="Categories" value="Books"> Books </li>
+        <li><input type="checkbox" name="Categories" value="CameraPhoto"> Camera & Photo </li>
+        <li><input type="checkbox" name="Categories" value="CellPhones"> Cell Phones </li>
+        <li><input type="checkbox" name="Categories" value="ClothingShoe"> Clothing & Shoe </li>
+        <li><input type="checkbox" name="Categories" value="Computers"> Computers </li>
+        <li><input type="checkbox" name="Categories" value="Electronics"> Electronics </li>
+        <li><input type="checkbox" name="Categories" value="HealthBeauty"> Health & Beauty </li>
+        <li><input type="checkbox" name="Categories" value="Home"> Home </li>
+        <li><input type="checkbox" name="Categories" value="Jobs"> Jobs </li>
+        <li><input type="checkbox" name="Categories" value="Movies"> Movies </li>
+        <li><input type="checkbox" name="Categories" value="Music"> Music </li>
+        <li><input type="checkbox" name="Categories" value="MusicalInstruments"> Musical Instruments </li>
+        <li><input type="checkbox" name="Categories" value="Pets"> Pets </li>
+        <li><input type="checkbox" name="Categories" value="RealEstate"> Real Estate </li>
+        <li><input type="checkbox" name="Categories" value="SportingGoods"> Sporting Goods </li>
     </ul>
 
-    <input value="Post" type="submit" style="position:relative; top:20px"/>
-    
+    <input type="number" name="CommunityId" hidden="hidden" value="@ViewBag.Community.CommunityId" />
+
+    <input value="Post" type="submit" style="position:relative; margin-top:20px;" disabled/>  
+    <label for="checkbox-validate" class="message-error" style="position:relative; margin-left:70px; margin-top:-30px;">You must select at least one category. </label>
 </form>
+
+
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script type="text/javascript">
+    
+    var checkboxes = $("input[type='checkbox']");
+    submitButt = $("input[type='submit']");
+
+    checkboxes.click(function () {
+        var error = $('label[for="checkbox-validate"]');
+
+        if (checkboxes.filter(':checked').length > 0) {
+            submitButt.prop("disabled", false);
+            error.hide();
+        } else {
+            submitButt.prop("disabled", true);
+            error.show();
+        }
+    });
+</script>
+

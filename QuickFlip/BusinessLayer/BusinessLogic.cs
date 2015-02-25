@@ -19,5 +19,47 @@ namespace QuickFlip.BusinessLayer
 
             return comm;
         }
+
+        public static Post CreatePost(Post newPost)
+        {
+            DataAccess da = new DataAccess();
+
+            newPost = da.CreatePost(newPost);
+
+            da.Dispose();
+
+            return newPost;
+        }
+
+        public static PostMedia CreatePostMedia(PostMedia newPostMedia)
+        {
+            DataAccess da = new DataAccess();
+
+            newPostMedia = da.CreatePostMedia(newPostMedia);
+
+            da.Dispose();
+
+            return newPostMedia;
+        }
+
+        public static void AddPostToCategory(Post post, Category category)
+        {
+            DataAccess da = new DataAccess();
+
+            da.AddPostToCategory(post, category);
+
+            da.Dispose();
+        }
+
+        public static List<Post> GetPostsByPostType(PostType type)
+        {
+            DataAccess da = new DataAccess();
+
+            List<Post> buyPosts = da.GetPostsByPostType(type);
+
+            da.Dispose();
+
+            return buyPosts;
+        }
     }
 }
