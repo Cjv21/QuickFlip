@@ -150,6 +150,30 @@ namespace QuickFlip.DataAccessLayer
             return null; 
         }
 
+        public void AddPostToCategory(Post post, Category category)
+        {
+            try
+            {
+                // form query
+                SqlCommand command = new SqlCommand(
+                    "INSERT INTO [" + category.ToString() + "] " +
+                    "(PostId, Tags) " +
+                    "VALUES (@PostId, @Tags)",
+                    Connection);
+
+                // add parameters
+                command.Parameters.AddWithValue("@PostId", post.PostId);
+                command.Parameters.AddWithValue("@Tags", String.Empty); // FIXME WHEN I ADD TAGS
+
+                // execute
+                command.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+
         public Post GetPostByCreateDate(DateTime createDate)
         {
             try
@@ -265,69 +289,6 @@ namespace QuickFlip.DataAccessLayer
             return null;
         }
 
-        public List<Category> GetCategoriesByPostId(int postId)
-        {
-            List<Category> categories = new List<Category>();
-
-            for (int i = 0; i < Enum.GetNames(typeof(Category)).Length; i++)
-            {
-                Category cat = (Category)i;
-
-                try
-                {
-                    // form query
-                    SqlCommand command = new SqlCommand(
-                        "SELECT * FROM [" + cat.ToString() + "] " +
-                        "WHERE PostId = @PostId",
-                        Connection);
-
-                    // add parameters
-                    command.Parameters.AddWithValue("@PostId", postId);
-
-                    // execute
-                    SqlDataReader reader = command.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        if (reader["PostId"] != null) { categories.Add(cat); }
-                    }
-
-                    reader.Close();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.ToString());
-                }
-            }
-
-            return categories;
-        }
-
-       
-        public void AddPostToCategory(Post post, Category category)
-        {
-            try
-            {
-                // form query
-                SqlCommand command = new SqlCommand(
-                    "INSERT INTO [" + category.ToString() + "] " +
-                    "(PostId, Tags) " + 
-                    "VALUES (@PostId, @Tags)",
-                    Connection);
-
-                // add parameters
-                command.Parameters.AddWithValue("@PostId", post.PostId);
-                command.Parameters.AddWithValue("@Tags", String.Empty); // FIXME WHEN I ADD TAGS
-
-                // execute
-                command.ExecuteNonQuery();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-        }
-
         public List<Post> GetPostsByPostType(PostType type)
         {
             try
@@ -394,6 +355,43 @@ namespace QuickFlip.DataAccessLayer
             return null;
         }
 
+        public List<Category> GetCategoriesByPostId(int postId)
+        {
+            List<Category> categories = new List<Category>();
+
+            for (int i = 0; i < Enum.GetNames(typeof(Category)).Length; i++)
+            {
+                Category cat = (Category)i;
+
+                try
+                {
+                    // form query
+                    SqlCommand command = new SqlCommand(
+                        "SELECT * FROM [" + cat.ToString() + "] " +
+                        "WHERE PostId = @PostId",
+                        Connection);
+
+                    // add parameters
+                    command.Parameters.AddWithValue("@PostId", postId);
+
+                    // execute
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        if (reader["PostId"] != null) { categories.Add(cat); }
+                    }
+
+                    reader.Close();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                }
+            }
+
+            return categories;
+        }
 
         #endregion
 
@@ -605,7 +603,6 @@ namespace QuickFlip.DataAccessLayer
 
             return null;
         }
-
 
         #endregion
     }

@@ -9,6 +9,8 @@ namespace QuickFlip.BusinessLayer
 {
     public class BusinessLogic
     {
+        #region Community
+
         public static Community GetCommunityByCommunityId(int id)
         {
             DataAccess da = new DataAccess();
@@ -20,6 +22,10 @@ namespace QuickFlip.BusinessLayer
             return comm;
         }
 
+        #endregion
+
+        #region Post
+
         public static Post CreatePost(Post newPost)
         {
             DataAccess da = new DataAccess();
@@ -29,6 +35,15 @@ namespace QuickFlip.BusinessLayer
             da.Dispose();
 
             return newPost;
+        }
+
+        public static void AddPostToCategory(Post post, Category category)
+        {
+            DataAccess da = new DataAccess();
+
+            da.AddPostToCategory(post, category);
+
+            da.Dispose();
         }
 
         public static Post GetPostByPostId(int postId)
@@ -42,6 +57,21 @@ namespace QuickFlip.BusinessLayer
             return post;
         }
 
+        public static List<Post> GetPostsByPostType(PostType type)
+        {
+            DataAccess da = new DataAccess();
+
+            List<Post> buyPosts = da.GetPostsByPostType(type);
+
+            da.Dispose();
+
+            return buyPosts;
+        }
+
+        #endregion
+
+        #region PostMedia
+
         public static PostMedia CreatePostMedia(PostMedia newPostMedia)
         {
             DataAccess da = new DataAccess();
@@ -53,25 +83,9 @@ namespace QuickFlip.BusinessLayer
             return newPostMedia;
         }
 
-        public static void AddPostToCategory(Post post, Category category)
-        {
-            DataAccess da = new DataAccess();
+        #endregion PostMedia
 
-            da.AddPostToCategory(post, category);
-
-            da.Dispose();
-        }
-
-        public static List<Post> GetPostsByPostType(PostType type)
-        {
-            DataAccess da = new DataAccess();
-
-            List<Post> buyPosts = da.GetPostsByPostType(type);
-
-            da.Dispose();
-
-            return buyPosts;
-        }
+        #region Offer
 
         public static Offer CreateOffer(Offer newOffer)
         {
@@ -94,5 +108,7 @@ namespace QuickFlip.BusinessLayer
 
             return offers;
         }
+
+        #endregion
     }
 }
