@@ -1,6 +1,8 @@
 ﻿@using System.Linq
 @using QuickFlip.Models
 
+<script src="~/Scripts/makeoffer-modal.js"></script>
+
 <img src="@ViewBag.Community.Logo.Src" style="max-height:100px; max-width:100px" />
 
 <h2>Buy @@ @((CommunityAbbrev)ViewBag.Community.CommunityId) </h2>
@@ -31,27 +33,41 @@
     <b style="font-size:medium">Description:</b><br />
     <textarea readonly style="resize:none"> @Model.Description </textarea>
 
+    <br /><b style="font-size:medium">Type:</b> @(Model.AuctionType == AuctionType.Auction ? "Reverse Auction" : "Favorite Offer") <br />
+
     <br /><b style="font-size:medium">Max Price:</b> @(Model.RequiredPrice == null ? "None" : "$" + Model.RequiredPrice.ToString())<br />
 
-    <br /><b style="font-size:medium">Current Offer:</b><br />
+    <br /><b style="font-size:medium">Current Offer: </b> @(Model.Offers.Count == 0 ? "None" : "$" + Model.BestOffer.Amount.ToString()) <br />
+
+    @if(Model.TransactionType == TransactionType.Local)
+    {
+        <br /><i style="color:blue">Local Meetup Only</i><br />
+    }
+    else
+    {
+        <br /><i style="color:blue">Open To Shipping</i><br />
+    }
 
     @if (Request.IsAuthenticated)
     {
         if (WebSecurity.CurrentUserId != @Model.UserId)
         {
-            <input type="button" id="offerButton" value="Make offer!" style="position:relative; top:20px;">
-
-            @*
+                <input type="button" id="offerButton" value="Make offer!" style="position:relative; top:20px;">
+                
                 <div id="dialog" title="Make Offer">
-                    <form method="POST" enctype="multipart/form-data" action="~/Sell/MakeOffer">
-                        $<input type="number" name="OfferAmount" min=@( @Model.Offers.Count == 0 ? @Model.RequiredPrice : @Model.BestOffer.Amount + 1) required="required" />
-
-                        <br /><br />
-
+                    <form method="POST" enctype="multipart/form-data" action="~/Buy/MakeOffer">
+                        
+                        <div style="text-align:center; margin-top:10px">
+                            $<input type="number" name="OfferAmount" max=@( @Model.Offers.Count == 0 ? @Model.RequiredPrice : @Model.BestOffer.Amount - 1) required="required" />
+                        </div>
+                        
                         <input type="number" name="PostId" hidden="hidden" value="@Model.PostId" />
-                        <input value="Save" type="submit" />
+                        
+                        <div style="text-align:center; margin-top:25px">
+                            <input value="Submit" type="submit" style="align-content:center" />
+                        </div>
                     </form>
-                </div> *@
+                </div> 
         }
     }
     else
@@ -61,8 +77,6 @@
         </a>
     }
 </div>
-
-
 
 
 

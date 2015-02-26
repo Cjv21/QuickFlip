@@ -72,5 +72,27 @@ namespace QuickFlip.BusinessLayer
 
             return buyPosts;
         }
+
+        public static Offer CreateOffer(Offer newOffer)
+        {
+            DataAccess da = new DataAccess();
+
+            newOffer = da.CreateOffer(newOffer);
+
+            da.Dispose();
+
+            return newOffer;
+        }
+
+        public static List<Offer> GetOffersByPostId(int postId)
+        {
+            DataAccess da = new DataAccess();
+
+            List<Offer> offers = da.GetOffersByPostId(postId);
+
+            da.Dispose();
+
+            return offers;
+        }
     }
 }

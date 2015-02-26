@@ -245,12 +245,12 @@ namespace QuickFlip.DataAccessLayer
 
                     reader.Close();
 
-                    // post.Offers = GetOffersByPostId(post.PostId);
-                    // if (post.AuctionType == AuctionType.Auction)
-                    // {
-                    //      post.BestOffer = post.Offers.OrderByDescending(x => x.Amount);
-                    // }
-                    // 
+                    post.Offers = GetOffersByPostId(post.PostId);
+                    if (post.AuctionType == AuctionType.Auction)
+                    {
+                        post.BestOffer = post.Offers.OrderByDescending(x => x.Amount).LastOrDefault();
+                    }
+                     
                     post.Categories = GetCategoriesByPostId(post.PostId);
                     post.PostMedia = GetPostMediaByPostId(post.PostId);
 
@@ -373,12 +373,11 @@ namespace QuickFlip.DataAccessLayer
 
                 foreach (var post in posts)
                 {
-                    // post.Offers = GetOffersByPostId(post.PostId);
-                    // if (post.AuctionType == AuctionType.Auction)
-                    // {
-                    //      post.BestOffer = post.Offers.OrderByDescending(x => x.Amount);
-                    // }
-                    // 
+                    post.Offers = GetOffersByPostId(post.PostId);
+                    if (post.AuctionType == AuctionType.Auction)
+                    {
+                        post.BestOffer = post.Offers.OrderByDescending(x => x.Amount).LastOrDefault();
+                    }
 
                     post.Categories = GetCategoriesByPostId(post.PostId);
                     post.PostMedia = GetPostMediaByPostId(post.PostId);
@@ -467,6 +466,146 @@ namespace QuickFlip.DataAccessLayer
 
             return null;
         }
+
+        #endregion
+
+        #region Offer
+        public Offer CreateOffer(Offer newOffer)
+        {
+            try
+            {
+                // form query
+                SqlCommand command = new SqlCommand(
+                    "INSERT INTO [Offer] " +
+                    "(PostId, UserId, Amount, Description, CreateDate, Accepted) " +
+                    "VALUES (@PostId, @UserId, @Amount, @Description, @CreateDate, @Accepted)",
+                    Connection);
+
+                // add parameters
+                command.Parameters.AddWithValue("@PostId", newOffer.PostId);
+                command.Parameters.AddWithValue("@UserId", newOffer.UserId);
+                command.Parameters.AddWithValue("@Amount", newOffer.Amount);
+                command.Parameters.AddWithValue("@Description", newOffer.Description);
+                command.Parameters.AddWithValue("@CreateDate", newOffer.CreateDate);
+                command.Parameters.AddWithValue("@Accepted", newOffer.Accepted);
+
+                // convert null values to DBNull
+                foreach (SqlParameter parameter in command.Parameters)
+                {
+                    if (parameter.Value == null) { parameter.Value = DBNull.Value; }
+                }
+
+                // execute
+                command.ExecuteNonQuery();
+
+                newOffer = GetOfferByCreateDate(newOffer.CreateDate);
+
+                // create offermedia here, or make separate????
+
+                return newOffer;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
+            return null;
+        }
+
+        public Offer GetOfferByCreateDate(DateTime createDate)
+        {
+            try
+            {
+                // form query
+                SqlCommand command = new SqlCommand(
+                    "SELECT * FROM [Offer] " +
+                    "WHERE CreateDate = @CreateDate",
+                    Connection);
+
+                // add parameters
+                command.Parameters.AddWithValue("@CreateDate", createDate);
+
+                // execute
+                SqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Offer offer = new Offer()
+                    {
+                        OfferId = Convert.ToInt32(reader["OfferId"]),
+                        PostId = Convert.ToInt32(reader["PostId"]),
+                        UserId = Convert.ToInt32(reader["UserId"]),
+                        Amount = reader["RequiredPrice"] == DBNull.Value
+                            ? (int?)null : Convert.ToInt32(reader["RequiredPrice"]),
+                        Description = Convert.ToString(reader["Description"]),
+                        CreateDate = Convert.ToDateTime(reader["CreateDate"]),
+                        Accepted = Convert.ToBoolean(reader["Accepted"])
+                    };
+
+                    reader.Close();
+
+                    //offer.OfferMedia = GetOfferMediaByOfferId(offer.OfferId);
+
+                    return offer;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
+            return null;
+        }
+
+        public List<Offer> GetOffersByPostId(int postId)
+        {
+            try
+            {
+                // form query
+                SqlCommand command = new SqlCommand(
+                    "SELECT * FROM [Offer] " +
+                    "WHERE PostId = @PostId",
+                    Connection);
+
+                // add parameters
+                command.Parameters.AddWithValue("@PostId", postId);
+
+                // execute
+                SqlDataReader reader = command.ExecuteReader();
+
+                List<Offer> offers = new List<Offer>();
+
+                while (reader.Read())
+                {
+                    Offer offer = new Offer()
+                    {
+                        OfferId = Convert.ToInt32(reader["OfferId"]),
+                        PostId = Convert.ToInt32(reader["PostId"]),
+                        UserId = Convert.ToInt32(reader["UserId"]),
+                        Amount = reader["Amount"] == DBNull.Value
+                            ? (int?)null : Convert.ToInt32(reader["Amount"]),
+                        Description = Convert.ToString(reader["Description"]),
+                        CreateDate = Convert.ToDateTime(reader["CreateDate"]),
+                        Accepted = Convert.ToBoolean(reader["Accepted"])
+                    };
+
+                    //offer.OfferMedia = GetOfferMediaByOfferId(offer.OfferId);
+
+                    offers.Add(offer);
+                }
+
+                reader.Close();
+
+                return offers;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
+            return null;
+        }
+
 
         #endregion
     }

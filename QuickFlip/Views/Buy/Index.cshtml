@@ -40,14 +40,8 @@ else
                 Html.ActionLink((String.IsNullOrWhiteSpace((string)item.Title) ? "Untitled" : (string)item.Title), "Post", new { id = item.PostId }, new { style = "text-decoration:none;" })),
             grid.Column(columnName: "Current Bid", style: "currentColumn", format: (item) =>
                         {
-                            //if (item.Offers.Count == 0)
-                            //{
-                                return "-";
-                            //}
-                            //else
-                            //{
-                            //    return "$" + item.Offers[0].Amount.ToString();
-                            //}
+                            if (item.Offers.Count == 0) { return "-"; }
+                            else { return "$" + item.BestOffer.Amount.ToString(); }
                         }),
             grid.Column(columnName: "Max Price", style: "minMaxColumn", format: (item) =>
                         (item.RequiredPrice == null ? "-" : "$" + item.RequiredPrice.ToString())),

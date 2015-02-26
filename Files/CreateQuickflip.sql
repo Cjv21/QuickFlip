@@ -213,6 +213,20 @@ CREATE TABLE [PostMedia]
 	FOREIGN KEY (PostId) REFERENCES Post(PostId)
 )
 
+CREATE TABLE [Offer]
+(
+	OfferId INT NOT NULL IDENTITY,
+	PostId INT NOT NULL,
+	UserId INT NOT NULL,
+	Amount INT,
+	Description VARCHAR(300),
+	CreateDate DATETIME NOT NULL,
+	Accepted BIT NOT NULL,
+	PRIMARY KEY (OfferId),
+	FOREIGN KEY (PostId) REFERENCES Post(PostId),
+	FOREIGN KEY (UserId) REFERENCES UserProfile(UserId)
+)
+
 GO
 
 

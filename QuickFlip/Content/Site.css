@@ -1008,3 +1008,11 @@ img.uwm {
     .titleColumn {
         width: 300px;
     }
+
+
+
+/* DIALOG SHIT */
+.ui-dialog .ui-dialog-title {
+    text-align: center;
+    width: 100%;
+}

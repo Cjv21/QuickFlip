@@ -6,19 +6,11 @@ using System.Web.Mvc;
 using WebMatrix.WebData;
 using QuickFlip.BusinessLayer;
 using QuickFlip.Models;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Transactions;
-using System.Web;
-using System.Web.Mvc;
 using System.Web.Security;
 using DotNetOpenAuth.AspNet;
 using Microsoft.Web.WebPages.OAuth;
-using WebMatrix.WebData;
 using QuickFlip.Filters;
-using QuickFlip.Models;
 
 
 namespace QuickFlip.Controllers
@@ -33,6 +25,7 @@ namespace QuickFlip.Controllers
             ViewBag.Community = comm;
 
             List<Post> buyPosts = BusinessLogic.GetPostsByPostType(PostType.Buy);
+            buyPosts.RemoveAll(x => x.CommunityId != comm.CommunityId);
 
             return View(buyPosts);
         }
@@ -115,6 +108,67 @@ namespace QuickFlip.Controllers
             }
 
             return RedirectToAction("Index", new { id = (CommunityAbbrev)newPost.CommunityId });
+        }
+
+        // POST: /Buy/MakeOffer
+        [HttpPost]
+        [InitializeSimpleMembership]
+        public ActionResult MakeOffer()
+        {
+            int amount = Convert.ToInt32(Request.Form["OfferAmount"]);
+
+            int postId = Convert.ToInt32(Request.Form["PostId"]);
+
+            Post post = BusinessLogic.GetPostByPostId(postId);
+
+            // delete old offers from the same user
+            if (post.Offers != null)
+            {
+                foreach (var offer in post.Offers)
+                {
+                    if (offer.UserId == WebSecurity.CurrentUserId)
+                    {
+                        // BusinessLogic.DeleteOffer(offer.OfferId);
+                    }
+                }
+            }
+            
+            // create new offer
+            Offer newOffer = new Offer()
+            {
+                PostId = postId,
+                UserId = WebSecurity.CurrentUserId,
+                Amount = amount,
+                //Description = description,
+                CreateDate = DateTime.Now,
+                Accepted = false
+            };
+
+            newOffer = BusinessLogic.CreateOffer(newOffer);
+
+            //if (offerImage != null)
+            //{
+            //    byte[] imageBytes = new byte[offerImage.InputStream.Length];
+            //    long bytesRead = offerImage.InputStream.Read(imageBytes, 0, (int)offerImage.InputStream.Length);
+            //    offerImage.InputStream.Close();
+            //    string b64EncodedImage = Convert.ToBase64String(imageBytes, 0, imageBytes.Length);
+
+            //    OfferMedia newOfferMedia = new OfferMedia()
+            //    {
+            //        OfferId = newOffer.OfferId,
+            //        B64EncodedImage = b64EncodedImage
+            //    };
+
+            //    newOfferMedia = BusinessLogic.CreateOfferMedia(newOfferMedia);
+            //}
+
+            // delete old new offer and outbid alerts for this post
+
+            // send previous highest bidder an alert saying they were outbid
+
+            // send pos owner an alert saying a new offer arrived
+
+            return RedirectToAction("Index", new { id = (CommunityAbbrev)post.CommunityId });
         }
     }
 }
