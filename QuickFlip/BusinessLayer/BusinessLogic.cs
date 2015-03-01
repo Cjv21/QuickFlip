@@ -68,6 +68,29 @@ namespace QuickFlip.BusinessLayer
             return buyPosts;
         }
 
+        public static string GetFullCategoryName(Category category)
+        {
+            switch (category)
+            {
+                case Category.CameraPhoto:
+                    return "Camera & Photo";
+                case Category.CellPhones:
+                    return "Cell Phones";
+                case Category.ClothingShoe:
+                    return "Clothing & Shoe";
+                case Category.HealthBeauty:
+                    return "Health & Beauty";
+                case Category.MusicalInstruments:
+                    return "Musical Instruments";
+                case Category.RealEstate:
+                    return "Real Estate";
+                case Category.SportingGoods:
+                    return "Sporting Goods";
+                default: 
+                    return category.ToString();
+            }
+        }
+
         #endregion
 
         #region PostMedia
@@ -83,7 +106,7 @@ namespace QuickFlip.BusinessLayer
             return newPostMedia;
         }
 
-        #endregion PostMedia
+        #endregion
 
         #region Offer
 

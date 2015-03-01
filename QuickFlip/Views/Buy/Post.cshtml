@@ -1,11 +1,12 @@
 ﻿@using System.Linq
+@using QuickFlip.BusinessLayer
 @using QuickFlip.Models
 
 <script src="~/Scripts/makeoffer-modal.js"></script>
 
 <img src="@ViewBag.Community.Logo.Src" style="max-height:100px; max-width:100px" />
 
-<h2>Buy @@ @((CommunityAbbrev)ViewBag.Community.CommunityId) </h2>
+<h2>Want To Buy @@ @((CommunityAbbrev)ViewBag.Community.CommunityId) </h2>
 <hr />
 
 <div id="PostBody" style="margin-top:20px; margin-left:20px;">
@@ -14,14 +15,28 @@
         @(String.IsNullOrWhiteSpace(Model.Title) ? "Untitled" : @Model.Title)
     </div>
 
-    <div id="CreateDate">
-        Created: @Model.CreateDate.ToShortDateString()
+    <div id="CreateDate" style="margin-bottom:10px;">
+        Created On: @Model.CreateDate.ToShortDateString() <br />
+        Created By: @Model.UserId <br />
     </div>
 
-    <ul style="margin-top:20px;">
+    <br />
+    <b style="font-size:medium">Type:</b> @(Model.AuctionType == AuctionType.Auction ? "Reverse Auction" : "Favorite Offer") <br />
+
+    <b style="font-size:medium; ">Max Price:</b> @(Model.RequiredPrice == null ? "None" : "$" + Model.RequiredPrice.ToString())<br />
+
+    @if (Model.AuctionType == AuctionType.Auction)
+    {
+        <b style="font-size:medium">Current Offer: </b> @(Model.Offers.Count == 0 ? "None" : "$" + Model.BestOffer.Amount.ToString()) <br />
+
+    }
+
+    <br />
+    <b style="font-size:medium">Categories:</b> 
+    <ul>        
         @foreach (var category in Model.Categories)
         {
-            <li>@category</li>
+            <li>@BusinessLogic.GetFullCategoryName(category)</li>
         }
     </ul>
 
@@ -33,11 +48,10 @@
     <b style="font-size:medium">Description:</b><br />
     <textarea readonly style="resize:none"> @Model.Description </textarea>
 
-    <br /><b style="font-size:medium">Type:</b> @(Model.AuctionType == AuctionType.Auction ? "Reverse Auction" : "Favorite Offer") <br />
+    <br />
 
-    <br /><b style="font-size:medium">Max Price:</b> @(Model.RequiredPrice == null ? "None" : "$" + Model.RequiredPrice.ToString())<br />
 
-    <br /><b style="font-size:medium">Current Offer: </b> @(Model.Offers.Count == 0 ? "None" : "$" + Model.BestOffer.Amount.ToString()) <br />
+
 
     @if(Model.TransactionType == TransactionType.Local)
     {

@@ -1,11 +1,11 @@
 ﻿@using System.Linq
+@using QuickFlip.BusinessLayer
 @using QuickFlip.Models
 
 <img src="@ViewBag.Community.Logo.Src" style="max-height:100px; max-width:100px" />
 
-<h2>Buy @@ @((CommunityAbbrev)ViewBag.Community.CommunityId) </h2>
+<h2>Want To Buy @@ @((CommunityAbbrev)ViewBag.Community.CommunityId) </h2>
 <hr />
-
 <br />
 
 
@@ -25,37 +25,114 @@ else
 
 <br /><br /><br /><br />
 
-@using QuickFlip.Models
-@{
-    var grid = new WebGrid(
-        Model, canSort: false, rowsPerPage: 30, selectionFieldName: "selectedRow", ajaxUpdateContainerId: "gridContent");
-}
-<div id="gridContent">
-    @grid.GetHtml(tableStyle: "webGrid",
-        headerStyle: "webGridHeader",
-        rowStyle: "rows",
-        selectedRowStyle: "select",
-        columns: grid.Columns(
-            grid.Column(columnName: "Title", style: "titleColumn", format: (item) =>
-                Html.ActionLink((String.IsNullOrWhiteSpace((string)item.Title) ? "Untitled" : (string)item.Title), "Post", new { id = item.PostId }, new { style = "text-decoration:none;" })),
-            grid.Column(columnName: "Current Bid", style: "currentColumn", format: (item) =>
-                        {
-                            if (item.Offers.Count == 0) { return "-"; }
-                            else { return "$" + item.BestOffer.Amount.ToString(); }
-                        }),
-            grid.Column(columnName: "Max Price", style: "minMaxColumn", format: (item) =>
-                        (item.RequiredPrice == null ? "-" : "$" + item.RequiredPrice.ToString())),
-            grid.Column(style: "deleteColumn", format: (item) =>
-                {
-                    //if (WebSecurity.CurrentUserId == item.UserId)
-                    //{
-                    //    return Html.ActionLink(" ", "DeleteBuyPost", new { id = item.PostId }, new { @class = "deleteButton" });
-                    //}
-                    //else
-                    //{
-                        return String.Empty;
-                    //}
-                })
-         ))
+<div class="backboard">
+   
+   @*begin narrow choices*@ 
+    <div style="float: left; width: 250px; margin-left: 20px;">
+
+        <h3 style="color:white;">Narrow Your Choices</h3>
+        <hr />
+        <div style="border: 2px solid; height: 1200px; width: 240px; background-color: white; padding-left: 10px;">
+            <form method="POST" enctype="multipart/form-data" action=@Url.Action("Index", "Buy")>
+
+                <h4>In Categories:</h4>
+                <ul>
+                    <li><input type="checkbox" name="Categories" value="Auto"> Auto </li>
+                    <li><input type="checkbox" name="Categories" value="Books"> Books </li>
+                    <li><input type="checkbox" name="Categories" value="CameraPhoto"> Camera & Photo </li>
+                    <li><input type="checkbox" name="Categories" value="CellPhones"> Cell Phones </li>
+                    <li><input type="checkbox" name="Categories" value="ClothingShoe"> Clothing & Shoe </li>
+                    <li><input type="checkbox" name="Categories" value="Computers"> Computers </li>
+                    <li><input type="checkbox" name="Categories" value="Electronics"> Electronics </li>
+                    <li><input type="checkbox" name="Categories" value="HealthBeauty"> Health & Beauty </li>
+                    <li><input type="checkbox" name="Categories" value="Home"> Home </li>
+                    <li><input type="checkbox" name="Categories" value="Jobs"> Jobs </li>
+                    <li><input type="checkbox" name="Categories" value="Movies"> Movies </li>
+                    <li><input type="checkbox" name="Categories" value="Music"> Music </li>
+                    <li><input type="checkbox" name="Categories" value="MusicalInstruments"> Musical Instruments </li>
+                    <li><input type="checkbox" name="Categories" value="Pets"> Pets </li>
+                    <li><input type="checkbox" name="Categories" value="RealEstate"> Real Estate </li>
+                    <li><input type="checkbox" name="Categories" value="SportingGoods"> Sporting Goods </li>
+                </ul>
+
+                <h4>Willing To Pay At Least:</h4>
+                $ <input type="number" name="MaxPriceFilter" style="width:160px" />
+
+                <h4>Will Ship?</h4>
+                <select name="WillShip?" style="margin-top:5px;">
+                    <option value="Don't Care">Don't Care</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+
+                <h4>Any Bids?</h4>
+
+                <input value="Filter" type="submit" style="display:block; position:relative; margin: 0 auto; margin-top: 40px;" />
+
+            </form>
+        </div>
+    </div>
+    @*end narrow choices*@
+
+
+    @*begin posts*@
+    <div style="float: right; width: 245px; margin-left: 10px;">
+        @foreach (var post in Model)
+        {
+            string postTitle = String.IsNullOrWhiteSpace((string)post.Title) ? "Untitled" : (string)post.Title;
+
+            string categories = String.Empty;
+            for (int i = 0; i < post.Categories.Count; i++)
+            {
+                categories += BusinessLogic.GetFullCategoryName(post.Categories[i]);
+                if (i != post.Categories.Count - 1) { categories += ", "; }
+            }
+
+            string auctionType = (post.AuctionType == AuctionType.Auction ? "Auction" : "Favorite Offer");
+
+            string willShip = (post.TransactionType == TransactionType.LocalOrLongDistance ? "Yes" : "No");
+
+            string maxPrice = (post.RequiredPrice == null ? "None" : "$" + post.RequiredPrice.ToString());
+
+            string currentBid = (post.BestOffer == null ? "None" : "$" + post.BestOffer.Amount.ToString());
+
+
+
+            <div style="border:2px solid; height:150px; background-color:white; width:500px; border-radius: 5px; margin: 10px; margin-right:30px;float:right; padding:10px;">
+
+
+                <div style="float:left; width:225px; margin-left:20px;">
+                    <h3>@Html.ActionLink(postTitle, "Post", new { id = post.PostId }, new { style = "text-decoration:none;" })</h3>
+
+                    @if (post.PostMedia != null)
+                    {
+                        <br /><img src="@String.Format("data:image/png;base64,{0}", post.PostMedia.B64EncodedImage)" style="max-width: 100px; width: auto; max-height: 100px; height: auto;" /><br />
+                    }
+                </div>
+
+
+                <div style="float: right; width: 245px; margin-left: 10px;">
+                    <div style="margin-top:20px;"> <b>Categories: </b> @categories </div>
+                    <div style="margin-top:10px;"> <b>Type: </b> @auctionType </div>
+                    @if (post.RequiredPrice != null)
+                    {
+                        <div style="margin-top:10px;"> <b>Willing to Pay:</b> @maxPrice </div>
+                    }
+                    @if (post.AuctionType == AuctionType.Auction)
+                    {
+                        <div style="margin-top:10px;"> <b>Current Bid: </b> @currentBid </div>
+                    }
+                    <div style="margin-top:10px; margin-bottom:20px;"> <b>Will Ship?</b> @willShip</div>
+                </div>
+            </div>
+        }
+    </div>
+
+
 </div>
+
+
+
+
+
 

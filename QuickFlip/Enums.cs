@@ -1,4 +1,6 @@
-﻿public enum CommunityAbbrev
+﻿using System.Collections.Generic;
+
+public enum CommunityAbbrev
 {
     IU = 1,
     MSU = 2,
