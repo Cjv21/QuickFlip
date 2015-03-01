@@ -9,7 +9,7 @@
 <h2>Want To Buy @@ @((CommunityAbbrev)ViewBag.Community.CommunityId) </h2>
 <hr />
 
-<div id="PostBody" style="margin-top:20px; margin-left:20px;">
+<div id="PostBody" style="margin: 20px;">
 
     <div id="Title" style="font-size:xx-large">
         @(String.IsNullOrWhiteSpace(Model.Title) ? "Untitled" : @Model.Title)
@@ -17,7 +17,7 @@
 
     <div id="CreateDate" style="margin-bottom:10px;">
         Created On: @Model.CreateDate.ToShortDateString() <br />
-        Created By: @Model.UserId <br />
+        Created By: <a>username</a> <br />
     </div>
 
     <br />
@@ -31,19 +31,25 @@
 
     }
 
-    <br />
-    <b style="font-size:medium">Categories:</b> 
-    <ul>        
-        @foreach (var category in Model.Categories)
-        {
-            <li>@BusinessLogic.GetFullCategoryName(category)</li>
-        }
-    </ul>
+
 
     @if (Model.PostMedia != null)
     {
         <br /><img src="@String.Format("data:image/png;base64,{0}", Model.PostMedia.B64EncodedImage)" style="max-width:500px; width:auto; max-height:500px; height:auto;" /> <br />
     } 
+    else
+    {   
+        <br /><img src="~/Images/NoPhotoIcon.png" style="max-width: 250px; width: auto; max-height: 250px; height: auto;" /> <br />
+    }
+
+    <br />
+    <b style="font-size:medium">Categories:</b>
+    <ul style="margin-top:4px; margin-bottom:25px;">
+        @foreach (var category in Model.Categories)
+        {
+            <li>@BusinessLogic.GetFullCategoryName(category)</li>
+        }
+    </ul>
 
     <b style="font-size:medium">Description:</b><br />
     <textarea readonly style="resize:none"> @Model.Description </textarea>

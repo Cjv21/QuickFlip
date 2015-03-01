@@ -26,6 +26,7 @@ namespace QuickFlip.Controllers
 
             List<Post> buyPosts = BusinessLogic.GetPostsByPostType(PostType.Buy);
             buyPosts.RemoveAll(x => x.CommunityId != comm.CommunityId);
+            buyPosts = buyPosts.OrderByDescending(x => x.CreateDate).ToList();
 
             return View(buyPosts);
         }

@@ -1,54 +1,54 @@
-﻿@model QuickFlip.Models.Community
+﻿<!-- includes -->
+@model QuickFlip.Models.Community
 
-
+<!-- community header -->
 <img src="@Model.Logo.Src" style="max-height:100px; max-width:100px" />
-
 <h2>@Model.CommunityName</h2>
 <hr />
 
-
+<!-- community home icons -->
 <ul style="list-style-type:none;">
 
-    <li style="margin-bottom:70px;">
-       
-        <a href="@Url.Action("Index", "Buy", new { id = (CommunityAbbrev)Model.CommunityId })" style="display: block; float: left; position:relative; height: 75px; border: 3px solid #021a40; border-radius: 20px; ">
+    <li style="margin-bottom:70px; margin-top:50px;">
+        <a href="@Url.Action("Index", "Buy", new { id = (CommunityAbbrev)Model.CommunityId })" class="comm-home-icons">
             <img src="~/Images/BuyIcon.png" style="display: block; width: 75px; height: 75px; border: none; " />
         </a> 
 
-        <div style="position:relative; text-align:left; margin-left:90px; top:20px; left:20px; font-size:x-large">
+        <div class="comm-home-icons-desc">
             <b>Want To Buy:</b> People here are looking for...
         </div>
     </li>
     
     <li style="margin-bottom: 70px;">
-        <a style="display: block; float: left; position:relative; height: 75px; border: 3px solid #021a40; border-radius: 20px; ">
+        <a class="comm-home-icons">
             <img src="~/Images/SellIcon.png" style ="display: block; width: 75px; height: 75px;;" />
         </a>
 
-        <div style="position:relative; text-align:left; margin-left:90px; top:20px; left:20px; font-size:x-large">
+        <div class="comm-home-icons-desc">
             <b>For Sale:</b> People here are selling...
-         </div>
+        </div>
     </li>
 
     <li style="margin-bottom: 70px;">
-        <a style="display: block; float: left; position:relative; height: 75px; border: 3px solid #021a40; border-radius: 20px; ">
+        <a class="comm-home-icons">
             <img src="~/Images/UsersIcon.png" style="display: block; width: 75px; height: 75px;;" />
         </a>
 
-        <div style="position:relative; text-align:left; margin-left:90px; top:20px; left:20px; font-size:x-large">
+        <div class="comm-home-icons-desc">
             <b>Users:</b> People in this community
         </div>
     </li>
 
     <li style="margin-bottom: 70px;">
-        <a style="display: block; float: left; position:relative; height: 75px; border: 3px solid #021a40; border-radius: 20px; ">
+        <a class="comm-home-icons">
             <img src="~/Images/SearchIcon.png" style="display: block; width: 75px; height: 75px;;" />
         </a>
 
-        <div style="position:relative; text-align:left; margin-left:90px; top:20px; left:20px; font-size:x-large">
+        <div class="comm-home-icons-desc">
             <b>Search:</b> Search for content in @((CommunityAbbrev)Model.CommunityId)
         </div>
     </li>
+
 </ul>
 
 
