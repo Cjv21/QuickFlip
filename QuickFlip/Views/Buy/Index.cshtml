@@ -2,10 +2,12 @@
 @using System.Linq
 @using QuickFlip.BusinessLayer
 @using QuickFlip.Models
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/category-selectall.js"></script>
 
 <!-- community header -->
 <img src="@ViewBag.Community.Logo.Src" class="comm-header-logo" />
-<h2>Want To Buy @@ @((CommunityAbbrev)ViewBag.Community.CommunityId) </h2>
+<h2>Want to Buy @@ @((CommunityAbbrev)ViewBag.Community.CommunityId) </h2>
 <hr />
 <br />
 
@@ -13,13 +15,13 @@
 @if (Request.IsAuthenticated)
 {
     <a href="@Url.Action("MakeBuyPost", "Buy", new { id = (CommunityAbbrev)ViewBag.Community.CommunityId })" class="make-post-link">
-        Make a Post
+        Make a post
     </a>
 }
 else
 {
     <a href=@Url.Action("Login", "Account", new { returnUrl = Url.Action("MakeBuyPost", "Buy", new { id = (CommunityAbbrev)ViewBag.Community.CommunityId }) }) class="make-post-link">
-        Login to Make a Post
+        Login to make a post
     </a>
 }
 
@@ -51,7 +53,8 @@ else
                 </select>
 
                 <h4>In Categories:</h4>
-                <ul>
+                <ul style="list-style-type: none; padding-left:20px;">
+                    <li><input type="checkbox" name="Categories" id="select-all" value="Any"> Any </li>
                     <li><input type="checkbox" name="Categories" value="Auto"> Auto </li>
                     <li><input type="checkbox" name="Categories" value="Books"> Books </li>
                     <li><input type="checkbox" name="Categories" value="CameraPhoto"> Camera & Photo </li>
@@ -70,7 +73,7 @@ else
                     <li><input type="checkbox" name="Categories" value="SportingGoods"> Sporting Goods </li>
                 </ul>
 
-                <h4>Willing To Pay At Least:</h4>
+                <h4>Willing to Pay at Least:</h4>
                 $ <input type="number" name="MaxPriceFilter" style="width:160px" />
 
                 <h4>Will Ship?</h4>
@@ -86,8 +89,8 @@ else
                     <option value="Yes">Yes</option>
                 </select>
 
-                <h4>Any Bids?</h4>
-                <select name="AnyBids" style="margin-top:5px;">
+                <h4>Any Offers?</h4>
+                <select name="AnyOffers" style="margin-top:5px;">
                     <option value="DontCare">Don't Care</option>
                     <option value="Yes">Yes</option>
                     <option value="No">No</option>
@@ -107,7 +110,7 @@ else
             string auctionType = (post.AuctionType == AuctionType.Auction ? "Auction" : "Favorite Offer");
             string willShip = (post.TransactionType == TransactionType.LocalOrLongDistance ? "Yes" : "No");
             string maxPrice = (post.RequiredPrice == null ? "None" : "$" + post.RequiredPrice.ToString());
-            string currentBid = (post.BestOffer == null ? "None" : "$" + post.BestOffer.Amount.ToString());
+            string currentOffer = (post.BestOffer == null ? "None" : "$" + post.BestOffer.Amount.ToString());
 
             string categories = String.Empty;
             for (int i = 0; i < post.Categories.Count; i++)
@@ -143,7 +146,7 @@ else
                     }
                     @if (post.AuctionType == AuctionType.Auction)
                     {
-                        <div style="margin-top:10px;"> <b>Current Bid: </b> @currentBid </div>
+                        <div style="margin-top:10px;"> <b>Current Offer: </b> @currentOffer </div>
                     }
                     <div style="margin-top:10px; margin-bottom:20px;"> <b>Will Ship?</b> @willShip</div>
                 </div>

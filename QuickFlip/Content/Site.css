@@ -978,6 +978,18 @@ img.uwm {
      margin-left: 20px;
  }
 
+ /* category validate in make post */
+ .category-validate {
+    clear: both;
+    color: #e80c4d;
+    font-size: 1.1em;
+    font-weight: bold;
+    margin: 20px 0 10px 0;
+    position: relative;
+    margin-left: 70px;
+    margin-top: -30px;
+}
+
 /* buy & sell index backboard */
 .backboard {
         background-color: #999;
@@ -1060,5 +1072,20 @@ img.uwm {
     max-width: 100px;
     width: auto;
     max-height: 100px;
+    height: auto;
+}
+
+/* post */
+.post-image {
+    max-width: 500px; 
+    width: auto; 
+    max-height: 500px; 
+    height: auto;
+}
+
+.post-image-null {
+    max-width: 250px; 
+    width: auto; 
+    max-height: 250px; 
     height: auto;
 }

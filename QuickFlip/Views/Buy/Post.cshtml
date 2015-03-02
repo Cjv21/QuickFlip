@@ -1,48 +1,53 @@
-﻿@using System.Linq
+﻿<!-- includes -->
+@using System.Linq
 @using QuickFlip.BusinessLayer
 @using QuickFlip.Models
-
 <script src="~/Scripts/makeoffer-modal.js"></script>
 
-<img src="@ViewBag.Community.Logo.Src" style="max-height:100px; max-width:100px" />
-
-<h2>Want To Buy @@ @((CommunityAbbrev)ViewBag.Community.CommunityId) </h2>
+<!-- community header -->
+<img src="@ViewBag.Community.Logo.Src" class="comm-header-logo" />
+<h2>Want to Buy @@ @((CommunityAbbrev)ViewBag.Community.CommunityId) </h2>
 <hr />
+<br />
 
-<div id="PostBody" style="margin: 20px;">
+<!-- title -->
+<div style="font-size:xx-large">
+    @(String.IsNullOrWhiteSpace(Model.Title) ? "Untitled" : @Model.Title)
+</div>
 
-    <div id="Title" style="font-size:xx-large">
-        @(String.IsNullOrWhiteSpace(Model.Title) ? "Untitled" : @Model.Title)
-    </div>
-
-    <div id="CreateDate" style="margin-bottom:10px;">
-        Created On: @Model.CreateDate.ToShortDateString() <br />
-        Created By: <a>username</a> <br />
-    </div>
-
+<!-- created on / created by -->
+<div style="margin:10px;">
+    <b style="font-size:medium">Created On: </b> @Model.CreateDate.ToShortDateString()
     <br />
-    <b style="font-size:medium">Type:</b> @(Model.AuctionType == AuctionType.Auction ? "Reverse Auction" : "Favorite Offer") <br />
+    <b style="font-size:medium">Created By: </b>  <a>username</a>
+</div>
 
-    <b style="font-size:medium; ">Max Price:</b> @(Model.RequiredPrice == null ? "None" : "$" + Model.RequiredPrice.ToString())<br />
-
+<!-- auction type / max price / current offer -->
+<div style="margin-left:10px; margin-top:20px;">
+    <b style="font-size:medium;">Type:</b> @(Model.AuctionType == AuctionType.Auction ? "Reverse Auction" : "Favorite Offer") 
+    <br />
+    <b style="font-size:medium;">Max Price:</b> @(Model.RequiredPrice == null ? "None" : "$" + Model.RequiredPrice.ToString())
+    <br />
     @if (Model.AuctionType == AuctionType.Auction)
     {
-        <b style="font-size:medium">Current Offer: </b> @(Model.Offers.Count == 0 ? "None" : "$" + Model.BestOffer.Amount.ToString()) <br />
-
+        <b style="font-size:medium">Current Offer: </b> @(Model.Offers.Count == 0 ? "None" : "$" + Model.BestOffer.Amount.ToString())
     }
+</div>
 
-
-
+<!-- post image -->
+<div style="margin:40px;">
     @if (Model.PostMedia != null)
     {
-        <br /><img src="@String.Format("data:image/png;base64,{0}", Model.PostMedia.B64EncodedImage)" style="max-width:500px; width:auto; max-height:500px; height:auto;" /> <br />
-    } 
-    else
-    {   
-        <br /><img src="~/Images/NoPhotoIcon.png" style="max-width: 250px; width: auto; max-height: 250px; height: auto;" /> <br />
+        <img src="@String.Format("data:image/png;base64,{0}", Model.PostMedia.B64EncodedImage)" class="post-image" />
     }
+    else
+    {
+        <img src="~/Images/NoPhotoIcon.png" class="post-image-null" />
+    }
+</div>
 
-    <br />
+<!-- categories -->
+<div style="margin:10px;">
     <b style="font-size:medium">Categories:</b>
     <ul style="margin-top:4px; margin-bottom:25px;">
         @foreach (var category in Model.Categories)
@@ -50,53 +55,59 @@
             <li>@BusinessLogic.GetFullCategoryName(category)</li>
         }
     </ul>
+</div>
 
-    <b style="font-size:medium">Description:</b><br />
-    <textarea readonly style="resize:none"> @Model.Description </textarea>
-
+<!-- description -->
+<div style="margin:10px;">
+    <b style="font-size:medium">Description:</b>
     <br />
+    <textarea readonly style="resize:none"> @Model.Description </textarea>
+</div>
 
 
-
-
-    @if(Model.TransactionType == TransactionType.Local)
+<!-- transaction type flag -->
+<div style="margin-top:30px;">
+    @if (Model.TransactionType == TransactionType.Local)
     {
-        <br /><i style="color:blue">Local Meetup Only</i><br />
+        <i style="color:blue">Local Meetup Only!</i>
     }
     else
     {
-        <br /><i style="color:blue">Open To Shipping</i><br />
+        <i style="color:blue">Open To Shipping!</i>
     }
+</div>
 
+<!-- make offer -->
+<div>
     @if (Request.IsAuthenticated)
     {
         if (WebSecurity.CurrentUserId != @Model.UserId)
         {
-                <input type="button" id="offerButton" value="Make offer!" style="position:relative; top:20px;">
-                
-                <div id="dialog" title="Make Offer">
-                    <form method="POST" enctype="multipart/form-data" action="~/Buy/MakeOffer">
-                        
-                        <div style="text-align:center; margin-top:10px">
-                            $<input type="number" name="OfferAmount" max=@( @Model.Offers.Count == 0 ? @Model.RequiredPrice : @Model.BestOffer.Amount - 1) required="required" />
-                        </div>
-                        
-                        <input type="number" name="PostId" hidden="hidden" value="@Model.PostId" />
-                        
-                        <div style="text-align:center; margin-top:25px">
-                            <input value="Submit" type="submit" style="align-content:center" />
-                        </div>
-                    </form>
-                </div> 
+            <input type="button" id="offerButton" value="Make offer!" style="position:relative; top:20px;">
+            
+            <!-- make offer dialog -->
+            <div id="dialog" title="Make Offer">
+                <form method="POST" enctype="multipart/form-data" action="~/Buy/MakeOffer">
+                    <div style="text-align:center; margin-top:10px">
+                        $<input type="number" name="OfferAmount" max=@( @Model.Offers.Count == 0 ? @Model.RequiredPrice : @Model.BestOffer.Amount - 1) required="required" />
+                    </div>
+                    <input type="number" name="PostId" hidden="hidden" value="@Model.PostId" />
+                    <div style="text-align:center; margin-top:25px">
+                        <input value="Submit" type="submit" style="align-content:center" />
+                    </div>
+                </form>
+            </div>
         }
     }
     else
     {
+        <!-- not logged in, login to make an offer -->
         <a href=@Url.Action("Login", "Account", new { returnUrl = Url.Action("Post", "Buy", new { id = Model.PostId }) }) style="position:relative; top:20px;">
-            Login to make an Offer
+            Login to make an offer
         </a>
     }
 </div>
+
 
 
 
