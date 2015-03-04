@@ -70,9 +70,9 @@ CREATE TABLE [UserProfile]
 (
 	UserId INT NOT NULL IDENTITY,
 	UserName NVARCHAR(MAX),
-	CommunityId INT NOT NULL,
-	Email VARCHAR(320) NOT NULL,
-	Nonce VARCHAR(8) NOT NULL,
+	CommunityId INT,
+	Email VARCHAR(320),
+	Nonce VARCHAR(8),
 	Verified BIT NOT NULL DEFAULT 0,
 	B64EncodedImage NVARCHAR(MAX),
 	PRIMARY KEY (UserId),

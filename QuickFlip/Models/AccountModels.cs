@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Globalization;
+using System.Web;
 using System.Web.Security;
 
 namespace QuickFlip.Models
@@ -86,6 +87,15 @@ namespace QuickFlip.Models
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+
+        [DataType(DataType.EmailAddress)]
+        [Required(ErrorMessage = "The email address is required.")]
+        [Display(Name = "Email address")]
+        [EmailAddress(ErrorMessage = "Invalid Email Address.")]
+        public string Email { get; set; }
+
+        [Display(Name = "Profile picture (optional)")]
+        public HttpPostedFileBase ProfilePicture { get; set; }
     }
 
     public class ExternalLogin

@@ -9,6 +9,43 @@ namespace QuickFlip.BusinessLayer
 {
     public class BusinessLogic
     {
+        #region UserProfile
+            
+        public static bool IsEmailVerified(string userName)
+        {
+            DataAccess da = new DataAccess();
+
+            bool isEmailVerified = da.IsEmailVerified(userName);
+
+            da.Dispose();
+
+            return isEmailVerified;
+        }
+
+        public static bool DoesUserExist(string userName)
+        {
+            DataAccess da = new DataAccess();
+
+            bool DoesUserExist = da.DoesUserExist(userName);
+
+            da.Dispose();
+
+            return DoesUserExist;
+        }
+
+        public static void PopulateUserProfile(RegisterModel newUser)
+        {
+            DataAccess da = new DataAccess();
+
+            string nonce = Generate8CharNonce();
+
+            da.PopulateUserProfile(newUser, nonce);
+
+            da.Dispose();
+        }
+
+        #endregion
+
         #region Community
 
         public static Community GetCommunityByCommunityId(int id)
@@ -130,6 +167,21 @@ namespace QuickFlip.BusinessLayer
             da.Dispose();
 
             return offers;
+        }
+
+        #endregion
+
+        #region Utilities
+
+        public static string Generate8CharNonce()
+        {
+            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            var random = new Random();
+            var nonce = new string(
+                Enumerable.Repeat(chars, 8)
+                          .Select(s => s[random.Next(s.Length)])
+                          .ToArray());
+            return nonce;
         }
 
         #endregion

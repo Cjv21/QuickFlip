@@ -1,0 +1,20 @@
+﻿<!-- includes -->
+@using System.Linq
+@using QuickFlip.BusinessLayer
+@using QuickFlip.Models
+
+<!-- verify header -->
+<h2>Verify Email.</h2>
+<hr />
+<br />
+
+<!-- verify content -->
+<img src="~/Images/Oops.png" style="max-width:200px;"/>
+<label style="font-size:large;">You have not verified your Email.</label>
+
+<form method="POST" action=@Url.Action("SubmitNonce", "Home")>
+    <label style="margin-top:35px; font-size:medium;"> Please enter your confirmation code: </label>
+    <input type="text" name="Nonce" style="width:200px;" />
+    <br />
+    <input value="Confirm" type="submit" style="position:relative; margin-top:20px; margin-left:20px;" />
+</form>

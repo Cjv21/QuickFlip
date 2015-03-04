@@ -16,6 +16,5 @@ namespace QuickFlip.Controllers
             Community comm = BusinessLogic.GetCommunityByCommunityId((int)id);
             return View(comm);
         }
-
     }
 }

@@ -272,6 +272,7 @@
     <Content Include="Images\IU.png" />
     <Content Include="Images\MSU.png" />
     <Content Include="Images\NU.png" />
+    <Content Include="Images\Oops.png" />
     <Content Include="Images\OSU.png" />
     <Content Include="Images\PSU.png" />
     <Content Include="Images\PU.png" />
@@ -347,6 +348,8 @@
     <Content Include="Views\Buy\Index.cshtml" />
     <Content Include="Views\Buy\MakeBuyPost.cshtml" />
     <Content Include="Views\Buy\Post.cshtml" />
+    <Content Include="Views\Home\VerifyEmail.cshtml" />
+    <Content Include="Views\Home\AccountCreated.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

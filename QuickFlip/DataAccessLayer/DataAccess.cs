@@ -12,6 +12,7 @@ namespace QuickFlip.DataAccessLayer
     {
         private SqlConnection Connection;
 
+
         #region Constructor/Dispose
 
         public DataAccess()
@@ -42,6 +43,109 @@ namespace QuickFlip.DataAccessLayer
         }
 
         #endregion
+
+
+        #region UserProfile
+
+        public bool IsEmailVerified(string userName)
+        {
+            try
+            {
+                // form query
+                SqlCommand command = new SqlCommand(
+                    "SELECT Verified FROM [UserProfile] " +
+                    "WHERE UserName = @UserName",
+                    Connection);
+
+                // add parameters
+                command.Parameters.AddWithValue("@UserName", userName);
+
+                // execute
+                SqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    bool isVerified = Convert.ToBoolean(reader["Verified"]);
+
+                    reader.Close();
+
+                    return isVerified;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
+            return false;
+        }
+
+        public bool DoesUserExist(string userName)
+        {
+            try
+            {
+                // form query
+                SqlCommand command = new SqlCommand(
+                    "SELECT COUNT(*) FROM [UserProfile] " +
+                    "WHERE UserName = @UserName",
+                    Connection);
+
+                // add parameters
+                command.Parameters.AddWithValue("@UserName", userName);
+
+                // execute
+                return (int)command.ExecuteScalar() != 0;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
+            return false;
+        }
+
+        public void PopulateUserProfile(RegisterModel newUser, string nonce)
+        {
+            try
+            {
+                // form query
+                SqlCommand command = new SqlCommand(
+                    "UPDATE [UserProfile] " +
+                    "SET Email = @Email, Nonce = @Nonce, B64EncodedImage = @B64EncodedImage " +
+                    "WHERE UserName = @UserName",
+                    Connection);
+
+                // base 64 encode profile picture
+                byte[] imageBytes = new byte[newUser.ProfilePicture.InputStream.Length];
+                long bytesRead = newUser.ProfilePicture.InputStream.Read(imageBytes, 0, (int)newUser.ProfilePicture.InputStream.Length);
+                newUser.ProfilePicture.InputStream.Close();
+                string b64EncodedImage = Convert.ToBase64String(imageBytes, 0, imageBytes.Length);
+
+                // add parameters
+                command.Parameters.AddWithValue("@Email", newUser.Email);
+                command.Parameters.AddWithValue("@Nonce", nonce);
+                command.Parameters.AddWithValue("@B64EncodedImage", b64EncodedImage);
+                command.Parameters.AddWithValue("@UserName", newUser.UserName);
+
+                // convert null values to DBNull
+                foreach (SqlParameter parameter in command.Parameters)
+                {
+                    if (parameter.Value == null) { parameter.Value = DBNull.Value; }
+                }
+
+                // execute
+                command.ExecuteNonQuery();
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+
+
+        #endregion
+
 
         #region Community
 
@@ -90,6 +194,7 @@ namespace QuickFlip.DataAccessLayer
         }
 
         #endregion
+
 
         #region Post
 
@@ -395,6 +500,7 @@ namespace QuickFlip.DataAccessLayer
 
         #endregion
 
+
         #region PostMedia
 
         public PostMedia CreatePostMedia(PostMedia newPostMedia)
@@ -467,7 +573,9 @@ namespace QuickFlip.DataAccessLayer
 
         #endregion
 
+
         #region Offer
+
         public Offer CreateOffer(Offer newOffer)
         {
             try
