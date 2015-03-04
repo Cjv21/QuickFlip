@@ -1,5 +1,32 @@
 ===============================================================================
 
+			Tasks
+
+===============================================================================
+
+	X community map 
+	X community home page
+	o confirm email
+	X buy index
+	o sell index
+	o advanced search
+	X make post
+	o tags
+	X make offer auction
+	o make offer favorite offer
+	o accept offer auction
+	o accept offer favorite offer
+	o activity e-mail alerts
+	o activity cell-phone alerts
+	o user profile
+	o user reviews
+	o messaging
+	X post previews
+	o recommendations 
+
+
+===============================================================================
+
 			SETTING UP THE DEV ENVIRONMENT
 
 ===============================================================================
@@ -130,103 +157,3 @@ Publishing to live site:
 	- Put all Enum declarations in "Enums.cs"
 
 
-
-===============================================================================
-
-				QuickFlip Tables
-
-===============================================================================
-
-	Community	
-		CommunityId
-		CommunityName
-		City
-		State
-		DefaultMeetingLocation
-	
-	UserProfile	
-		UserId
-		UserName
-		Email
-		
-	UserReviews
-		UserId
-		ReviewerUserId
-		PostId
-		Rating
-		ReviewDescription
-
-	ReportedUsers
-		UserId
-		ReporterUserId
-		Reason
-		Description
-		CreateDate
-		
-	Webpages_Membership
-		UserId
-		CreateDate
-		ConfirmationToken
-		IsConfirmed
-		LastPasswordFailureDate
-		PasswordFailuresSinceLastSuccess
-		Password
-		PasswordChangeDate
-		PasswordSalt	
-		PasswordVerification
-		PasswordVerificationTokenExperiationDate
-
-	Posts
-		PostId
-		CommunityId
-		CreateDate
-		ExpirationDate
-		PostTitle
-		Description
-		RequiredPrice
-		PostType
-		AuctionType
-		TransactionType
-
-	PostMedia
-		PostMediaId
-		PostId
-		B64EncodedImage
-
-	Auto, Books, CameraPhoto, CellPhones, ClothingShoe, Computers, 
-	Electronics, HealthBeauty, Home, Jobs, Movies, Music, MusicalInstruments, 
-	Pets, RealEstate, SportingGoods
-		PostId
-
-	Offers
-		OfferId
-		OfferAmount
-		OfferTitle
-		OfferDescription
-		PostId
-		UserId
-		CreateDate
-	
-	OfferMedia
-		OfferMediaId
-		OfferId
-		B64EncodedImage		
-
-	Alerts	
-		AlertId
-		OfferId
-		AlertType
-		CreateDate
-
-	AcceptedOffers
-		OfferId
-		CreateDate
-
-	SuccessfulTransactions
-		PostId
-		CreateDate
-
-	FailedTransactions
-		PostId
-		CreateDate
-	

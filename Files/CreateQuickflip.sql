@@ -3,7 +3,7 @@
 -- Description:	Creates the QuickFlip database
 -- =============================================
 
-USE [aspnet-QuickFlip-20150210135155]
+USE [quickflip-db]
 
 SET ANSI_NULLS ON
 GO
@@ -13,6 +13,7 @@ GO
 
 SET NOCOUNT ON;
 
+-- COMMUNITY
 CREATE TABLE [Community]
 (
 	CommunityId INT NOT NULL IDENTITY,
@@ -23,42 +24,87 @@ CREATE TABLE [Community]
 	PRIMARY KEY (CommunityId)
 )
 
-INSERT INTO [Community] (CommunityName, City, State, DefaultMeetingLocation)
+INSERT INTO [Community] (Name, City, State, DefaultMeetingLocation)
 VALUES ('Indiana University', 'Bloomington', 'Indiana', 'Indiana University Memorial Union (900 East 7th St.)')
 
-INSERT INTO [Community] (CommunityName, City, State, DefaultMeetingLocation)
+INSERT INTO [Community] (Name, City, State, DefaultMeetingLocation)
 VALUES ('Michigan State University', 'East Lansing', 'Michigan', 'MSU Union (45 Abbot Rd.)')
 
-INSERT INTO [Community] (CommunityName, City, State, DefaultMeetingLocation)
+INSERT INTO [Community] (Name, City, State, DefaultMeetingLocation)
 VALUES ('Northwestern University', 'Evanston', 'Illinois', 'Norris University Center (1999 Campus Dr.)')
 
-INSERT INTO [Community] (CommunityName, City, State, DefaultMeetingLocation)
+INSERT INTO [Community] (Name, City, State, DefaultMeetingLocation)
 VALUES ('Ohio State University', 'Columbus', 'Ohio', 'The Ohio Union (1739 North High St.)')
 
-INSERT INTO [Community] (CommunityName, City, State, DefaultMeetingLocation)
+INSERT INTO [Community] (Name, City, State, DefaultMeetingLocation)
 VALUES ('Penn State University', 'State College', 'Pennsylvania', 'Penn State Bookstore (1 East Pollock Rd.)')
 
-INSERT INTO [Community] (CommunityName, City, State, DefaultMeetingLocation)
+INSERT INTO [Community] (Name, City, State, DefaultMeetingLocation)
 VALUES ('Purdue University', 'West Lafayette', 'Indiana', 'Purdue Memorial Union (101 North Grant St.)')
 
-INSERT INTO [Community] (CommunityName, City, State, DefaultMeetingLocation)
+INSERT INTO [Community] (Name, City, State, DefaultMeetingLocation)
 VALUES ('University of Iowa', 'Iowa City', 'Iowa', 'Iowa Memorial Union (125 North Madison St.)')
 
-INSERT INTO [Community] (CommunityName, City, State, DefaultMeetingLocation)
+INSERT INTO [Community] (Name, City, State, DefaultMeetingLocation)
 VALUES ('University of Illinois - Urbana Champaign', 'Champaign', 'Illinois', 'Illini Union (1401 West Green St.)')
 
-INSERT INTO [Community] (CommunityName, City, State, DefaultMeetingLocation)
+INSERT INTO [Community] (Name, City, State, DefaultMeetingLocation)
 VALUES ('University of Michigan', 'Ann Arbor', 'Michigan', 'Michigan Union (530 South State St.)')
 
-INSERT INTO [Community] (CommunityName, City, State, DefaultMeetingLocation)
+INSERT INTO [Community] (Name, City, State, DefaultMeetingLocation)
 VALUES ('University of Minnesota', 'Minneapolis', 'Minnesota', 'Coffman Memorial Union (300 Washington Ave.)')
 
-INSERT INTO [Community] (CommunityName, City, State, DefaultMeetingLocation)
+INSERT INTO [Community] (Name, City, State, DefaultMeetingLocation)
 VALUES ('University of Nebraska - Lincoln', 'Lincoln', 'Nebraska', 'Nebraska Union (1400 R St.)')
 
-INSERT INTO [Community] (CommunityName, City, State, DefaultMeetingLocation)
+INSERT INTO [Community] (Name, City, State, DefaultMeetingLocation)
 VALUES ('University of Wisconsin - Madison', 'Madison', 'Wisconsin', 'Memorial Union (800 Langdon St.)')
 
+-- USER
+DROP TABLE [webpages_UsersInRoles]
+DROP TABLE [webpages_Roles]
+DROP TABLE [webpages_OAuthMembership]
+DROP TABLE [UserProfile]
+
+CREATE TABLE [UserProfile]
+(
+	UserId INT NOT NULL IDENTITY,
+	UserName NVARCHAR(MAX),
+	CommunityId INT NOT NULL,
+	Email VARCHAR(320) NOT NULL,
+	Nonce VARCHAR(8) NOT NULL,
+	Verified BIT NOT NULL DEFAULT 0,
+	B64EncodedImage NVARCHAR(MAX),
+	PRIMARY KEY (UserId),
+	FOREIGN KEY (CommunityId) REFERENCES [Community](CommunityId)
+)
+
+CREATE TABLE [UserReview]
+(
+	UserReviewId INT NOT NULL IDENTITY,
+	ReviewedUserId INT NOT NULL,
+	ReviewerUserId INT NOT NULL,
+	Rating INT,
+	Description VARCHAR(1000),
+	PRIMARY KEY (UserReviewId),
+	FOREIGN KEY (ReviewedUserId) REFERENCES [UserProfile](UserId),
+	FOREIGN KEY (ReviewerUserId) REFERENCES [UserProfile](UserId)
+)
+
+CREATE TABLE [Message]
+(
+	MessageId INT NOT NULL IDENTITY,
+	RecipientUserId INT NOT NULL,
+	SenderUserId INT NOT NULL,
+	Content VARCHAR(1000),
+	Seen BIT DEFAULT 0,
+	PRIMARY KEY (MessageId),
+	FOREIGN KEY (RecipientUserId) REFERENCES [UserProfile](UserId),
+	FOREIGN KEY (SenderUserId) REFERENCES [UserProfile](UserId)
+)
+
+
+-- POST
 CREATE TABLE [Post]
 (
 	PostId INT NOT NULL IDENTITY,
@@ -72,10 +118,21 @@ CREATE TABLE [Post]
 	PostType INT NOT NULL,
 	AuctionType INT NOT NULL,
 	TransactionType INT NOT NULL,
+	Settled BIT DEFAULT 0 NOT NULL,
 	PRIMARY KEY (PostId),
 	FOREIGN KEY (CommunityId) REFERENCES Community(CommunityId)
 )
 
+CREATE TABLE [PostMedia]
+(
+	PostMediaId INT NOT NULL IDENTITY,
+	Postid INT NOT NULL,
+	B64EncodedImage NVARCHAR(MAX),
+	PRIMARY KEY (PostMediaId),
+	FOREIGN KEY (PostId) REFERENCES Post(PostId)
+)
+
+-- CATEGORIES
 CREATE TABLE [Auto]
 (
 	PostId INT NOT NULL,
@@ -204,15 +261,7 @@ CREATE TABLE [SportingGoods]
 	FOREIGN KEY (PostId) REFERENCES Post(PostId)
 )
 
-CREATE TABLE [PostMedia]
-(
-	PostMediaId INT NOT NULL IDENTITY,
-	Postid INT NOT NULL,
-	B64EncodedImage NVARCHAR(MAX),
-	PRIMARY KEY (PostMediaId),
-	FOREIGN KEY (PostId) REFERENCES Post(PostId)
-)
-
+-- OFFER
 CREATE TABLE [Offer]
 (
 	OfferId INT NOT NULL IDENTITY,
@@ -227,6 +276,27 @@ CREATE TABLE [Offer]
 	FOREIGN KEY (UserId) REFERENCES UserProfile(UserId)
 )
 
-GO
+CREATE TABLE [OfferMedia]
+(
+	OfferMediaId INT NOT NULL IDENTITY,
+	OfferId INT NOT NULL,
+	B64EncodedImage NVARCHAR(MAX),
+	PRIMARY KEY (OfferMediaId),
+	FOREIGN KEY (OfferId) REFERENCES Offer(OfferId)
+)
+
+-- ALERT
+CREATE TABLE [Alert]
+(
+	AlertId INT NOT NULL IDENTITY,
+	OfferId INT,
+	MessageId INT,
+	AlertType INT NOT NULL,
+	CreateDate DATETIME NOT NULL,
+	PRIMARY KEY (AlertId),
+	FOREIGN KEY (OfferId) REFERENCES [Offer](OfferId),
+	FOREIGN KEY (MessageId) REFERENCES [Message](MessageId)
+)
+
 
 

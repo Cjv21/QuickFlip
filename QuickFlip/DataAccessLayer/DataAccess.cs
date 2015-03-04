@@ -66,7 +66,7 @@ namespace QuickFlip.DataAccessLayer
                     Community comm = new Community
                     {
                         CommunityId = Convert.ToInt32(reader["CommunityId"]),
-                        CommunityName = Convert.ToString(reader["CommunityName"]),
+                        Name = Convert.ToString(reader["Name"]),
                         City = Convert.ToString(reader["City"]),
                         State = Convert.ToString(reader["State"]),
                         DefaultMeetingLocation = Convert.ToString(reader["DefaultMeetingLocation"]),
