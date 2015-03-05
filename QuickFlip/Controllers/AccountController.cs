@@ -34,25 +34,35 @@ namespace QuickFlip.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Login(LoginModel model, string returnUrl)
         {
-            if (!BusinessLogic.DoesUserExist(model.UserName) || BusinessLogic.IsEmailVerified(model.UserName))
+            // valid login and verified
+            if (ModelState.IsValid && 
+                BusinessLogic.IsEmailVerified(model.UserName) && 
+                WebSecurity.Login(model.UserName, model.Password, persistCookie: model.RememberMe))
             {
-                if (ModelState.IsValid && WebSecurity.Login(model.UserName, model.Password, persistCookie: model.RememberMe))
-                {
-                    return RedirectToLocal(returnUrl);
-                }
-
-                // If we got this far, something failed, redisplay form
-                ModelState.AddModelError("", "The user name or password provided is incorrect.");
-                return View(model);
+                return RedirectToLocal(returnUrl);
             }
-            else
+
+            // valid login and not verified
+            if (ModelState.IsValid &&
+                !BusinessLogic.IsEmailVerified(model.UserName) && 
+                WebSecurity.Login(model.UserName, model.Password, persistCookie: model.RememberMe))
             {
+                WebSecurity.Logout();
+
                 // redirect to confirm email page
                 var userNameBytes = System.Text.Encoding.UTF8.GetBytes(model.UserName);
                 string b64EncodedUserName = Convert.ToBase64String(userNameBytes);
 
-                return RedirectToAction("VerifyEmail", "Home", new { id = b64EncodedUserName }); 
+                // store password in clear text, for now...
+                TempData["Password"] = model.Password;
+                TempData["FirstAttempt"] = true;
+
+                return RedirectToAction("VerifyEmail", "Home", new { id = b64EncodedUserName });
             }
+
+                // if we got this far, something failed, redisplay form
+                ModelState.AddModelError("", "The user name or password provided is incorrect.");
+                return View(model);
         }
 
 
@@ -88,16 +98,19 @@ namespace QuickFlip.Controllers
                 {
                     WebSecurity.CreateUserAndAccount(model.UserName, model.Password);
 
-                    // quickly login and immediately log out so we can extract the new UserId
-                    WebSecurity.Login(model.UserName, model.Password);
-                    int userId = WebSecurity.GetUserId(model.UserName);
-                    WebSecurity.Logout();
+                    string nonce = BusinessLogic.Generate8CharNonce();
 
-                    BusinessLogic.PopulateUserProfile(model);
+                    BusinessLogic.PopulateUserProfile(model, nonce);
+
+                    BusinessLogic.SendConfirmationCode(model, nonce);
 
                     // redirect to confirm email page
                     var userNameBytes = System.Text.Encoding.UTF8.GetBytes(model.UserName);
                     string b64EncodedUserName = Convert.ToBase64String(userNameBytes);
+
+                    // store password in clear text, for now...
+                    TempData["Password"] = model.Password;
+                    TempData["FirstAttempt"] = true;
 
                     return RedirectToAction("AccountCreated", "Home", new { id = b64EncodedUserName }); 
                 }

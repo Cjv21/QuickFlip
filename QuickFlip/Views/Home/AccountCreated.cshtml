@@ -9,12 +9,27 @@
 <br />
 
 <!-- account created content -->
-<label style="font-size:x-large; margin:5px;;">Congratulations!</label>
+<label style="font-size:x-large; margin:5px;">Congratulations!</label>
 <label style="font-size:medium; margin:5px;">Your account was created. </label>
 
 <form method="POST" action=@Url.Action("SubmitNonce", "Home")>
     <label style="margin-top:35px; font-size:medium;"> Please enter your confirmation code: </label>
     <input type="text" name="Nonce" style="width:200px;" />
+
+    <!-- yes, insecure. do not care for now, only facing the user anyways -->
+    <input type="text" name="UserName" hidden="hidden" value="@ViewData["UserName"]" />
+    <input type="text" name="Password" hidden="hidden" value="@ViewData["Password"]" />
+
     <br />
+
     <input value="Confirm" type="submit" style="position:relative; margin-top:20px; margin-left:20px;" />
+
 </form>
+
+<!-- incorrect confirmation code error -->
+@if (!Convert.ToBoolean(ViewData["FirstAttempt"]))
+{
+    <label class="error" style="position:relative; top:-35px; left:120px;">Incorrect code!</label>
+}
+
+

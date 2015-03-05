@@ -80,6 +80,62 @@ namespace QuickFlip.DataAccessLayer
             return false;
         }
 
+        public void SetEmailAsVerified(string userName)
+        {
+            try
+            {
+                // form query
+                SqlCommand command = new SqlCommand(
+                    "UPDATE [UserProfile] " +
+                    "SET Verified = 1 " +
+                    "WHERE UserName = @UserName",
+                    Connection);
+
+                // add parameters
+                command.Parameters.AddWithValue("@UserName", userName);
+
+                // execute
+                command.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+
+        public bool CheckNonce(string nonce, string userName)
+        {
+            try
+            {
+                // form query
+                SqlCommand command = new SqlCommand(
+                    "SELECT Nonce FROM [UserProfile] " +
+                    "WHERE UserName = @UserName",
+                    Connection);
+
+                // add parameters
+                command.Parameters.AddWithValue("@UserName", userName);
+
+                // execute
+                SqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    string dbNonce = reader["Nonce"].ToString();
+
+                    reader.Close();
+
+                    return (dbNonce == nonce);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
+            return false;
+        }
+
         public bool DoesUserExist(string userName)
         {
             try
@@ -116,10 +172,14 @@ namespace QuickFlip.DataAccessLayer
                     Connection);
 
                 // base 64 encode profile picture
-                byte[] imageBytes = new byte[newUser.ProfilePicture.InputStream.Length];
-                long bytesRead = newUser.ProfilePicture.InputStream.Read(imageBytes, 0, (int)newUser.ProfilePicture.InputStream.Length);
-                newUser.ProfilePicture.InputStream.Close();
-                string b64EncodedImage = Convert.ToBase64String(imageBytes, 0, imageBytes.Length);
+                string b64EncodedImage = null;
+                if (newUser.ProfilePicture != null)
+                {
+                    byte[] imageBytes = new byte[newUser.ProfilePicture.InputStream.Length];
+                    long bytesRead = newUser.ProfilePicture.InputStream.Read(imageBytes, 0, (int)newUser.ProfilePicture.InputStream.Length);
+                    newUser.ProfilePicture.InputStream.Close();
+                    b64EncodedImage = Convert.ToBase64String(imageBytes, 0, imageBytes.Length);
+                }
 
                 // add parameters
                 command.Parameters.AddWithValue("@Email", newUser.Email);

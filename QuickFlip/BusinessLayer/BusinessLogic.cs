@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Web;
 using QuickFlip.DataAccessLayer;
 using QuickFlip.Models;
@@ -22,6 +23,32 @@ namespace QuickFlip.BusinessLayer
             return isEmailVerified;
         }
 
+        public static void SetEmailAsVerified(string userName)
+        {
+            DataAccess da = new DataAccess();
+
+            da.SetEmailAsVerified(userName);
+
+            da.Dispose();
+        }
+
+        public static void SendConfirmationCode(RegisterModel newUser, string nonce)
+        {
+            string body = "Welcome to QuickFlip! \n \n" + "Your confirmation code: " + nonce;
+            SendEmail(newUser.Email, "Confirmation Code", body);
+        }
+
+        public static bool CheckNonce(string nonce, string userName)
+        {
+            DataAccess da = new DataAccess();
+
+            bool isNonceCorrect = da.CheckNonce(nonce, userName);
+
+            da.Dispose();
+
+            return isNonceCorrect;
+        }
+
         public static bool DoesUserExist(string userName)
         {
             DataAccess da = new DataAccess();
@@ -33,11 +60,9 @@ namespace QuickFlip.BusinessLayer
             return DoesUserExist;
         }
 
-        public static void PopulateUserProfile(RegisterModel newUser)
+        public static void PopulateUserProfile(RegisterModel newUser, string nonce)
         {
             DataAccess da = new DataAccess();
-
-            string nonce = Generate8CharNonce();
 
             da.PopulateUserProfile(newUser, nonce);
 
@@ -182,6 +207,34 @@ namespace QuickFlip.BusinessLayer
                           .Select(s => s[random.Next(s.Length)])
                           .ToArray());
             return nonce;
+        }
+
+        public static void SendEmail(string recipient, string subject, string body)
+        {
+            try
+            {
+                MailMessage mail = new MailMessage();
+
+                SmtpClient smtpClient = new SmtpClient("smtp.gmail.com");
+
+                smtpClient.EnableSsl = true;
+
+                smtpClient.Credentials = new System.Net.NetworkCredential("quickflipauctions", "Quickflip411");
+
+                smtpClient.Port = 587;
+
+                mail.From = new MailAddress("quickflipauctions@gmail.com");
+                mail.To.Add(recipient);
+                mail.Subject = subject;
+                mail.Body = body;
+
+                smtpClient.Send(mail);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
         }
 
         #endregion
