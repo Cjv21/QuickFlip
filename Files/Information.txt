@@ -6,16 +6,18 @@
 
 	X community map 
 	X community home page
-	o confirm email
+	X confirm email
 	X buy index
-	o sell index
+	o sell index    (wait until buy is completely finished, copy over)
+	o index filter
 	o advanced search
 	X make post
 	o tags
-	X make offer auction
-	o make offer favorite offer
+	X make offer (auction)
+	o make offer (favorite offer)
 	o accept offer auction
 	o accept offer favorite offer
+	o activity in-application alerts
 	o activity e-mail alerts
 	o activity cell-phone alerts
 	o user profile
@@ -23,6 +25,8 @@
 	o messaging
 	X post previews
 	o recommendations 
+
+	o LAST: convert object mapped traversals into advanced sql queries
 
 
 ===============================================================================
