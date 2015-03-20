@@ -69,6 +69,27 @@ namespace QuickFlip.BusinessLayer
             da.Dispose();
         }
 
+        public static User GetUserByUserId(int userId)
+        {
+            DataAccess da = new DataAccess();
+
+            User user = da.GetUserByUserId(userId);
+
+            da.Dispose();
+
+            return user;
+        }
+
+        public static string GetUserNameFromUserId(int userId)
+        {
+            DataAccess da = new DataAccess();
+
+            User user = da.GetUserByUserId(userId);
+
+            da.Dispose();
+
+            return user.UserName;
+        }
         #endregion
 
         #region Community

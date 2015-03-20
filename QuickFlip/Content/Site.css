@@ -1069,17 +1069,17 @@ img.uwm {
 
 .post-preview-image {
     margin-top: 15px;
-    max-width: 100px;
+    max-width: 85px;
     width: auto;
-    max-height: 100px;
+    max-height: 85px;
     height: auto;
 }
 
 /* post */
 .post-image {
-    max-width: 500px; 
+    max-width: 300px; 
     width: auto; 
-    max-height: 500px; 
+    max-height: 300px; 
     height: auto;
 }
 
@@ -1089,3 +1089,14 @@ img.uwm {
     max-height: 250px; 
     height: auto;
 }
+
+.post-backboard {
+    background-color: #fff;
+    border: 2px solid; 
+    width: 880px; 
+    border-radius: 5px; 
+    margin: 15px; 
+    float: left; 
+    padding: 10px;
+}
+

@@ -125,7 +125,7 @@ namespace QuickFlip.DataAccessLayer
 
                     reader.Close();
 
-                    return (dbNonce == nonce);
+                    return (dbNonce.ToLower() == nonce.ToLower());
                 }
             }
             catch (Exception e)
@@ -203,6 +203,45 @@ namespace QuickFlip.DataAccessLayer
             }
         }
 
+        public User GetUserByUserId(int userId)
+        {
+            try
+            {
+                // form query
+                SqlCommand command = new SqlCommand(
+                    "SELECT * FROM [UserProfile] " +
+                    "WHERE UserId = @UserId",
+                    Connection);
+
+                // add parameters
+                command.Parameters.AddWithValue("@UserId", userId);
+
+                // execute
+                SqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    User user = new User()
+                    {
+                        UserId = Convert.ToInt32(reader["UserId"]),
+                        UserName = Convert.ToString(reader["UserName"]),
+                        //CommunityId = Convert.ToInt32(reader["CommunityId"]),
+                        Email = Convert.ToString(reader["Email"]),
+                        B64EncodedImage = Convert.ToString(reader["B64EncodedImage"])
+                    };
+
+                    reader.Close();
+
+                    return user;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
+            return null;
+        }
 
         #endregion
 
