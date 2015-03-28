@@ -26,7 +26,96 @@ namespace QuickFlip.Controllers
 
             List<Post> buyPosts = BusinessLogic.GetPostsByPostType(PostType.Buy);
             buyPosts.RemoveAll(x => x.CommunityId != comm.CommunityId);
-            buyPosts = buyPosts.OrderByDescending(x => x.CreateDate).ToList();
+
+            if (Request.Form["Filtered"] == "1")
+            {
+                // order by filter
+                switch(Request.Form["OrderBy"])
+                {
+                    case "MostRecent": 
+                        buyPosts = buyPosts.OrderByDescending(x => x.CreateDate).ToList();
+                        break;
+                    case "LeastRecent": 
+                        buyPosts = buyPosts.OrderBy(x => x.CreateDate).ToList();
+                        break;
+                    case "AscendingPrice": 
+                        buyPosts = buyPosts.OrderBy(x => x.RequiredPrice).ToList();
+                        break;
+                    case "DescendingPrice":
+                        buyPosts = buyPosts.OrderByDescending(x => x.RequiredPrice).ToList();
+                        break;
+                }
+
+                // category filter
+                if (Request.Form["Categories"] == String.Empty) { return null; }
+                string[] categories = Request.Form["Categories"].Split(',').Select(sValue => sValue.Trim()).ToArray();
+                List<Post> categoryFiltered = new List<Post>();
+                foreach (var category in categories)
+                {
+                    foreach (var post in buyPosts)
+                    {
+                        if (post.Categories.Contains((Category)Enum.Parse(typeof(Category), category)))
+                        {
+                            categoryFiltered.Add(post);
+                        }
+                    }
+                }
+                buyPosts = categoryFiltered;
+
+                /*
+                <select name="Type" style="margin-top:5px;">
+                    <option value="DontCare">Don't Care</option>
+                    <option value="Auction">Auction</option>
+                    <option value="FavoriteOffer">Favorite Offer</option>
+
+                    <li><input type="checkbox" name="Categories" id="select-all" value="Any"> Any </li>
+                    <li><input type="checkbox" name="Categories" value="Auto"> Auto </li>
+                    <li><input type="checkbox" name="Categories" value="Books"> Books </li>
+                    <li><input type="checkbox" name="Categories" value="CameraPhoto"> Camera & Photo </li>
+                    <li><input type="checkbox" name="Categories" value="CellPhones"> Cell Phones </li>
+                    <li><input type="checkbox" name="Categories" value="ClothingShoe"> Clothing & Shoe </li>
+                    <li><input type="checkbox" name="Categories" value="Computers"> Computers </li>
+                    <li><input type="checkbox" name="Categories" value="Electronics"> Electronics </li>
+                    <li><input type="checkbox" name="Categories" value="HealthBeauty"> Health & Beauty </li>
+                    <li><input type="checkbox" name="Categories" value="Home"> Home </li>
+                    <li><input type="checkbox" name="Categories" value="Jobs"> Jobs </li>
+                    <li><input type="checkbox" name="Categories" value="Movies"> Movies </li>
+                    <li><input type="checkbox" name="Categories" value="Music"> Music </li>
+                    <li><input type="checkbox" name="Categories" value="MusicalInstruments"> Musical Instruments </li>
+                    <li><input type="checkbox" name="Categories" value="Pets"> Pets </li>
+                    <li><input type="checkbox" name="Categories" value="RealEstate"> Real Estate </li>
+                    <li><input type="checkbox" name="Categories" value="SportingGoods"> Sporting Goods </li>
+
+                $ <input type="number" name="MaxPriceFilter" style="width:160px" />
+
+                <select name="WillShip" style="margin-top:5px;">
+                    <option value="DontCare">Don't Care</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+
+                <h4>Has Photo?</h4>
+                <select name="HasPhoto" style="margin-top:5px;">
+                    <option value="DontCare">Don't Care</option>
+                    <option value="Yes">Yes</option>
+                </select>
+
+                <h4>Any Offers?</h4>
+                <select name="AnyOffers" style="margin-top:5px;">
+                    <option value="DontCare">Don't Care</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+
+                <input name="Filtered" type="number" value="1" hidden="hidden" />
+                
+                <input value="Filter" type="submit" class="filter-button"/>
+            </form> */
+
+            }
+            else
+            {
+                buyPosts = buyPosts.OrderByDescending(x => x.CreateDate).ToList();
+            }
 
             return View(buyPosts);
         }

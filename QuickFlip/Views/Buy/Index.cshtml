@@ -95,6 +95,8 @@ else
                     <option value="Yes">Yes</option>
                     <option value="No">No</option>
                 </select>
+
+                <input name="Filtered" type="number" value="1" hidden="hidden" />
                 
                 <input value="Filter" type="submit" class="filter-button"/>
             </form>
@@ -112,6 +114,7 @@ else
             string maxPrice = (post.RequiredPrice == null ? "None" : "$" + post.RequiredPrice.ToString());
             string currentOffer = (post.BestOffer == null ? "None" : "$" + post.BestOffer.Amount.ToString());
 
+     
             string categories = String.Empty;
             for (int i = 0; i < post.Categories.Count; i++)
             {
