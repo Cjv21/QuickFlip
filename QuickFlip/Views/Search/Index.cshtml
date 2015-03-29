@@ -1,0 +1,138 @@
+﻿<!-- includes -->
+@using System.Linq
+@using QuickFlip.BusinessLayer
+@using QuickFlip.Models
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/search-pricefilter-type.js"></script>
+<script src="~/Scripts/category-select-all.js"></script>
+<script src="~/Scripts/community-select-all.js"></script>
+
+<!-- community header -->
+<img src="@ViewBag.Community.Logo.Src" class="comm-header-logo" />
+<h2>Search @@ @((CommunityAbbrev)ViewBag.Community.CommunityId) </h2>
+<hr />
+<br />
+
+<!-- backboard content -->
+<div class="backboard">
+
+    <!-- search parameters -->
+    <div class="search-parameter-area">
+
+        <div class="search-parameters">
+            <form method="POST" enctype="multipart/form-data" action=@Url.Action("Index", "Buy")>
+
+                <h4>Keywords:</h4>
+                <input type="text" name="Keywords" />
+
+                <div id="categories" style="height:180px;">
+                    <h4>Categories:</h4>
+                    <ul class="checkbox-grid">
+                        <li><input type="checkbox" name="Categories" id="category-select-all" value="Any"> Any </li>
+                        <li><input type="checkbox" name="Categories" value="Auto"> Auto </li>
+                        <li><input type="checkbox" name="Categories" value="Books"> Books </li>
+                        <li><input type="checkbox" name="Categories" value="CameraPhoto"> Camera & Photo </li>
+                        <li><input type="checkbox" name="Categories" value="CellPhones"> Cell Phones </li>
+                        <li><input type="checkbox" name="Categories" value="ClothingShoe"> Clothing & Shoe </li>
+                        <li><input type="checkbox" name="Categories" value="Computers"> Computers </li>
+                        <li><input type="checkbox" name="Categories" value="Electronics"> Electronics </li>
+                        <li><input type="checkbox" name="Categories" value="HealthBeauty"> Health & Beauty </li>
+                        <li><input type="checkbox" name="Categories" value="Home"> Home </li>
+                        <li><input type="checkbox" name="Categories" value="Jobs"> Jobs </li>
+                        <li><input type="checkbox" name="Categories" value="Movies"> Movies </li>
+                        <li><input type="checkbox" name="Categories" value="Music"> Music </li>
+                        <li><input type="checkbox" name="Categories" value="MusicalInstruments"> Musical Instruments </li>
+                        <li><input type="checkbox" name="Categories" value="Pets"> Pets </li>
+                        <li><input type="checkbox" name="Categories" value="RealEstate"> Real Estate </li>
+                        <li><input type="checkbox" name="Categories" value="SportingGoods"> Sporting Goods </li>
+                    </ul>
+                </div>
+
+
+
+                <div style="height:160px; margin-left:40px;">
+
+                    <div style="width:33%; float:left;">
+                        <h4>Post Type:</h4>
+                        <select name="PostType" id="post-type">
+                            <option value="ForSale">For Sale</option>
+                            <option value="WantToBuy">Want to Buy</option>
+                            <option value="DontCare">Any</option>
+                        </select>
+
+                        <div id="required-price-div">
+                            <h4 id="required-price-label">Max Price:</h4>
+                            $<input type="number" id="required-price-input" name="MaxPriceFilter" style="width:70px" />
+                        </div>
+                    </div>
+
+                    <div style="width:33%; float:left;">
+                        <h4>Auction Type:</h4>
+                        <select name="Type" style="margin-top:5px;">
+                            <option value="DontCare">Don't Care</option>
+                            <option value="Auction">Auction</option>
+                            <option value="FavoriteOffer">Favorite Offer</option>
+                        </select>
+
+                        <h4>Will Ship?</h4>
+                        <select name="WillShip" style="margin-top:5px;">
+                            <option value="DontCare">Don't Care</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+
+                    <div style="width:33%; float:left">
+                        <h4>Has Photo?</h4>
+                        <select name="HasPhoto" style="margin-top:5px;">
+                            <option value="DontCare">Don't Care</option>
+                            <option value="Yes">Yes</option>
+                        </select>
+
+                        <h4>Any Offers?</h4>
+                        <select name="AnyOffers" style="margin-top:5px;">
+                            <option value="DontCare">Don't Care</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+
+                    </div>
+                </div>
+
+                <div id="communities">
+                    <h4>In Communities:</h4>
+                    <ul class="checkbox-grid">
+                        <li><input type="checkbox" name="Communities" id="community-select-all" value="Any"> Any </li>
+                        <li><input type="checkbox" name="Communities" value="IU"> IU </li>
+                        <li><input type="checkbox" name="Communities" value="MSU"> MSU </li>
+                        <li><input type="checkbox" name="Communities" value="NU"> NU </li>
+                        <li><input type="checkbox" name="Communities" value="OSU"> OSU </li>
+                        <li><input type="checkbox" name="Communities" value="PSU"> PSU </li>
+                        <li><input type="checkbox" name="Communities" value="UI"> UI </li>
+                        <li><input type="checkbox" name="Communities" value="UIUC"> UIUC </li>
+                        <li><input type="checkbox" name="Communities" value="UM"> UM </li>
+                        <li><input type="checkbox" name="Communities" value="UMN"> UMN </li>
+                        <li><input type="checkbox" name="Communities" value="UNL"> UNL </li>
+                        <li><input type="checkbox" name="Communities" value="UWM"> UWM </li>
+                    </ul>
+                </div>
+
+                <div style="margin-left:250px; margin-bottom:30px">
+                    <h4 style="margin-top:140px">Order By:</h4>
+                    <select name="OrderBy" style="margin-top:5px;">
+                        <option value="MostRecent">Most Recent</option>
+                        <option value="LeastRecent">Least Recent</option>
+                        <option value="AscendingPrice">Ascending Price</option>
+                        <option value="DescendingPrice">Descending Price</option>
+                    </select>
+
+                    <input name="Searched" type="number" value="1" hidden="hidden" />
+
+                    <input value="Search" type="submit" class="search-button" />
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>

@@ -21,7 +21,7 @@
     
     <li style="margin-bottom: 70px;">
         <a class="comm-home-icons">
-            <img src="~/Images/SellIcon.png" style ="display: block; width: 75px; height: 75px;;" />
+            <img src="~/Images/SellIcon.png" style ="display: block; width: 75px; height: 75px;" />
         </a>
 
         <div class="comm-home-icons-desc">
@@ -31,7 +31,7 @@
 
     <li style="margin-bottom: 70px;">
         <a class="comm-home-icons">
-            <img src="~/Images/UsersIcon.png" style="display: block; width: 75px; height: 75px;;" />
+            <img src="~/Images/UsersIcon.png" style="display: block; width: 75px; height: 75px;" />
         </a>
 
         <div class="comm-home-icons-desc">
@@ -40,8 +40,8 @@
     </li>
 
     <li style="margin-bottom: 70px;">
-        <a class="comm-home-icons">
-            <img src="~/Images/SearchIcon.png" style="display: block; width: 75px; height: 75px;;" />
+        <a href="@Url.Action("Index", "Search", new { id = (CommunityAbbrev)Model.CommunityId })" class="comm-home-icons">
+            <img src="~/Images/SearchIcon.png" style="display: block; width: 75px; height: 75px;" />
         </a>
 
         <div class="comm-home-icons-desc">

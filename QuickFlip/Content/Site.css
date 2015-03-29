@@ -1035,6 +1035,25 @@ img.uwm {
     margin-left: 90px;
 }
 
+/* search bar */
+.search-parameter-area {
+    float: left;
+    width: 860px;
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+.search-parameters {
+    border: 2px solid;
+    width: 840px;
+    background-color: white;
+    padding-left: 10px;
+}
+
+.search-button { 
+    margin-left: 50px;
+}
+
 /* post list */
 .post-list-area {
     float: right;
