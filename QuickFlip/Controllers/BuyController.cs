@@ -29,16 +29,63 @@ namespace QuickFlip.Controllers
 
             if (Request.Form["Filtered"] == "1")
             {
-                // order by filter
-                switch(Request.Form["OrderBy"])
+                // category filter
+                List<string> categories = new List<string>();
+                if (Request.Form["Categories"] == null) { buyPosts.RemoveAll(x => true); }
+                else
                 {
-                    case "MostRecent": 
+                    categories = Request.Form["Categories"].Split(',').Select(sValue => sValue.Trim()).ToList();
+                    categories.RemoveAll(x => x == "Any");
+
+                    List<Post> categoryFiltered = new List<Post>();
+                    foreach (var category in categories)
+                    {
+                        foreach (var post in buyPosts)
+                        {
+                            if (post.Categories.Contains((Category)Enum.Parse(typeof(Category), category)))
+                            {
+                                categoryFiltered.Add(post);
+                            }
+                        }
+                    }
+
+                    buyPosts = categoryFiltered.GroupBy(x => x.PostId).Select(group => group.First()).ToList();
+                }
+
+                // max price filter
+                if (Request.Form["MaxPriceFilter"] != String.Empty)
+                {
+                    buyPosts.RemoveAll(x => x.RequiredPrice < UInt32.Parse(Request.Form["MaxPriceFilter"]));
+                }
+
+                // will ship filter
+                if (Request.Form["WillShip"] == "No")
+                {
+                    buyPosts.RemoveAll(x => x.TransactionType == TransactionType.Local);
+                }
+
+                // has photo filter
+                if (Request.Form["HasPhoto"] == "Yes")
+                {
+                    buyPosts.RemoveAll(x => x.PostMedia == null);
+                }
+
+                // any offers filter
+                if (Request.Form["AnyOffers"] == "No")
+                {
+                    buyPosts.RemoveAll(x => x.Offers.Count == 0);
+                }
+
+                // order by filter
+                switch (Request.Form["OrderBy"])
+                {
+                    case "MostRecent":
                         buyPosts = buyPosts.OrderByDescending(x => x.CreateDate).ToList();
                         break;
-                    case "LeastRecent": 
+                    case "LeastRecent":
                         buyPosts = buyPosts.OrderBy(x => x.CreateDate).ToList();
                         break;
-                    case "AscendingPrice": 
+                    case "AscendingPrice":
                         buyPosts = buyPosts.OrderBy(x => x.RequiredPrice).ToList();
                         break;
                     case "DescendingPrice":
@@ -46,26 +93,45 @@ namespace QuickFlip.Controllers
                         break;
                 }
 
-                // category filter
-                if (Request.Form["Categories"] == String.Empty) { return null; }
-                string[] categories = Request.Form["Categories"].Split(',').Select(sValue => sValue.Trim()).ToArray();
-                List<Post> categoryFiltered = new List<Post>();
+                // restore filter selections
+                ViewData["OrderBy"] = Request.Form["OrderBy"];
+                ViewData["Type"] = Request.Form["Type"];
+
+                var categoryEnums = Enum.GetValues(typeof(Category)).Cast<Category>();
+                foreach (var categoryEnum in categoryEnums)
+                {
+                    ViewData[categoryEnum.ToString()] = "0";
+                }
                 foreach (var category in categories)
                 {
-                    foreach (var post in buyPosts)
-                    {
-                        if (post.Categories.Contains((Category)Enum.Parse(typeof(Category), category)))
-                        {
-                            categoryFiltered.Add(post);
-                        }
-                    }
+                    ViewData[category.ToString()] = "1";
                 }
-
-                buyPosts = categoryFiltered;
+                ViewData["Any"] = (categories.Count == Enum.GetValues(typeof(Category)).Length) ? "1" : "0";
+                
+                ViewData["MaxPriceFilter"] = Request.Form["MaxPriceFilter"];
+                ViewData["WillShip"] = Request.Form["WillShip"];
+                ViewData["HasPhoto"] = Request.Form["HasPhoto"];
+                ViewData["AnyOffers"] = Request.Form["AnyOffers"];
             }
             else
             {
                 buyPosts = buyPosts.OrderByDescending(x => x.CreateDate).ToList();
+
+                // default filter selections
+                ViewData["OrderBy"] = "MostRecent";
+                ViewData["Type"] = "DontCare";
+
+                var categoryEnums = Enum.GetValues(typeof(Category)).Cast<Category>();
+                foreach (var categoryEnum in categoryEnums)
+                {
+                    ViewData[categoryEnum.ToString()] = "1";
+                }
+                ViewData["Any"] = "1";
+
+                ViewData["WillShip"] = "DontCare";
+                ViewData["HasPhoto"] = "DontCare";
+                ViewData["AnyOffers"] = "DontCare";
+            
             }
 
             return View(buyPosts);

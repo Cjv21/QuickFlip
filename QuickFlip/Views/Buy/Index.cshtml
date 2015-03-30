@@ -37,66 +37,127 @@ else
         <div class="filter-bar">
             <form method="POST" enctype="multipart/form-data" action=@Url.Action("Index", "Buy")>
 
-                <h4>Order By:</h4>
+                <h4>Order By:</h4> 
                 <select name="OrderBy" style="margin-top:5px;">
-                    <option value="MostRecent">Most Recent</option>
-                    <option value="LeastRecent">Least Recent</option>
-                    <option value="AscendingPrice">Ascending Price</option>
-                    <option value="DescendingPrice">Descending Price</option>
+                    @if (ViewData["OrderBy"].ToString() == "MostRecent") { <option selected value="MostRecent">Most Recent</option> }
+                    else { <option value="MostRecent">Most Recent</option> }       
+                    
+                    @if (ViewData["OrderBy"].ToString() == "LeastRecent") { <option selected value="LeastRecent">Least Recent</option> }
+                    else { <option value="LeastRecent">Least Recent</option> }
+
+                    @if (ViewData["OrderBy"].ToString() == "AscendingPrice") { <option selected value="AscendingPrice">Ascending Price</option> }
+                    else { <option value="AscendingPrice">Ascending Price</option> }
+                    
+                    @if (ViewData["OrderBy"].ToString() == "DescendingPrice") { <option selected value="DescendingPrice">Descending Price</option> }
+                    else { <option value="DescendingPrice">Descending Price</option> }
                 </select>
 
                 <h4>Type:</h4>
                 <select name="Type" style="margin-top:5px;">
-                    <option value="DontCare">Don't Care</option>
-                    <option value="Auction">Auction</option>
-                    <option value="FavoriteOffer">Favorite Offer</option>
+                    @if (ViewData["Type"].ToString() == "DontCare") { <option selected value="DontCare">Don't Care</option> }
+                    else { <option value="DontCare">Don't Care</option> }
+
+                    @if (ViewData["Type"].ToString() == "Auction") { <option selected value="Auction">Auction</option> }
+                    else { <option value="Auction">Auction</option> }
+
+                    @if (ViewData["Type"].ToString() == "FavoriteOffer") { <option selected value="FavoriteOffer">Favorite Offer</option>}
+                    else { <option value="FavoriteOffer">Favorite Offer</option> }
                 </select>
 
                 <div id="categories">
                     <h4>In Categories:</h4>
                     <ul style="list-style-type: none; padding-left:20px;">
-                        <li><input type="checkbox" name="Categories" id="category-select-all" value="Any"> Any </li>
-                        <li><input type="checkbox" name="Categories" value="Auto"> Auto </li>
-                        <li><input type="checkbox" name="Categories" value="Books"> Books </li>
-                        <li><input type="checkbox" name="Categories" value="CameraPhoto"> Camera & Photo </li>
-                        <li><input type="checkbox" name="Categories" value="CellPhones"> Cell Phones </li>
-                        <li><input type="checkbox" name="Categories" value="ClothingShoe"> Clothing & Shoe </li>
-                        <li><input type="checkbox" name="Categories" value="Computers"> Computers </li>
-                        <li><input type="checkbox" name="Categories" value="Electronics"> Electronics </li>
-                        <li><input type="checkbox" name="Categories" value="HealthBeauty"> Health & Beauty </li>
-                        <li><input type="checkbox" name="Categories" value="Home"> Home </li>
-                        <li><input type="checkbox" name="Categories" value="Jobs"> Jobs </li>
-                        <li><input type="checkbox" name="Categories" value="Movies"> Movies </li>
-                        <li><input type="checkbox" name="Categories" value="Music"> Music </li>
-                        <li><input type="checkbox" name="Categories" value="MusicalInstruments"> Musical Instruments </li>
-                        <li><input type="checkbox" name="Categories" value="Pets"> Pets </li>
-                        <li><input type="checkbox" name="Categories" value="RealEstate"> Real Estate </li>
-                        <li><input type="checkbox" name="Categories" value="SportingGoods"> Sporting Goods </li>
+
+                        @if (ViewData["Any"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" id="category-select-all" value="Any"> Any </li> }
+                        else { <li><input type="checkbox" name="Categories" id="category-select-all" value="Any"> Any </li> }
+                            
+                        @if (ViewData["Auto"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="Auto"> Auto </li> }
+                        else { <li><input type="checkbox" name="Categories" value="Auto"> Auto </li> }                                                  
+                                                                                                         
+                        @if (ViewData["Books"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="Books"> Books </li> }
+                        else { <li><input type="checkbox" name="Categories" value="Books"> Books </li> }    
+                                                                                                                                        
+                        @if (ViewData["Auto"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="CameraPhoto"> Camera & Photo </li> }
+                        else { <li><input type="checkbox" name="Categories" value="CameraPhoto"> Camera & Photo </li> }     
+                                                                                                                                                     
+                        @if (ViewData["Auto"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="CellPhones"> Cell Phones </li> }
+                        else { <li><input type="checkbox" name="Categories" value="CellPhones"> Cell Phones </li> }                                                                                                                             
+
+                        @if (ViewData["Auto"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="ClothingShoe"> Clothing & Shoe </li> }
+                        else { <li><input type="checkbox" name="Categories" value="ClothingShoe"> Clothing & Shoe </li> }                                                                                                                                    
+
+                        @if (ViewData["Auto"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="Computers"> Computers </li> }
+                        else { <li><input type="checkbox" name="Categories" value="Computers"> Computers </li> }                                                                                                                           
+
+                        @if (ViewData["Auto"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="Electronics"> Electronics </li> }
+                        else { <li><input type="checkbox" name="Categories" value="Electronics"> Electronics </li> }                                                                                                                               
+
+                        @if (ViewData["Auto"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="HealthBeauty"> Health & Beauty </li> }
+                        else { <li><input type="checkbox" name="Categories" value="HealthBeauty"> Health & Beauty </li> }                                                                                                                                    
+
+                        @if (ViewData["Auto"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="Home"> Home </li> }
+                        else { <li><input type="checkbox" name="Categories" value="Home"> Home </li> }                                                                                                                 
+
+                        @if (ViewData["Auto"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="Jobs"> Jobs </li> }
+                        else { <li><input type="checkbox" name="Categories" value="Jobs"> Jobs </li> }                                                                                                                 
+
+                        @if (ViewData["Auto"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="Movies"> Movies </li> }
+                        else { <li><input type="checkbox" name="Categories" value="Movies"> Movies </li> }                                                                                                                     
+
+                        @if (ViewData["Auto"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="Music"> Music </li> }
+                        else { <li><input type="checkbox" name="Categories" value="Music"> Music </li> }                                                                                                                   
+
+                        @if (ViewData["Auto"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="MusicalInstruments"> Musical Instruments </li> }
+                        else { <li><input type="checkbox" name="Categories" value="MusicalInstruments"> Musical Instruments </li> }                                                                                                                                              
+
+                        @if (ViewData["Auto"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="Pets"> Pets </li> }
+                        else { <li><input type="checkbox" name="Categories" value="Pets"> Pets </li> }                                                                                                                 
+
+                        @if (ViewData["Auto"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="RealEstate"> Real Estate </li> }
+                        else { <li><input type="checkbox" name="Categories" value="RealEstate"> Real Estate </li> }                                                                                                                              
+
+                        @if (ViewData["Auto"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="SportingGoods"> Sporting Goods </li> }
+                        else { <li><input type="checkbox" name="Categories" value="SportingGoods"> Sporting Goods </li> }     
+                                                                                                                                                       
                     </ul>
                 </div>
 
 
                 <h4>Willing to Pay at Least:</h4>
-                $ <input type="number" name="MaxPriceFilter" style="width:160px" />
+                $ <input type="number" name="MaxPriceFilter" style="width:160px" value="@ViewData["MaxPriceFilter"]"/>
+                
 
                 <h4>Will Ship?</h4>
                 <select name="WillShip" style="margin-top:5px;">
-                    <option value="DontCare">Don't Care</option>
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
+                    @if (ViewData["WillShip"].ToString() == "DontCare") { <option selected value="DontCare">Don't Care</option> }
+                    else { <option value="DontCare">Don't Care</option> }
+
+                    @if (ViewData["WillShip"].ToString() == "Yes") { <option selected value="Yes">Yes</option> }
+                    else { <option value="Yes">Yes</option> }   
+                                                                                                           
+                    @if (ViewData["WillShip"].ToString() == "No") { <option selected value="No">No</option> }
+                    else { <option value="No">No</option> }
                 </select>
 
                 <h4>Has Photo?</h4>
                 <select name="HasPhoto" style="margin-top:5px;">
-                    <option value="DontCare">Don't Care</option>
-                    <option value="Yes">Yes</option>
+                    @if (ViewData["HasPhoto"].ToString() == "DontCare") { <option selected value="DontCare">Don't Care</option> }
+                    else { <option value="DontCare">Don't Care</option> }           
+                                                                                                            
+                    @if (ViewData["HasPhoto"].ToString() == "Yes") { <option selected value="Yes">Yes</option> }
+                    else { <option value="Yes">Yes</option> }                                                                                 
                 </select>
 
                 <h4>Any Offers?</h4>
                 <select name="AnyOffers" style="margin-top:5px;">
-                    <option value="DontCare">Don't Care</option>
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
+                    @if (ViewData["AnyOffers"].ToString() == "DontCare") { <option selected value="DontCare">Don't Care</option> }
+                    else { <option value="DontCare">Don't Care</option> }                    
+                                                                                                    
+                    @if (ViewData["AnyOffers"].ToString() == "Yes") { <option selected value="Yes">Yes</option> }
+                    else { <option value="Yes">Yes</option> }        
+                                                                                               
+                    @if (ViewData["AnyOffers"].ToString() == "No") { <option selected value="No">No</option> }
+                    else { <option value="No">No</option> }                                                                                
                 </select>
 
                 <input name="Filtered" type="number" value="1" hidden="hidden" />

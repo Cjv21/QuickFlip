@@ -12,7 +12,6 @@ namespace QuickFlip.DataAccessLayer
     {
         private SqlConnection Connection;
 
-
         #region Constructor/Dispose
 
         public DataAccess()
@@ -43,7 +42,6 @@ namespace QuickFlip.DataAccessLayer
         }
 
         #endregion
-
 
         #region UserProfile
 
@@ -245,7 +243,6 @@ namespace QuickFlip.DataAccessLayer
 
         #endregion
 
-
         #region Community
 
         public Community GetCommmunityByCommunityId(int communityId)
@@ -293,7 +290,6 @@ namespace QuickFlip.DataAccessLayer
         }
 
         #endregion
-
 
         #region Post
 
@@ -595,7 +591,6 @@ namespace QuickFlip.DataAccessLayer
 
         #endregion 
 
-
         #region PostMedia
 
         public PostMedia CreatePostMedia(PostMedia newPostMedia)
@@ -667,7 +662,6 @@ namespace QuickFlip.DataAccessLayer
         }
 
         #endregion
-
 
         #region Offer
 
