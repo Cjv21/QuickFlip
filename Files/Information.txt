@@ -9,7 +9,7 @@
 	X confirm email
 	X buy index
 	o sell index    (wait until buy is completely finished, copy over)
-	o index filter
+	X index filter
 	o advanced search
 	X make post
 	o tags

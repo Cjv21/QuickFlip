@@ -47,7 +47,7 @@
         }
         else
         {
-            <img src="~/Images/NoPhotoIcon.png" class="post-image-null" />
+            <img src="~/Images/NoPhotoIcon.png" style="border-image-source:inherit;" />
         }
     </div>
 
@@ -80,25 +80,33 @@
     </div>
 
     <!-- make offer -->
-    <div style="margin-top: 20px;">
+    <div style="margin-bottom: 20px;">
         @if (Request.IsAuthenticated)
         {
             if (WebSecurity.CurrentUserId != @Model.UserId)
             {
                 <input type="button" id="offerButton" value="Make offer!" style="position:relative; top:20px;">
 
-            <!-- make offer dialog -->
-                <div id="dialog" title="Make Offer">
-                    <form method="POST" enctype="multipart/form-data" action="~/Buy/MakeOffer">
-                        <div style="text-align:center; margin-top:10px">
-                            $<input type="number" name="OfferAmount" max=@( @Model.Offers.Count == 0 ? @Model.RequiredPrice : @Model.BestOffer.Amount - 1) required="required" />
-                        </div>
-                        <input type="number" name="PostId" hidden="hidden" value="@Model.PostId" />
-                        <div style="text-align:center; margin-top:25px">
-                            <input value="Submit" type="submit" style="align-content:center" />
-                        </div>
-                    </form>
-                </div>
+                if (Model.AuctionType == AuctionType.Auction)
+                {
+                    <!-- make offer dialog -->
+                    <div id="dialog" title="Make Offer">
+                        <form method="POST" enctype="multipart/form-data" action="~/Buy/MakeOffer">
+                            <div style="text-align:center; margin-top:10px">
+                                $<input type="number" name="OfferAmount" max=@( @Model.Offers.Count == 0 ? @Model.RequiredPrice : @Model.BestOffer.Amount - 1) required="required" />
+                            </div>
+                            <input type="number" name="PostId" hidden="hidden" value="@Model.PostId" />
+                            <div style="text-align:center; margin-top:25px">
+                                <input value="Submit" type="submit" style="align-content:center" />
+                            </div>
+                        </form>
+                    </div>
+                }
+                else
+                {
+                    
+                }
+
             }
         }
         else

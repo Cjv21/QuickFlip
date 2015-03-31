@@ -1,32 +1,40 @@
-﻿@model QuickFlip.Models.LocalPasswordModel
-@{
-    ViewBag.Title = "Manage Account";
-}
+﻿<!-- includes -->
+@using System.Linq
+@using QuickFlip.BusinessLayer
+@using QuickFlip.Models
+<script src="~/Scripts/change-profilepicture.js"></script>
 
 <hgroup class="title">
-    <h1>@ViewBag.Title.</h1>
+    <h1>Manage Account.</h1>
 </hgroup>
 
-<p class="message-success">@ViewBag.StatusMessage</p>
+<hr />
 
-<p>You're logged in as <strong>@User.Identity.Name</strong>.</p>
+<h2 style="margin-left:10px;"> @WebSecurity.CurrentUserName </h2>
 
-@if (ViewBag.HasLocalPassword)
-{
-    @Html.Partial("_ChangePasswordPartial")
-}
-else
-{ 
-    @Html.Partial("_SetPasswordPartial")
-}
+<!-- profile picture -->
+<div style="margin:10px;">
+    @if (Model.B64EncodedImage != String.Empty)
+    {
+        <img src="@String.Format("data:image/png;base64,{0}", Model.B64EncodedImage)" class="profile-picture" />
+    }
+    else
+    {
+        <img src="~/Images/NoPhotoIcon.png" class="profile-picture" />
+    }
+</div>
 
-<section id="externalLogins">
-    @Html.Action("RemoveExternalLogins")
+<input type="button" id="changeProfilePicture" value="Change Picture" style="margin-top:200px;">
 
-    <h3>Add an external login</h3>
-    @Html.Action("ExternalLoginsList", new { ReturnUrl = ViewBag.ReturnUrl })
-</section>
 
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}
+<!-- change profile picture dialog -->
+<div id="dialog" title="Change Profile Picture">
+    <form method="POST" enctype="multipart/form-data" action="~/Account/ChangeProfilePicture">
+        <div style="text-align:center; margin-top:10px">
+            @Html.TextBox("newProfilePicture", "", new { type = "file" })
+        </div>
+        <div style="text-align:center; margin-top:25px">
+            <input value="Submit" type="submit" style="align-content:center" />
+        </div>
+    </form>
+</div>

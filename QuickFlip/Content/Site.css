@@ -1120,3 +1120,12 @@ img.uwm {
     padding: 10px;
 }
 
+/* Manage Account */
+ .profile-picture {
+     float: left;
+     position: relative;
+     height: 180px;
+     max-width: 180px;
+     border: 3px solid #021a40;
+     border-radius: 10px;
+ }

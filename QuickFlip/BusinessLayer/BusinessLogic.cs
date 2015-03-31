@@ -90,6 +90,15 @@ namespace QuickFlip.BusinessLayer
 
             return user.UserName;
         }
+
+        public static void ChangeProfilePicture(int userId, string b64EncodedImage)
+        {
+            DataAccess da = new DataAccess();
+
+            da.ChangeProfilePicture(userId, b64EncodedImage);
+
+            da.Dispose();
+        }
         #endregion
 
         #region Community

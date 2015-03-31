@@ -18,7 +18,36 @@ namespace QuickFlip.Controllers
     [InitializeSimpleMembership]
     public class AccountController : Controller
     {
-     
+
+        [InitializeSimpleMembership]
+        public ActionResult Manage()
+        {
+            User user = BusinessLogic.GetUserByUserId(WebSecurity.CurrentUserId);
+
+            return View(user);
+        }
+
+        [HttpPost]
+        [InitializeSimpleMembership]
+        public ActionResult ChangeProfilePicture(HttpPostedFileBase newProfilePicture)
+        {
+            // base 64 encode profile picture
+            string b64EncodedImage = null;
+            if (newProfilePicture != null)
+            {
+                byte[] imageBytes = new byte[newProfilePicture.InputStream.Length];
+                long bytesRead = newProfilePicture.InputStream.Read(imageBytes, 0, (int)newProfilePicture.InputStream.Length);
+                newProfilePicture.InputStream.Close();
+                b64EncodedImage = Convert.ToBase64String(imageBytes, 0, imageBytes.Length);
+            }
+
+            BusinessLogic.ChangeProfilePicture(WebSecurity.CurrentUserId, b64EncodedImage);
+
+            return RedirectToAction("Manage");
+        }
+
+
+
         // GET: /Account/Login
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
@@ -131,7 +160,7 @@ namespace QuickFlip.Controllers
         public ActionResult Disassociate(string provider, string providerUserId)
         {
             string ownerAccount = OAuthWebSecurity.GetUserName(provider, providerUserId);
-            ManageMessageId? message = null;
+            ChangePasswordMessageId? message = null;
 
             // Only disassociate the account if the currently logged in user is the owner
             if (ownerAccount == User.Identity.Name)
@@ -144,37 +173,37 @@ namespace QuickFlip.Controllers
                     {
                         OAuthWebSecurity.DeleteAccount(provider, providerUserId);
                         scope.Complete();
-                        message = ManageMessageId.RemoveLoginSuccess;
+                        message = ChangePasswordMessageId.RemoveLoginSuccess;
                     }
                 }
             }
 
-            return RedirectToAction("Manage", new { Message = message });
+            return RedirectToAction("ChangePassword", new { Message = message });
         }
 
        
-        // GET: /Account/Manage
-        public ActionResult Manage(ManageMessageId? message)
+        // GET: /Account/ChangePassword
+        public ActionResult ChangePassword(ChangePasswordMessageId? message)
         {
             ViewBag.StatusMessage =
-                message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
-                : message == ManageMessageId.SetPasswordSuccess ? "Your password has been set."
-                : message == ManageMessageId.RemoveLoginSuccess ? "The external login was removed."
+                message == ChangePasswordMessageId.ChangePasswordSuccess ? "Your password has been changed."
+                : message == ChangePasswordMessageId.SetPasswordSuccess ? "Your password has been set."
+                : message == ChangePasswordMessageId.RemoveLoginSuccess ? "The external login was removed."
                 : "";
             ViewBag.HasLocalPassword = OAuthWebSecurity.HasLocalAccount(WebSecurity.GetUserId(User.Identity.Name));
-            ViewBag.ReturnUrl = Url.Action("Manage");
+            ViewBag.ReturnUrl = Url.Action("ChangePassword");
             return View();
         }
 
         
-        // POST: /Account/Manage
+        // POST: /Account/ChangePassword
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Manage(LocalPasswordModel model)
+        public ActionResult ChangePassword(LocalPasswordModel model)
         {
             bool hasLocalAccount = OAuthWebSecurity.HasLocalAccount(WebSecurity.GetUserId(User.Identity.Name));
             ViewBag.HasLocalPassword = hasLocalAccount;
-            ViewBag.ReturnUrl = Url.Action("Manage");
+            ViewBag.ReturnUrl = Url.Action("ChangePassword");
             if (hasLocalAccount)
             {
                 if (ModelState.IsValid)
@@ -192,7 +221,7 @@ namespace QuickFlip.Controllers
 
                     if (changePasswordSucceeded)
                     {
-                        return RedirectToAction("Manage", new { Message = ManageMessageId.ChangePasswordSuccess });
+                        return RedirectToAction("ChangePassword", new { Message = ChangePasswordMessageId.ChangePasswordSuccess });
                     }
                     else
                     {
@@ -215,7 +244,7 @@ namespace QuickFlip.Controllers
                     try
                     {
                         WebSecurity.CreateAccount(User.Identity.Name, model.NewPassword);
-                        return RedirectToAction("Manage", new { Message = ManageMessageId.SetPasswordSuccess });
+                        return RedirectToAction("ChangePassword", new { Message = ChangePasswordMessageId.SetPasswordSuccess });
                     }
                     catch (Exception)
                     {
@@ -242,7 +271,7 @@ namespace QuickFlip.Controllers
             }
         }
 
-        public enum ManageMessageId
+        public enum ChangePasswordMessageId
         {
             ChangePasswordSuccess,
             SetPasswordSuccess,

@@ -165,25 +165,45 @@ namespace QuickFlip.DataAccessLayer
                 // form query
                 SqlCommand command = new SqlCommand(
                     "UPDATE [UserProfile] " +
-                    "SET Email = @Email, Nonce = @Nonce, B64EncodedImage = @B64EncodedImage " +
+                    "SET Email = @Email, Nonce = @Nonce" +
                     "WHERE UserName = @UserName",
                     Connection);
-
-                // base 64 encode profile picture
-                string b64EncodedImage = null;
-                if (newUser.ProfilePicture != null)
-                {
-                    byte[] imageBytes = new byte[newUser.ProfilePicture.InputStream.Length];
-                    long bytesRead = newUser.ProfilePicture.InputStream.Read(imageBytes, 0, (int)newUser.ProfilePicture.InputStream.Length);
-                    newUser.ProfilePicture.InputStream.Close();
-                    b64EncodedImage = Convert.ToBase64String(imageBytes, 0, imageBytes.Length);
-                }
 
                 // add parameters
                 command.Parameters.AddWithValue("@Email", newUser.Email);
                 command.Parameters.AddWithValue("@Nonce", nonce);
-                command.Parameters.AddWithValue("@B64EncodedImage", b64EncodedImage);
                 command.Parameters.AddWithValue("@UserName", newUser.UserName);
+
+                // convert null values to DBNull
+                foreach (SqlParameter parameter in command.Parameters)
+                {
+                    if (parameter.Value == null) { parameter.Value = DBNull.Value; }
+                }
+
+                // execute
+                command.ExecuteNonQuery();
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+
+        public void ChangeProfilePicture(int userId, string b64EncodedImage)
+        {
+            try
+            {
+                // form query
+                SqlCommand command = new SqlCommand(
+                    "UPDATE [UserProfile] " +
+                    "SET B64EncodedImage = @B64EncodedImage " +
+                    "WHERE UserId = @UserId",
+                    Connection);
+
+                // add parameters
+                command.Parameters.AddWithValue("@B64EncodedImage", b64EncodedImage);
+                command.Parameters.AddWithValue("@UserId", userId);
 
                 // convert null values to DBNull
                 foreach (SqlParameter parameter in command.Parameters)
@@ -466,6 +486,7 @@ namespace QuickFlip.DataAccessLayer
                 // form query
                 SqlCommand command = new SqlCommand(
                     "SELECT * FROM [Post] " +
+                    "INNER JOIN [Category] ON Post.PostId = Category.PostId " + 
                     "WHERE PostType = @PostType",
                     Connection);
 
@@ -494,7 +515,8 @@ namespace QuickFlip.DataAccessLayer
                             ? (int?)null : Convert.ToInt32(reader["RequiredPrice"]),
                         PostType = (PostType)reader["PostType"],
                         AuctionType = (AuctionType)reader["AuctionType"],
-                        TransactionType = (TransactionType)reader["TransactionType"]
+                        TransactionType = (TransactionType)reader["TransactionType"],
+                        Categories = new List<Category>() { (Category)Enum.Parse(typeof(Category), reader["Category"].ToString()) }
                     };
 
                     posts.Add(post);
@@ -502,6 +524,19 @@ namespace QuickFlip.DataAccessLayer
 
                 reader.Close();
 
+                // combine categories
+                var categoryCombined = posts.GroupBy(l => l.PostId)
+                                            .Select(x => new Post { PostId = x.Key, Categories = x.SelectMany(y => y.Categories).ToList() })
+                                            .ToList();
+
+                foreach (var post in posts)
+                {
+                    post.Categories = categoryCombined.FirstOrDefault(x => x.PostId == post.PostId).Categories;
+                }
+
+                posts = posts.GroupBy(x => x.PostId).Select(group => group.First()).ToList();
+
+                // get offers and post media
                 foreach (var post in posts)
                 {
                     post.Offers = GetOffersByPostId(post.PostId);
@@ -510,7 +545,6 @@ namespace QuickFlip.DataAccessLayer
                         post.BestOffer = post.Offers.OrderByDescending(x => x.Amount).LastOrDefault();
                     }
 
-                    post.Categories = GetCategoriesByPostId(post.PostId);
                     post.PostMedia = GetPostMediaByPostId(post.PostId);
                 }
 
