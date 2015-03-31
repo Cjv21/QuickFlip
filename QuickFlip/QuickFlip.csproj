@@ -357,6 +357,8 @@
     <Content Include="Views\Home\AccountCreated.cshtml" />
     <Content Include="Views\Search\Index.cshtml" />
     <Content Include="Views\Account\Manage.cshtml" />
+    <Content Include="Views\Buy\AcceptOffer.cshtml" />
+    <Content Include="Views\Buy\MessageSent.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -36,6 +36,7 @@
         @if (Model.AuctionType == AuctionType.Auction)
         {
             <b style="font-size:medium">Current Offer: </b> @(Model.Offers.Count == 0 ? "None" : "$" + Model.BestOffer.Amount.ToString())
+            <a style="text-decoration:none">(@BusinessLogic.GetUserNameFromUserId(Model.BestOffer.UserId))</a>
         }
     </div>
 
@@ -106,7 +107,17 @@
                 {
                     
                 }
+            }
+             // TEMPORARY POC: ACCEPT OFFER BUTTON AT BOTTOM
+            else if (Model.AuctionType == AuctionType.Auction && Model.BestOffer != null)
+            {
+                <form method="POST" enctype="multipart/form-data" action=@Url.Action("AcceptOffer", "Buy")>
 
+                    <input value="@Model.PostId" name="PostId" hidden="hidden" />
+
+                    <input value="Accept Offer!" type="submit" style="position:relative; top:20px;" />
+       
+                </form>
             }
         }
         else

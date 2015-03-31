@@ -479,7 +479,7 @@ namespace QuickFlip.DataAccessLayer
             return null;
         }
 
-        public List<Post> GetPostsByPostType(PostType type)
+        public List<Post> GetPostsByPostTypeAndCommunity(PostType type, CommunityAbbrev community)
         {
             try
             {
@@ -487,11 +487,13 @@ namespace QuickFlip.DataAccessLayer
                 SqlCommand command = new SqlCommand(
                     "SELECT * FROM [Post] " +
                     "INNER JOIN [Category] ON Post.PostId = Category.PostId " + 
-                    "WHERE PostType = @PostType",
+                    "WHERE PostType = @PostType " + 
+                    "AND CommunityId = @CommunityId",
                     Connection);
 
                 // add parameters
                 command.Parameters.AddWithValue("@PostType", type);
+                command.Parameters.AddWithValue("CommunityId", (int)community);
 
                 // execute
                 SqlDataReader reader = command.ExecuteReader();
@@ -516,6 +518,7 @@ namespace QuickFlip.DataAccessLayer
                         PostType = (PostType)reader["PostType"],
                         AuctionType = (AuctionType)reader["AuctionType"],
                         TransactionType = (TransactionType)reader["TransactionType"],
+                        Settled = Convert.ToBoolean(reader["Settled"]),
                         Categories = new List<Category>() { (Category)Enum.Parse(typeof(Category), reader["Category"].ToString()) }
                     };
 
@@ -557,6 +560,30 @@ namespace QuickFlip.DataAccessLayer
             }
 
             return null;
+        }
+
+        public void SettlePost(int postId)
+        {
+            try
+            {
+                // form query
+                SqlCommand command = new SqlCommand(
+                    "UPDATE [Post] " +
+                    "SET Settled = 1 " +
+                    "WHERE PostId = @PostId",
+                    Connection);
+
+                // add parameters
+                command.Parameters.AddWithValue("@PostId", postId);
+
+                // execute
+                command.ExecuteNonQuery();
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
         }
 
         #endregion
@@ -833,6 +860,30 @@ namespace QuickFlip.DataAccessLayer
             }
 
             return null;
+        }
+
+        public void AcceptOffer(int offerId)
+        {
+            try
+            {
+                // form query
+                SqlCommand command = new SqlCommand(
+                    "UPDATE [Offer] " +
+                    "SET Accepted = 1 " +
+                    "WHERE OfferId = @OfferId",
+                    Connection);
+
+                // add parameters
+                command.Parameters.AddWithValue("@OfferId", offerId);
+
+                // execute
+                command.ExecuteNonQuery();
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
         }
 
         #endregion

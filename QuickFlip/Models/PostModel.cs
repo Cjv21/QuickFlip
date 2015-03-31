@@ -18,6 +18,7 @@ namespace QuickFlip.Models
 		public PostType PostType  { get; set; }
 		public AuctionType AuctionType { get; set; }
         public TransactionType TransactionType { get; set; }
+        public bool Settled { get; set; }
         public List<Category> Categories { get; set; }
         public List<Offer> Offers { get; set; }
         public Offer BestOffer { get; set; }

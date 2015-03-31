@@ -129,15 +129,6 @@ namespace QuickFlip.BusinessLayer
             return newPost;
         }
 
-        public static void AddPostToCategory(Post post, Category category)
-        {
-            DataAccess da = new DataAccess();
-
-            da.AddPostToCategory(post, category);
-
-            da.Dispose();
-        }
-
         public static Post GetPostByPostId(int postId)
         {
             DataAccess da = new DataAccess();
@@ -149,15 +140,37 @@ namespace QuickFlip.BusinessLayer
             return post;
         }
 
-        public static List<Post> GetPostsByPostType(PostType type)
+        public static List<Post> GetPostsByPostType(PostType type, CommunityAbbrev community)
         {
             DataAccess da = new DataAccess();
 
-            List<Post> buyPosts = da.GetPostsByPostType(type);
+            List<Post> buyPosts = da.GetPostsByPostTypeAndCommunity(type, community);
 
             da.Dispose();
 
             return buyPosts;
+        }
+
+        public static void SettlePost(int postId)
+        {
+            DataAccess da = new DataAccess();
+
+            da.SettlePost(postId);
+
+            da.Dispose();
+        }
+
+        #endregion
+
+        #region Category
+
+        public static void AddPostToCategory(Post post, Category category)
+        {
+            DataAccess da = new DataAccess();
+
+            da.AddPostToCategory(post, category);
+
+            da.Dispose();
         }
 
         public static string GetFullCategoryName(Category category)
@@ -178,7 +191,7 @@ namespace QuickFlip.BusinessLayer
                     return "Real Estate";
                 case Category.SportingGoods:
                     return "Sporting Goods";
-                default: 
+                default:
                     return category.ToString();
             }
         }
@@ -222,6 +235,15 @@ namespace QuickFlip.BusinessLayer
             da.Dispose();
 
             return offers;
+        }
+
+        public static void AcceptOffer(int offerId)
+        {
+            DataAccess da = new DataAccess();
+
+            da.AcceptOffer(offerId);
+
+            da.Dispose();
         }
 
         #endregion

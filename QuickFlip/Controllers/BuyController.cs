@@ -24,8 +24,7 @@ namespace QuickFlip.Controllers
             Community comm = BusinessLogic.GetCommunityByCommunityId((int)id);
             ViewBag.Community = comm;
 
-            List<Post> buyPosts = BusinessLogic.GetPostsByPostType(PostType.Buy);
-            buyPosts.RemoveAll(x => x.CommunityId != comm.CommunityId);
+            List<Post> buyPosts = BusinessLogic.GetPostsByPostType(PostType.Buy, id);
 
             if (Request.Form["Filtered"] == "1")
             {
@@ -276,6 +275,48 @@ namespace QuickFlip.Controllers
             // send pos owner an alert saying a new offer arrived
 
             return RedirectToAction("Index", new { id = (CommunityAbbrev)post.CommunityId });
+        }
+
+        // POST: /Buy/AcceptOffer
+        [HttpPost]
+        public ActionResult AcceptOffer()
+        {
+            int postId = Convert.ToInt32(Request.Form["PostId"]);
+
+            Post postToSettle = BusinessLogic.GetPostByPostId(postId);
+
+            BusinessLogic.SettlePost(postId);
+
+            BusinessLogic.AcceptOffer(postToSettle.BestOffer.OfferId);
+
+            return RedirectToAction("AcceptOffer", new { id = postToSettle.PostId });
+        }
+
+        public ActionResult AcceptOffer(int id)
+        {
+            Post post = BusinessLogic.GetPostByPostId(id);
+
+            return View(post);
+        }
+
+        [HttpPost]
+        public ActionResult SendAcceptMessage()
+        {
+            string subject = "Your offer was accepted!";
+
+            string body = Request.Form["AcceptMessage"].ToString();
+
+            string recipient = BusinessLogic.GetUserByUserId(
+                BusinessLogic.GetPostByPostId(Convert.ToInt32(Request.Form["PostId"])).UserId).Email;
+
+            BusinessLogic.SendEmail(recipient, subject, body);
+
+            return RedirectToAction("MessageSent");
+        }
+
+        public ActionResult MessageSent()
+        {
+            return View();
         }
     }
 }
