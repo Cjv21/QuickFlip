@@ -1,0 +1,83 @@
+﻿<!-- includes -->
+@using System.Linq
+@using QuickFlip.Models
+<script src="~/Scripts/category-validate.js"></script>
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+
+<!-- community header -->
+<img src="@ViewBag.Community.Logo.Src" class="comm-header-logo" />
+<h2>For Sale @@ @((CommunityAbbrev)ViewBag.Community.CommunityId) </h2>
+<hr />
+<br />
+
+@if (Request.IsAuthenticated)
+{
+    <!-- make post form -->
+    <form method="POST" enctype="multipart/form-data" action=@Url.Action("SubmitPost", "Sell")>
+
+        <h3>Type:</h3>
+        <select name="Type">
+            <option value="Auction">Auction</option>
+            <option value="FavoriteOffer">Favorite Offer</option>
+        </select>
+        <br />
+
+        <h3>Local meetup only?</h3>
+        <select name="LocalOnly">
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+        </select>
+        <br />
+
+        <h3>Title:</h3>
+        <input type="text" name="PostTitle" />
+        <br>
+
+        <h3>Minimum price willing to sell for (optional):</h3>
+        $ <input type="number" name="MaxPrice" />
+        <br>
+
+        <h3>Description:</h3>
+        <textarea name="PostDescription" rows="10" style="width:600px; resize:none"> </textarea>
+        <br>
+
+        <h3>Picture of what you're looking for (optional):</h3>
+        @Html.TextBox("postImage", "", new { type = "file" })
+        <br />
+
+        <h3>Categories:</h3>
+        <ul class="checkbox-grid">
+            <li><input type="checkbox" name="Categories" value="Auto"> Auto </li>
+            <li><input type="checkbox" name="Categories" value="Books"> Books </li>
+            <li><input type="checkbox" name="Categories" value="CameraPhoto"> Camera & Photo </li>
+            <li><input type="checkbox" name="Categories" value="CellPhones"> Cell Phones </li>
+            <li><input type="checkbox" name="Categories" value="ClothingShoe"> Clothing & Shoe </li>
+            <li><input type="checkbox" name="Categories" value="Computers"> Computers </li>
+            <li><input type="checkbox" name="Categories" value="Electronics"> Electronics </li>
+            <li><input type="checkbox" name="Categories" value="HealthBeauty"> Health & Beauty </li>
+            <li><input type="checkbox" name="Categories" value="Home"> Home </li>
+            <li><input type="checkbox" name="Categories" value="Jobs"> Jobs </li>
+            <li><input type="checkbox" name="Categories" value="Movies"> Movies </li>
+            <li><input type="checkbox" name="Categories" value="Music"> Music </li>
+            <li><input type="checkbox" name="Categories" value="MusicalInstruments"> Musical Instruments </li>
+            <li><input type="checkbox" name="Categories" value="Pets"> Pets </li>
+            <li><input type="checkbox" name="Categories" value="RealEstate"> Real Estate </li>
+            <li><input type="checkbox" name="Categories" value="SportingGoods"> Sporting Goods </li>
+        </ul>
+
+        <input type="number" name="CommunityId" hidden="hidden" value="@ViewBag.Community.CommunityId" />
+
+        <input value="Post" type="submit" style="position:relative; margin-top:20px;" disabled/>  
+        <label for="checkbox-validate" class="category-validate">You must select at least one category. </label>
+    </form>    
+}
+else
+{
+    <!-- login to make a post -->
+    <a href=@Url.Action("Login", "Account", new { returnUrl = Url.Action("MakeSellPost", "Sell", new { id = (CommunityAbbrev)ViewBag.Community.CommunityId }) }) class="make-post-link">
+        Login to Make a Post
+    </a>
+}
+
+
+

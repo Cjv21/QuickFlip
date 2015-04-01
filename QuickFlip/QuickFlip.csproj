@@ -191,6 +191,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="BusinessLayer\BusinessLogic.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\SellController.cs" />
     <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Controllers\BuyController.cs" />
     <Compile Include="Controllers\CommunityController.cs" />
@@ -359,6 +360,11 @@
     <Content Include="Views\Account\Manage.cshtml" />
     <Content Include="Views\Buy\AcceptOffer.cshtml" />
     <Content Include="Views\Buy\MessageSent.cshtml" />
+    <Content Include="Views\Sell\AcceptOffer.cshtml" />
+    <Content Include="Views\Sell\Index.cshtml" />
+    <Content Include="Views\Sell\MakeSellPost.cshtml" />
+    <Content Include="Views\Sell\MessageSent.cshtml" />
+    <Content Include="Views\Sell\Post.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

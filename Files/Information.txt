@@ -15,8 +15,9 @@
 	o tags
 	X make offer (auction)
 	o make offer (favorite offer)
-	o accept offer auction
+	X accept offer auction
 	o accept offer favorite offer
+	X recommendations 
 	o activity in-application alerts
 	o activity e-mail alerts
 	o activity cell-phone alerts
@@ -24,9 +25,48 @@
 	o user reviews
 	o messaging
 	X post previews
-	o recommendations 
+	
 
 	o LAST: convert object mapped traversals into advanced sql queries
+
+
+===============================================================================
+
+			FAKE USERS
+
+===============================================================================
+
+jamesmaila
+jamesmaila9@gmail.com
+XXX
+
+jamesmaila2
+maila2@illinois.edu
+XXX
+
+// fake users
+user2
+2quickflip411@gmail.com
+quickflip
+
+user3
+3quickflip411@gmail.com
+quickflip
+
+user4
+4quickflip411@gmail.com
+quickflip
+
+// lol, after making 3 quickflip accounts google made quickflip a "common word"
+// had to change password...
+user5
+5quickflip411@gmail.com
+quickflip.
+
+user6
+6quickflip411@gmail.com
+quickflip.
+
 
 
 ===============================================================================

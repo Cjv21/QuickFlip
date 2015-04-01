@@ -1,0 +1,140 @@
+﻿<!-- includes -->
+@using System.Linq
+@using QuickFlip.BusinessLayer
+@using QuickFlip.Models
+<script src="~/Scripts/makeoffer-modal.js"></script>
+
+<!-- community header -->
+<img src="@ViewBag.Community.Logo.Src" class="comm-header-logo" />
+<h2>For Sale @@ @((CommunityAbbrev)ViewBag.Community.CommunityId) </h2>
+<hr />
+<br />
+
+<div class="post-backboard">
+
+    <!-- title -->
+    <div style="font-size:xx-large; margin:10px;">
+        @(String.IsNullOrWhiteSpace(Model.Title) ? "Untitled" : @Model.Title)
+    </div>
+
+    <!-- created on / created by -->
+    <div style="margin:10px;">
+        @Model.CreateDate
+        <br />
+        Created by: <a>@BusinessLogic.GetUserNameFromUserId(Model.UserId)</a>
+    </div>
+
+
+    <!-- auction type / max price / current offer -->
+    <div style="margin-left:10px; margin-top:20px;">
+        <b style="font-size:medium;">Type:</b> @(Model.AuctionType == AuctionType.Auction ? "Reverse Auction" : "Favorite Offer")
+        <br />
+        <b style="font-size:medium;">Max Price:</b> @(Model.RequiredPrice == null ? "None" : "$" + Model.RequiredPrice.ToString())
+        <br />
+        @if (Model.AuctionType == AuctionType.Auction)
+        {
+            <b style="font-size:medium">Current Offer: </b> @(Model.Offers.Count == 0 ? "None" : "$" + Model.BestOffer.Amount.ToString())
+            if (Model.Offers.Count != 0)
+            {
+                <a style="text-decoration:none">(@BusinessLogic.GetUserNameFromUserId(Model.BestOffer.UserId))</a>
+            }
+        }
+    </div>
+
+    <!-- post image -->
+    <div style="margin:40px;">
+        @if (Model.PostMedia != null)
+        {
+            <img src="@String.Format("data:image/png;base64,{0}", Model.PostMedia.B64EncodedImage)" class="post-image" />
+        }
+        else
+        {
+            <img src="~/Images/NoPhotoIcon.png" style="border-image-source:inherit;" />
+        }
+    </div>
+
+    <!-- description -->
+    <div style="margin:10px;">
+        <textarea readonly rows="10" style="resize:none; height:auto;"> @Model.Description </textarea>
+    </div>
+
+    <!-- categories -->
+    <div style="margin:10px;">
+        <b style="font-size:medium">In Categories: </b> 
+        <ul style="margin-top:4px; margin-bottom:25px;">
+            @foreach (var category in Model.Categories)
+            {
+                <li>@BusinessLogic.GetFullCategoryName(category)</li>
+            }
+        </ul>
+    </div>
+
+    <!-- transaction type flag -->
+    <div style="margin-top:30px;">
+        @if (Model.TransactionType == TransactionType.Local)
+        {
+            <i style="color:blue">Local Meetup Only!</i>
+        }
+        else
+        {
+            <i style="color:blue">Open To Shipping!</i>
+        }
+    </div>
+
+    <!-- make offer -->
+    <div style="margin-bottom: 20px;">
+        @if (Request.IsAuthenticated)
+        {
+            if (WebSecurity.CurrentUserId != @Model.UserId)
+            {
+                <input type="button" id="offerButton" value="Make offer!" style="position:relative; top:20px;">
+
+                if (Model.AuctionType == AuctionType.Auction)
+                {
+                    <!-- make offer dialog -->
+                    <div id="dialog" title="Make Offer">
+                        <form method="POST" enctype="multipart/form-data" action="~/Sell/MakeOffer">
+                            <div style="text-align:center; margin-top:10px">
+                                $<input type="number" name="OfferAmount" max=@( @Model.Offers.Count == 0 ? @Model.RequiredPrice : @Model.BestOffer.Amount - 1) required="required" />
+                            </div>
+                            <input type="number" name="PostId" hidden="hidden" value="@Model.PostId" />
+                            <div style="text-align:center; margin-top:25px">
+                                <input value="Submit" type="submit" style="align-content:center" />
+                            </div>
+                        </form>
+                    </div>
+                }
+                else
+                {
+                    
+                }
+            }
+             // TEMPORARY POC: ACCEPT OFFER BUTTON AT BOTTOM
+            else if (Model.AuctionType == AuctionType.Auction && Model.BestOffer != null)
+            {
+                <form method="POST" enctype="multipart/form-data" action=@Url.Action("AcceptOffer", "Sell")>
+
+                    <input value="@Model.PostId" name="PostId" hidden="hidden" />
+
+                    <input value="Accept Offer!" type="submit" style="position:relative; top:20px;" />
+       
+                </form>
+            }
+        }
+        else
+        {
+        <!-- not logged in, login to make an offer -->
+            <a href=@Url.Action("Login", "Account", new { returnUrl = Url.Action("Post", "Sell", new { id = Model.PostId }) })>
+                Login to make an offer
+            </a>
+        }
+    </div>
+
+</div>
+
+
+
+
+
+
+

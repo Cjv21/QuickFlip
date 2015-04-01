@@ -1,0 +1,232 @@
+﻿<!-- includes -->
+@using System.Linq
+@using QuickFlip.BusinessLayer
+@using QuickFlip.Models
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/category-select-all.js"></script>
+
+<!-- community header -->
+<img src="@ViewBag.Community.Logo.Src" class="comm-header-logo" />
+<h2>For Sale @@ @((CommunityAbbrev)ViewBag.Community.CommunityId) </h2>
+<hr />
+<br />
+
+<!-- make a post link -->
+@if (Request.IsAuthenticated)
+{
+    <a href="@Url.Action("MakeSellPost", "Sell", new { id = (CommunityAbbrev)ViewBag.Community.CommunityId })" class="make-post-link">
+        Make a post
+    </a>
+}
+else
+{
+    <a href=@Url.Action("Login", "Account", new { returnUrl = Url.Action("MakeSellPost", "Sell", new { id = (CommunityAbbrev)ViewBag.Community.CommunityId }) }) class="make-post-link">
+        Login to make a post
+    </a>
+}
+
+<!-- backboard content -->
+<div class="backboard">
+
+   <!-- filter bar -->
+    <div class="filter-bar-area">
+
+        <h3 class="filter-bar-title">Narrow Your Choices</h3>
+        <hr />
+
+        <div class="filter-bar">
+            <form method="POST" enctype="multipart/form-data" action=@Url.Action("Index", "Sell")>
+
+                <h4>Order By:</h4> 
+                <select name="OrderBy" style="margin-top:5px;">
+                    @if (ViewData["OrderBy"].ToString() == "MostRecent") { <option selected value="MostRecent">Most Recent</option> }
+                    else { <option value="MostRecent">Most Recent</option> }       
+                    
+                    @if (ViewData["OrderBy"].ToString() == "LeastRecent") { <option selected value="LeastRecent">Least Recent</option> }
+                    else { <option value="LeastRecent">Least Recent</option> }
+
+                    @if (ViewData["OrderBy"].ToString() == "AscendingPrice") { <option selected value="AscendingPrice">Ascending Price</option> }
+                    else { <option value="AscendingPrice">Ascending Price</option> }
+                    
+                    @if (ViewData["OrderBy"].ToString() == "DescendingPrice") { <option selected value="DescendingPrice">Descending Price</option> }
+                    else { <option value="DescendingPrice">Descending Price</option> }
+                </select>
+
+                <h4>Type:</h4>
+                <select name="Type" style="margin-top:5px;">
+                    @if (ViewData["Type"].ToString() == "DontCare") { <option selected value="DontCare">Don't Care</option> }
+                    else { <option value="DontCare">Don't Care</option> }
+
+                    @if (ViewData["Type"].ToString() == "Auction") { <option selected value="Auction">Auction</option> }
+                    else { <option value="Auction">Auction</option> }
+
+                    @if (ViewData["Type"].ToString() == "FavoriteOffer") { <option selected value="FavoriteOffer">Favorite Offer</option>}
+                    else { <option value="FavoriteOffer">Favorite Offer</option> }
+                </select>
+
+                <div id="categories">
+                    <h4>In Categories:</h4>
+                    <ul style="list-style-type: none; padding-left:20px;">
+
+                        @if (ViewData["Any"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" id="category-select-all" value="Any"> Any </li> }
+                        else { <li><input type="checkbox" name="Categories" id="category-select-all" value="Any"> Any </li> }
+                            
+                        @if (ViewData["Auto"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="Auto"> Auto </li> }
+                        else { <li><input type="checkbox" name="Categories" value="Auto"> Auto </li> }                                                  
+                                                                                                         
+                        @if (ViewData["Books"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="Books"> Books </li> }
+                        else { <li><input type="checkbox" name="Categories" value="Books"> Books </li> }    
+                                                                                                                                        
+                        @if (ViewData["CameraPhoto"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="CameraPhoto"> Camera & Photo </li> }
+                        else { <li><input type="checkbox" name="Categories" value="CameraPhoto"> Camera & Photo </li> }     
+                                                                                                                                                     
+                        @if (ViewData["CellPhones"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="CellPhones"> Cell Phones </li> }
+                        else { <li><input type="checkbox" name="Categories" value="CellPhones"> Cell Phones </li> }                                                                                                                             
+
+                        @if (ViewData["ClothingShoe"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="ClothingShoe"> Clothing & Shoe </li> }
+                        else { <li><input type="checkbox" name="Categories" value="ClothingShoe"> Clothing & Shoe </li> }                                                                                                                                    
+
+                        @if (ViewData["Computers"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="Computers"> Computers </li> }
+                        else { <li><input type="checkbox" name="Categories" value="Computers"> Computers </li> }                                                                                                                           
+
+                        @if (ViewData["Electronics"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="Electronics"> Electronics </li> }
+                        else { <li><input type="checkbox" name="Categories" value="Electronics"> Electronics </li> }                                                                                                                               
+
+                        @if (ViewData["HealthBeauty"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="HealthBeauty"> Health & Beauty </li> }
+                        else { <li><input type="checkbox" name="Categories" value="HealthBeauty"> Health & Beauty </li> }                                                                                                                                    
+
+                        @if (ViewData["Home"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="Home"> Home </li> }
+                        else { <li><input type="checkbox" name="Categories" value="Home"> Home </li> }                                                                                                                 
+
+                        @if (ViewData["Jobs"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="Jobs"> Jobs </li> }
+                        else { <li><input type="checkbox" name="Categories" value="Jobs"> Jobs </li> }                                                                                                                 
+
+                        @if (ViewData["Movies"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="Movies"> Movies </li> }
+                        else { <li><input type="checkbox" name="Categories" value="Movies"> Movies </li> }                                                                                                                     
+
+                        @if (ViewData["Music"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="Music"> Music </li> }
+                        else { <li><input type="checkbox" name="Categories" value="Music"> Music </li> }                                                                                                                   
+
+                        @if (ViewData["MusicalInstruments"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="MusicalInstruments"> Musical Instruments </li> }
+                        else { <li><input type="checkbox" name="Categories" value="MusicalInstruments"> Musical Instruments </li> }                                                                                                                                              
+
+                        @if (ViewData["Pets"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="Pets"> Pets </li> }
+                        else { <li><input type="checkbox" name="Categories" value="Pets"> Pets </li> }                                                                                                                 
+
+                        @if (ViewData["RealEstate"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="RealEstate"> Real Estate </li> }
+                        else { <li><input type="checkbox" name="Categories" value="RealEstate"> Real Estate </li> }                                                                                                                              
+
+                        @if (ViewData["SportingGoods"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="SportingGoods"> Sporting Goods </li> }
+                        else { <li><input type="checkbox" name="Categories" value="SportingGoods"> Sporting Goods </li> }     
+                                                                                                                                                       
+                    </ul>
+                </div>
+
+
+                <h4>Max Price:</h4>
+                $ <input type="number" name="MaxPriceFilter" style="width:160px" value="@ViewData["MaxPriceFilter"]"/>
+                
+
+                <h4>Will Ship?</h4>
+                <select name="WillShip" style="margin-top:5px;">
+                    @if (ViewData["WillShip"].ToString() == "DontCare") { <option selected value="DontCare">Don't Care</option> }
+                    else { <option value="DontCare">Don't Care</option> }
+
+                    @if (ViewData["WillShip"].ToString() == "Yes") { <option selected value="Yes">Yes</option> }
+                    else { <option value="Yes">Yes</option> }   
+                                                                                                           
+                    @if (ViewData["WillShip"].ToString() == "No") { <option selected value="No">No</option> }
+                    else { <option value="No">No</option> }
+                </select>
+
+                <h4>Has Photo?</h4>
+                <select name="HasPhoto" style="margin-top:5px;">
+                    @if (ViewData["HasPhoto"].ToString() == "DontCare") { <option selected value="DontCare">Don't Care</option> }
+                    else { <option value="DontCare">Don't Care</option> }           
+                                                                                                            
+                    @if (ViewData["HasPhoto"].ToString() == "Yes") { <option selected value="Yes">Yes</option> }
+                    else { <option value="Yes">Yes</option> }                                                                                 
+                </select>
+
+                <h4>Any Offers?</h4>
+                <select name="AnyOffers" style="margin-top:5px;">
+                    @if (ViewData["AnyOffers"].ToString() == "DontCare") { <option selected value="DontCare">Don't Care</option> }
+                    else { <option value="DontCare">Don't Care</option> }                    
+                                                                                                    
+                    @if (ViewData["AnyOffers"].ToString() == "Yes") { <option selected value="Yes">Yes</option> }
+                    else { <option value="Yes">Yes</option> }        
+                                                                                               
+                    @if (ViewData["AnyOffers"].ToString() == "No") { <option selected value="No">No</option> }
+                    else { <option value="No">No</option> }                                                                                
+                </select>
+
+                <input name="Filtered" type="number" value="1" hidden="hidden" />
+                
+                <input value="Filter" type="submit" class="filter-button"/>
+            </form>
+        </div>
+    </div>
+
+    <!-- post list -->
+    <div class="post-list-area">
+        @foreach (var post in Model)
+        {
+            <!-- capture post information -->
+            string postTitle = String.IsNullOrWhiteSpace((string)post.Title) ? "Untitled" : (string)post.Title;
+            string auctionType = (post.AuctionType == AuctionType.Auction ? "Auction" : "Favorite Offer");
+            string willShip = (post.TransactionType == TransactionType.LocalOrLongDistance ? "Yes" : "No");
+            string maxPrice = (post.RequiredPrice == null ? "None" : "$" + post.RequiredPrice.ToString());
+            string currentOffer = (post.BestOffer == null ? "None" : "$" + post.BestOffer.Amount.ToString());
+
+     
+            string categories = String.Empty;
+            for (int i = 0; i < post.Categories.Count; i++)
+            {
+                categories += BusinessLogic.GetFullCategoryName(post.Categories[i]);
+                if (i != post.Categories.Count - 1) { categories += ", "; }
+            }
+
+            <!-- display post information -->
+            <div class="post-preview">
+
+                <!-- left column, post title and picture -->
+                <div class="post-preview-left">
+                    <h3>@Html.ActionLink(postTitle, "Post", new { id = post.PostId }, new { style = "text-decoration:none;" })</h3>
+
+                    @if (post.PostMedia != null)
+                    {
+                        <img src="@String.Format("data:image/png;base64,{0}", post.PostMedia.B64EncodedImage)" class="post-preview-image" />
+                    }
+                    else
+                    {
+                        <img src="~/Images/NoPhotoIcon.png" class="post-preview-image" />
+                    }
+                </div>
+
+                <!-- right column, post information -->
+                <div class="post-preview-right">
+                    <div style="margin-top:20px;"> <b>Categories: </b> @categories </div>
+                    <div style="margin-top:10px;"> <b>Type: </b> @auctionType </div>
+                    @if (post.RequiredPrice != null)
+                    {
+                        <div style="margin-top:10px;"> <b>Willing to Pay:</b> @maxPrice </div>
+                    }
+                    @if (post.AuctionType == AuctionType.Auction)
+                    {
+                        <div style="margin-top:10px;"> <b>Current Offer: </b> @currentOffer </div>
+                    }
+                    <div style="margin-top:10px; margin-bottom:20px;"> <b>Will Ship?</b> @willShip</div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
