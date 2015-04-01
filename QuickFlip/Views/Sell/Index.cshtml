@@ -124,7 +124,7 @@ else
 
 
                 <h4>Max Price:</h4>
-                $ <input type="number" name="MaxPriceFilter" style="width:160px" value="@ViewData["MaxPriceFilter"]"/>
+                $ <input type="number" name="MaxPriceFilter" style="width:160px" value="@ViewData["MaxPriceFilter"]" min="0"/>
                 
 
                 <h4>Will Ship?</h4>
@@ -209,7 +209,7 @@ else
                     <div style="margin-top:10px;"> <b>Type: </b> @auctionType </div>
                     @if (post.RequiredPrice != null)
                     {
-                        <div style="margin-top:10px;"> <b>Willing to Pay:</b> @maxPrice </div>
+                        <div style="margin-top:10px;"> <b>Starting Price:</b> @maxPrice </div>
                     }
                     @if (post.AuctionType == AuctionType.Auction)
                     {

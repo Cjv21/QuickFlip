@@ -24,7 +24,8 @@ namespace QuickFlip.Controllers
             Community comm = BusinessLogic.GetCommunityByCommunityId((int)id);
             ViewBag.Community = comm;
 
-            List<Post> sellPosts = BusinessLogic.GetPostsByPostType(PostType.Sell, id);
+            List<Post> sellPosts = BusinessLogic.GetPostsByPostTypeAndCommunity(PostType.Sell, id);
+            sellPosts.RemoveAll(x => x.Settled == true);
 
             if (Request.Form["Filtered"] == "1")
             {

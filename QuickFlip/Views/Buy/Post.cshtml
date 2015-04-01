@@ -36,7 +36,10 @@
         @if (Model.AuctionType == AuctionType.Auction)
         {
             <b style="font-size:medium">Current Offer: </b> @(Model.Offers.Count == 0 ? "None" : "$" + Model.BestOffer.Amount.ToString())
-            <a style="text-decoration:none">(@BusinessLogic.GetUserNameFromUserId(Model.BestOffer.UserId))</a>
+            if (Model.Offers.Count != 0)
+            {
+                <a style="text-decoration:none">(@BusinessLogic.GetUserNameFromUserId(Model.BestOffer.UserId))</a>
+            }
         }
     </div>
 

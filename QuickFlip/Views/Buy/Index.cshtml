@@ -124,7 +124,7 @@ else
 
 
                 <h4>Willing to Pay at Least:</h4>
-                $ <input type="number" name="MaxPriceFilter" style="width:160px" value="@ViewData["MaxPriceFilter"]"/>
+                $ <input type="number" name="MaxPriceFilter" style="width:160px" value="@ViewData["MaxPriceFilter"]" min="0"/>
                 
 
                 <h4>Will Ship?</h4>
@@ -173,7 +173,7 @@ else
         {
             <!-- capture post information -->
             string postTitle = String.IsNullOrWhiteSpace((string)post.Title) ? "Untitled" : (string)post.Title;
-            string auctionType = (post.AuctionType == AuctionType.Auction ? "Auction" : "Favorite Offer");
+            string auctionType = (post.AuctionType == AuctionType.Auction ? "Reverse Auction" : "Favorite Offer");
             string willShip = (post.TransactionType == TransactionType.LocalOrLongDistance ? "Yes" : "No");
             string maxPrice = (post.RequiredPrice == null ? "None" : "$" + post.RequiredPrice.ToString());
             string currentOffer = (post.BestOffer == null ? "None" : "$" + post.BestOffer.Amount.ToString());

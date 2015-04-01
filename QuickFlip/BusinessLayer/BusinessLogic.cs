@@ -140,7 +140,7 @@ namespace QuickFlip.BusinessLayer
             return post;
         }
 
-        public static List<Post> GetPostsByPostType(PostType type, CommunityAbbrev community)
+        public static List<Post> GetPostsByPostTypeAndCommunity(PostType type, CommunityAbbrev community)
         {
             DataAccess da = new DataAccess();
 
