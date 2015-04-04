@@ -18,7 +18,22 @@ namespace QuickFlip.Controllers
     [InitializeSimpleMembership]
     public class AccountController : Controller
     {
+        // GET: /Account/DeletePost/
+        [InitializeSimpleMembership]
+        public ActionResult DeletePost(int id)
+        {
+            Post post = BusinessLogic.GetPostByPostId(id);
 
+            if (post.UserId == WebSecurity.CurrentUserId)
+            {
+                BusinessLogic.DeletePost(post.PostId);
+            }
+
+            return RedirectToAction("Manage");
+        }
+
+
+        // GET: /Account/Manage
         [InitializeSimpleMembership]
         public ActionResult Manage()
         {
@@ -27,6 +42,8 @@ namespace QuickFlip.Controllers
             return View(user);
         }
 
+
+        // POST: /Account/ChangeProfilePicture
         [HttpPost]
         [InitializeSimpleMembership]
         public ActionResult ChangeProfilePicture(HttpPostedFileBase newProfilePicture)
@@ -45,7 +62,6 @@ namespace QuickFlip.Controllers
 
             return RedirectToAction("Manage");
         }
-
 
 
         // GET: /Account/Login

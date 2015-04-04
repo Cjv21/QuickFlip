@@ -10,31 +10,118 @@
 
 <hr />
 
-<h2 style="margin-left:10px;"> @WebSecurity.CurrentUserName </h2>
 
-<!-- profile picture -->
-<div style="margin:10px;">
-    @if (Model.B64EncodedImage != String.Empty)
-    {
-        <img src="@String.Format("data:image/png;base64,{0}", Model.B64EncodedImage)" class="profile-picture" />
-    }
-    else
-    {
-        <img src="~/Images/NoPhotoIcon.png" class="profile-picture" />
-    }
+<div style="width:700px; height:350px">
+
+    <!-- profile picture -->
+    <div style="width:220px; margin:15px; float:left;">
+
+        <h2 style="text-align:center; margin:10px;"> @WebSecurity.CurrentUserName </h2>
+
+        @if (Model.B64EncodedImage != String.Empty)
+        {
+            <img src="@String.Format("data:image/png;base64,{0}", Model.B64EncodedImage)" class="profile-picture" />
+        }
+        else
+        {
+            <img src="~/Images/NoPhotoIcon.png" class="profile-picture" />
+        }
+
+        <input type="button" id="changeProfilePicture" value="Change Picture" style="margin-top:15px; text-align:center; display:block; position:relative; margin-left:auto; margin-right:auto;">
+    </div>
+
+
+    <!-- change password -->
+    <div style="float:right; width:400px; margin-top:60px;">
+        <ul style="font-size:large;">
+            <li> @Html.ActionLink("Change password", "ChangePassword", "Account", new { style="text-decoration:none"}) </li>
+            <li> Change email </li>
+            <li> Set home community </li>
+        </ul>
+    </div>
+
 </div>
 
-<input type="button" id="changeProfilePicture" value="Change Picture" style="margin-top:200px;">
+<hr />
+<div style="margin:20px;">
 
+    <h2 style="margin-left:150px; margin-bottom:25px;"> My Posts:</h2>
 
-<!-- change profile picture dialog -->
-<div id="dialog" title="Change Profile Picture">
-    <form method="POST" enctype="multipart/form-data" action="~/Account/ChangeProfilePicture">
-        <div style="text-align:center; margin-top:10px">
-            @Html.TextBox("newProfilePicture", "", new { type = "file" })
-        </div>
-        <div style="text-align:center; margin-top:25px">
-            <input value="Submit" type="submit" style="align-content:center" />
-        </div>
-    </form>
+    <!-- post list -->
+        @foreach (var post in BusinessLogic.GetPostsByUserId(WebSecurity.CurrentUserId))
+        {
+            <!-- capture post information -->
+            string postTitle = String.IsNullOrWhiteSpace((string)post.Title) ? "Untitled" : (string)post.Title;
+            string postType = post.PostType == PostType.Buy ? "Want to buy" : "For sale";
+
+            string categories = String.Empty;
+            for (int i = 0; i < post.Categories.Count; i++)
+            {
+                categories += BusinessLogic.GetFullCategoryName(post.Categories[i]);
+                if (i != post.Categories.Count - 1) { categories += ", "; }
+            }
+
+            <!-- display post information -->
+            <div class="post-preview-manage">
+
+                <!-- left column, post title and picture -->
+                <div class="post-preview-left-manage">
+
+                    <h3>@Html.ActionLink(postTitle, "Post", post.PostType.ToString(), new { id = post.PostId }, new { style = "text-decoration:none;" })</h3>
+
+                    @if (post.PostMedia != null)
+                    {
+                        <img src="@String.Format("data:image/png;base64,{0}", post.PostMedia.B64EncodedImage)" class="post-preview-image" />
+                    }
+                    else
+                    {
+                        <img src="~/Images/NoPhotoIcon.png" class="post-preview-image" />
+                    }
+                </div>
+
+                <!-- right column, post information -->
+                <div class="post-preview-right-manage">
+                    <div style="margin-top:20px;"> <b>In: </b> @postType </div>
+                    <div style="margin-top:10px;"> <b>Categories: </b> @categories </div>
+
+                    <div style="margin-top: 20px;">
+                        <div style="float:left; margin-left:20px;">
+
+                            <a href="@Url.Action("EditPost", "Manage", new { id = post.PostId })" style="height:50px; width:50px; display:block;">
+                                <img src="~/Images/EditIcon.png" style="height:50px; width:50px;" />
+                            </a>
+
+                        </div>
+                        <div style="float:right; margin-right:80px;">
+                            <a href="@Url.Action("DeletePost", "Account", new { id = post.PostId })" style="height:50px; width:50px; display:block;">
+                                <img src="~/Images/DeleteIcon.png" style="height:50px; width:50px;" />
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
 </div>
+
+
+<div style="margin:50px;">
+    <hr />
+    <h2 style="margin-top:20px; margin-left:150px; margin-bottom:25px;"> My Offers:</h2>
+
+</div>
+
+
+
+<!-------------------- scripts -------------------->
+
+    <!-- change profile picture dialog -->
+    <div id="dialog" title="Change Profile Picture">
+        <form method="POST" enctype="multipart/form-data" action="~/Account/ChangeProfilePicture">
+            <div style="text-align:center; margin-top:10px">
+                @Html.TextBox("newProfilePicture", "", new { type = "file" })
+            </div>
+            <div style="text-align:center; margin-top:25px">
+                <input value="Submit" type="submit" style="align-content:center" />
+            </div>
+        </form>
+    </div>

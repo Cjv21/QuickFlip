@@ -267,6 +267,8 @@
     <Content Include="Content\themes\base\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
     <Content Include="Images\BuyIcon.png" />
+    <Content Include="Images\DeleteIcon.png" />
+    <Content Include="Images\EditIcon.png" />
     <Content Include="Images\favicon.ico" />
     <Content Include="Global.asax" />
     <None Include="Properties\PublishProfiles\quickflip - FTP.pubxml" />

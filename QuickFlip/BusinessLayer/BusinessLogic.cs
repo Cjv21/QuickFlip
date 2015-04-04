@@ -140,6 +140,17 @@ namespace QuickFlip.BusinessLayer
             return post;
         }
 
+        public static List<Post> GetPostsByUserId(int userId)
+        {
+            DataAccess da = new DataAccess();
+
+            List<Post> posts = da.GetPostsByUserId(userId);
+
+            da.Dispose();
+
+            return posts;
+        }
+
         public static List<Post> GetPostsByPostTypeAndCommunity(PostType type, CommunityAbbrev community)
         {
             DataAccess da = new DataAccess();
@@ -156,6 +167,15 @@ namespace QuickFlip.BusinessLayer
             DataAccess da = new DataAccess();
 
             da.SettlePost(postId);
+
+            da.Dispose();
+        }
+
+        public static void DeletePost(int postId)
+        {
+            DataAccess da = new DataAccess();
+
+            da.DeletePost(postId);
 
             da.Dispose();
         }
