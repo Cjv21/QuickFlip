@@ -649,6 +649,85 @@ namespace QuickFlip.DataAccessLayer
             return null;
         }
 
+        public List<Post> GetAllPosts()
+        {
+            try
+            {
+                // form query
+                SqlCommand command = new SqlCommand(
+                    "SELECT * FROM [Post] " +
+                    "INNER JOIN [Category] ON Post.PostId = Category.PostId",
+                    Connection);
+
+                // execute
+                SqlDataReader reader = command.ExecuteReader();
+
+                List<Post> posts = new List<Post>();
+
+                while (reader.Read())
+                {
+                    Post post = new Post()
+                    {
+                        PostId = Convert.ToInt32(reader["PostId"]),
+                        CommunityId = Convert.ToInt32(reader["CommunityId"]),
+                        UserId = Convert.ToInt32(reader["UserId"]),
+                        CreateDate = Convert.ToDateTime(reader["CreateDate"]),
+                        ExpirationDate = Convert.ToDateTime(reader["ExpirationDate"]),
+                        Title = reader["Title"] == DBNull.Value
+                            ? String.Empty : reader["Title"].ToString(),
+                        Description = reader["Description"] == DBNull.Value
+                            ? String.Empty : reader["Description"].ToString(),
+                        RequiredPrice = reader["RequiredPrice"] == DBNull.Value
+                            ? (int?)null : Convert.ToInt32(reader["RequiredPrice"]),
+                        PostType = (PostType)reader["PostType"],
+                        AuctionType = (AuctionType)reader["AuctionType"],
+                        TransactionType = (TransactionType)reader["TransactionType"],
+                        Settled = Convert.ToBoolean(reader["Settled"]),
+                        Categories = new List<Category>() { (Category)Enum.Parse(typeof(Category), reader["Category"].ToString()) }
+                    };
+
+                    posts.Add(post);
+                }
+
+                reader.Close();
+
+                // combine categories
+                var categoryCombined = posts.GroupBy(l => l.PostId)
+                                            .Select(x => new Post { PostId = x.Key, Categories = x.SelectMany(y => y.Categories).ToList() })
+                                            .ToList();
+
+                foreach (var post in posts)
+                {
+                    post.Categories = categoryCombined.FirstOrDefault(x => x.PostId == post.PostId).Categories;
+                }
+
+                posts = posts.GroupBy(x => x.PostId).Select(group => group.First()).ToList();
+
+                // get offers and post media
+                foreach (var post in posts)
+                {
+                    post.Offers = GetOffersByPostId(post.PostId);
+                    if (post.AuctionType == AuctionType.Auction)
+                    {
+                        post.BestOffer = post.PostType == PostType.Buy
+                            ? post.Offers.OrderByDescending(x => x.Amount).LastOrDefault()
+                            : post.BestOffer = post.Offers.OrderByDescending(x => x.Amount).FirstOrDefault();
+                    }
+
+                    post.PostMedia = GetPostMediaByPostId(post.PostId);
+                }
+
+                return posts;
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
+            return null;
+        }
+
         public void SettlePost(int postId)
         {
             try

@@ -20,7 +20,7 @@
     <div class="search-parameter-area">
 
         <div class="search-parameters">
-            <form method="POST" enctype="multipart/form-data" action=@Url.Action("Index", "Buy")>
+            <form method="POST" enctype="multipart/form-data" action=@Url.Action("Index", "Search")>
 
                 <h4>Keywords:</h4>
                 <input type="text" name="Keywords" />
@@ -135,11 +135,71 @@
 
         </div>
     </div>
-    <div class="search-results-area">
-        <div class="search-results">
-            <h2>Search Results:</h2>
-            <hr />
-            MEOW MEOW MEOW
+
+    @if (ViewData["ResultsReturned"] == "1")
+    {
+        <div class="search-results-area">
+            <div class="search-results">
+                <h2>Search Results:</h2>
+                <hr />
+
+
+
+                @foreach (var post in Model)
+                {
+            <!-- capture post information -->
+                    string postTitle = String.IsNullOrWhiteSpace((string)post.Title) ? "Untitled" : (string)post.Title;
+                    string auctionType = (post.AuctionType == AuctionType.Auction ? "Reverse Auction" : "Favorite Offer");
+                    string willShip = (post.TransactionType == TransactionType.LocalOrLongDistance ? "Yes" : "No");
+                    string maxPrice = (post.RequiredPrice == null ? "None" : "$" + post.RequiredPrice.ToString());
+                    string currentOffer = (post.BestOffer == null ? "None" : "$" + post.BestOffer.Amount.ToString());
+
+
+                    string categories = String.Empty;
+                    for (int i = 0; i < post.Categories.Count; i++)
+                    {
+                        categories += BusinessLogic.GetFullCategoryName(post.Categories[i]);
+                        if (i != post.Categories.Count - 1) { categories += ", "; }
+                    }
+
+            <!-- display post information -->
+                    <div class="post-preview">
+
+                        <!-- left column, post title and picture -->
+                        <div class="post-preview-left">
+                            <h3>@Html.ActionLink(postTitle, "Post", new { id = post.PostId }, new { style = "text-decoration:none;" })</h3>
+
+                            @if (post.PostMedia != null)
+                            {
+                                <img src="@String.Format("data:image/png;base64,{0}", post.PostMedia.B64EncodedImage)" class="post-preview-image" />
+                            }
+                            else
+                            {
+                                <img src="~/Images/NoPhotoIcon.png" class="post-preview-image" />
+                            }
+                        </div>
+
+                        <!-- right column, post information -->
+                        <div class="post-preview-right">
+                            <div style="margin-top:20px;"> <b>Categories: </b> @categories </div>
+                            <div style="margin-top:10px;"> <b>Type: </b> @auctionType </div>
+                            @if (post.RequiredPrice != null)
+                            {
+                                <div style="margin-top:10px;"> <b>Willing to Pay:</b> @maxPrice </div>
+                            }
+                            @if (post.AuctionType == AuctionType.Auction)
+                            {
+                                <div style="margin-top:10px;"> <b>Current Offer: </b> @currentOffer </div>
+                            }
+                            <div style="margin-top:10px; margin-bottom:20px;"> <b>Will Ship?</b> @willShip</div>
+                        </div>
+                    </div>
+                }
+
+
+
+            </div>
         </div>
-    </div>
+    }
+
 </div>

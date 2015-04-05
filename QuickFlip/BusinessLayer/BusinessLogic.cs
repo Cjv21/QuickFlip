@@ -162,6 +162,17 @@ namespace QuickFlip.BusinessLayer
             return buyPosts;
         }
 
+        public static List<Post> GetAllPosts()
+        {
+            DataAccess da = new DataAccess();
+
+            List<Post> posts = da.GetAllPosts();
+
+            da.Dispose();
+
+            return posts;
+        }
+
         public static void SettlePost(int postId)
         {
             DataAccess da = new DataAccess();
