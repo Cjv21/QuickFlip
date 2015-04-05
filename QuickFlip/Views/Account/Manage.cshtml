@@ -42,6 +42,8 @@
 
 </div>
 
+
+<!-- my posts -->
 <hr />
 <div style="margin:20px;">
 
@@ -103,9 +105,66 @@
         }
 </div>
 
+
+<!-- my offers -->
 <hr style="margin-top:50px;"/>
 <div style="margin:20px;">
     <h2 style="margin-left:150px; margin-bottom:25px;"> My Offers:</h2>
+
+    <!-- post list -->
+    @foreach (var post in BusinessLogic.GetPostsByBidderId(WebSecurity.CurrentUserId))
+    {
+            <!-- capture post information -->
+        string postTitle = String.IsNullOrWhiteSpace((string)post.Title) ? "Untitled" : (string)post.Title;
+        string postType = post.PostType == PostType.Buy ? "Want to buy" : "For sale";
+
+        string categories = String.Empty;
+        for (int i = 0; i < post.Categories.Count; i++)
+        {
+            categories += BusinessLogic.GetFullCategoryName(post.Categories[i]);
+            if (i != post.Categories.Count - 1) { categories += ", "; }
+        }
+
+            <!-- display post information -->
+        <div class="post-preview-manage">
+
+            <!-- left column, post title and picture -->
+            <div class="post-preview-left-manage">
+
+                <h3>@Html.ActionLink(postTitle, "Post", post.PostType.ToString(), new { id = post.PostId }, new { style = "text-decoration:none;" })</h3>
+
+                @if (post.PostMedia != null)
+                {
+                    <img src="@String.Format("data:image/png;base64,{0}", post.PostMedia.B64EncodedImage)" class="post-preview-image" />
+                }
+                else
+                {
+                    <img src="~/Images/NoPhotoIcon.png" class="post-preview-image" />
+                }
+            </div>
+
+            <!-- right column, post information -->
+            <div class="post-preview-right-manage">
+                <div style="margin-top:20px;"> <b>In: </b> @postType </div>
+                <div style="margin-top:10px;"> <b>Categories: </b> @categories </div>
+                <div style="margin-top:20px;"> 
+                
+                    @if (post.BestOffer.UserId == WebSecurity.CurrentUserId)
+                    {
+                        <img src="~/Images/BestOfferIcon.png" style="height:40px; width:auto;"/>
+                    }
+                    else
+                    {
+                        <img src="~/Images/OutbidIcon.png" style="height:40px; width:auto;"/>
+                    }
+                
+                </div>
+
+
+            </div>
+
+        </div>
+    }
 
 </div>
 
@@ -124,3 +183,11 @@
             </div>
         </form>
     </div>
+
+
+    @if (TempData["UnauthorizedDelete"] != null)
+    {
+        <script type="text/javascript">
+            alert(@Html.Raw(Json.Encode(TempData["UnauthorizedDelete"])));
+        </script>
+    }

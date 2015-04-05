@@ -28,6 +28,10 @@ namespace QuickFlip.Controllers
             {
                 BusinessLogic.DeletePost(post.PostId);
             }
+            else
+            {
+                TempData["UnauthorizedDelete"] = "You cannot delete a post that isn't yours!";
+            }
 
             return RedirectToAction("Manage");
         }
@@ -38,7 +42,6 @@ namespace QuickFlip.Controllers
         public ActionResult Manage()
         {
             User user = BusinessLogic.GetUserByUserId(WebSecurity.CurrentUserId);
-
             return View(user);
         }
 

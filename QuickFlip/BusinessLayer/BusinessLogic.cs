@@ -180,6 +180,17 @@ namespace QuickFlip.BusinessLayer
             da.Dispose();
         }
 
+        public static List<Post> GetPostsByBidderId(int userId)
+        {
+            DataAccess da = new DataAccess();
+
+            List<Post> posts = da.GetPostsByBidderId(userId);
+
+            da.Dispose();
+
+            return posts;
+        }
+
         #endregion
 
         #region Category
@@ -266,6 +277,15 @@ namespace QuickFlip.BusinessLayer
             da.Dispose();
         }
 
+        public static void DeleteOffer(int offerId)
+        {
+            DataAccess da = new DataAccess();
+
+            da.DeleteOffer(offerId);
+
+            da.Dispose();
+        }
+
         #endregion
 
         #region Utilities
@@ -307,6 +327,21 @@ namespace QuickFlip.BusinessLayer
                 Console.WriteLine(e.ToString());
             }
 
+        }
+
+        public static void SendSMS()
+        {
+           /* 
+            * AT&T – cellnumber@txt.att.net
+            * Verizon – cellnumber@vtext.com
+            * T-Mobile – cellnumber@tmomail.net
+            * Sprint PCS - cellnumber@messaging.sprintpcs.com
+            * Virgin Mobile – cellnumber@vmobl.com
+            * US Cellular – cellnumber@email.uscc.net
+            * Nextel - cellnumber@messaging.nextel.com
+            * Boost - cellnumber@myboostmobile.com
+            * Alltel – cellnumber@message.alltel.com
+            */
         }
 
         #endregion

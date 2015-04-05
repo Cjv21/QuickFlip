@@ -1147,9 +1147,12 @@ img.uwm {
     background-color: white;
     min-height: 160px;
     width: 480px;
-    margin: 10px;
+    margin: 15px;
     margin-left:auto;
     margin-right:auto;
+    padding: 15px;
+    display:table;
+    height:auto;
 }
 
 .post-preview-left-manage {

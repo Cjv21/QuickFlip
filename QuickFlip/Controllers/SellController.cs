@@ -235,7 +235,7 @@ namespace QuickFlip.Controllers
                 {
                     if (offer.UserId == WebSecurity.CurrentUserId)
                     {
-                        // BusinessLogic.DeleteOffer(offer.OfferId);
+                        BusinessLogic.DeleteOffer(offer.OfferId);
                     }
                 }
             }

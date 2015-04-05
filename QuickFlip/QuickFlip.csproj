@@ -266,6 +266,7 @@
     <Content Include="Content\themes\base\minified\jquery.ui.slider.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
+    <Content Include="Images\BestOfferIcon.png" />
     <Content Include="Images\BuyIcon.png" />
     <Content Include="Images\DeleteIcon.png" />
     <Content Include="Images\EditIcon.png" />
@@ -279,6 +280,7 @@
     <Content Include="Images\NU.png" />
     <Content Include="Images\Oops.png" />
     <Content Include="Images\OSU.png" />
+    <Content Include="Images\OutbidIcon.png" />
     <Content Include="Images\PSU.png" />
     <Content Include="Images\PU.png" />
     <Content Include="Images\SearchIcon.png" />
