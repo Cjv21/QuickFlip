@@ -29,10 +29,10 @@ namespace QuickFlip.Controllers
                 posts.RemoveAll(x => x.Settled == true);
 
                 // category filter
+                List<string> categories = new List<string>();
                 if (Request.Form["Categories"] == null) { posts.RemoveAll(x => true); }
                 else
                 {
-                    List<string> categories = new List<string>();
                     categories = Request.Form["Categories"].Split(',').Select(sValue => sValue.Trim()).ToList();
                     categories.RemoveAll(x => x == "Any");
 
@@ -53,6 +53,7 @@ namespace QuickFlip.Controllers
 
 
                 // community filter
+                List<CommunityAbbrev> communities = new List<CommunityAbbrev>();
                 if (Request.Form["Communities"] == null) { posts.RemoveAll(x => true); }
                 else
                 {
@@ -61,7 +62,6 @@ namespace QuickFlip.Controllers
                     communitiesStr.RemoveAll(x => x == "Any");
 
                     // convert to enum
-                    List<CommunityAbbrev> communities = new List<CommunityAbbrev>();
                     foreach (var communityStr in communitiesStr)
                     {
                         communities.Add((CommunityAbbrev)Enum.Parse(typeof(CommunityAbbrev), communityStr));
@@ -131,14 +131,19 @@ namespace QuickFlip.Controllers
                 // price filter
                 if (Request.Form["PostType"] == "WantToBuy")
                 {
-                    var willingToPay = UInt32.Parse(Request.Form["MaxPriceFilter"]);
-                    posts.RemoveAll(x => x.RequiredPrice < willingToPay);
-
+                    if (Request.Form["MaxPriceFilter"] != String.Empty)
+                    {
+                        var willingToPay = UInt32.Parse(Request.Form["MaxPriceFilter"]);
+                        posts.RemoveAll(x => x.RequiredPrice < willingToPay);
+                    }
                 }
                 else if (Request.Form["PostType"] == "ForSale")
                 {
-                    var maxPrice = UInt32.Parse(Request.Form["MaxPriceFilter"]);
-                    posts.RemoveAll(x => x.RequiredPrice > maxPrice);
+                    if (Request.Form["MaxPriceFilter"] != String.Empty)
+                    {
+                        var maxPrice = UInt32.Parse(Request.Form["MaxPriceFilter"]);
+                        posts.RemoveAll(x => x.RequiredPrice > maxPrice);
+                    }
                 }
                 
 
@@ -180,10 +185,68 @@ namespace QuickFlip.Controllers
 
                 ViewData["ResultsReturned"] = "1";
 
+                // restore filter selections
+                ViewData["OrderBy"] = Request.Form["OrderBy"];
+                ViewData["AuctionType"] = Request.Form["AuctionType"];
+
+                var categoryEnums = Enum.GetValues(typeof(Category)).Cast<Category>();
+                foreach (var categoryEnum in categoryEnums)
+                {
+                    ViewData[categoryEnum.ToString()] = "0";
+                }
+                foreach (var category in categories)
+                {
+                    ViewData[category.ToString()] = "1";
+                }
+                ViewData["AnyCategory"] = (categories.Count == Enum.GetValues(typeof(Category)).Length) ? "1" : "0";
+
+                var communityEnums = Enum.GetValues(typeof(CommunityAbbrev)).Cast<CommunityAbbrev>();
+                foreach (var communityEnum in communityEnums)
+                {
+                    ViewData[communityEnum.ToString()] = "0";
+                }
+                foreach (var community in communities)
+                {
+                    ViewData[community.ToString()] = "1";
+                }
+                ViewData["AnyCommunity"] = (communities.Count == Enum.GetValues(typeof(CommunityAbbrev)).Length) ? "1" : "0";
+
+                ViewData["PostType"] = Request.Form["PostType"];
+                ViewData["MaxPriceFilter"] = Request.Form["MaxPriceFilter"];
+                ViewData["WillShip"] = Request.Form["WillShip"];
+                ViewData["HasPhoto"] = Request.Form["HasPhoto"];
+                ViewData["AnyOffers"] = Request.Form["AnyOffers"];
+
                 return View(posts);
             }
+            else
+            {
+                // default filter selections
+                ViewData["OrderBy"] = "MostRecent";
+                ViewData["AuctionType"] = "DontCare";
 
-            return View();
+                var categoryEnums = Enum.GetValues(typeof(Category)).Cast<Category>();
+                foreach (var categoryEnum in categoryEnums)
+                {
+                    ViewData[categoryEnum.ToString()] = "1";
+                }
+                ViewData["AnyCategory"] = "1";
+
+                var communityEnums = Enum.GetValues(typeof(CommunityAbbrev)).Cast<CommunityAbbrev>();
+                foreach (var communityEnum in communityEnums)
+                {
+                    ViewData[communityEnum.ToString()] = "0";
+                }
+                ViewData["AnyCommunity"] = "0";
+                ViewData[((CommunityAbbrev)comm.CommunityId).ToString()] = "1";
+
+                ViewData["PostType"] = "ForSale";
+                ViewData["WillShip"] = "DontCare";
+                ViewData["HasPhoto"] = "DontCare";
+                ViewData["AnyOffers"] = "DontCare";
+
+                return View();
+            }
         }
 
     }

@@ -1044,6 +1044,7 @@ img.uwm {
 .search-results-area {
     width: 860px;
     margin: 15px;
+    height: auto;
 }
 
 .search-parameters {
@@ -1058,10 +1059,24 @@ img.uwm {
     width: 840px;
     background-color: white;
     padding-left: 10px;
+    height: auto;
 }
 
 .search-button { 
     margin-left: 50px;
+}
+
+.post-preview-search {
+    border: 2px solid;
+    border-radius: 5px;
+    background-color: white;
+    min-height: 160px;
+    width: 480px;
+    margin: 15px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10px;
+    display: table;
 }
 
 /* post list */
