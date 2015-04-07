@@ -156,7 +156,9 @@ namespace QuickFlip.Controllers
                     {
                         foreach (var word in keywords)
                         {
-                            if (post.Title.ToLower().Contains(word.ToLower()) || post.Description.ToLower().Contains(word.ToLower()))
+                            if (post.Title.ToLower().Contains(word.ToLower()) || 
+                                post.Description.ToLower().Contains(word.ToLower()) ||
+                                post.Tags.Contains(word.ToLower()))
                             {
                                 keywordFiltered.Add(post);
                             }
@@ -240,7 +242,7 @@ namespace QuickFlip.Controllers
                 ViewData["AnyCommunity"] = "0";
                 ViewData[((CommunityAbbrev)comm.CommunityId).ToString()] = "1";
 
-                ViewData["PostType"] = "ForSale";
+                ViewData["PostType"] = "DontCare";
                 ViewData["WillShip"] = "DontCare";
                 ViewData["HasPhoto"] = "DontCare";
                 ViewData["AnyOffers"] = "DontCare";

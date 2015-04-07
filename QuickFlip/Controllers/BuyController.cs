@@ -181,6 +181,12 @@ namespace QuickFlip.Controllers
             List<Category> categories = Request.Form["Categories"].ToString().Split(',').Select(
                 x => (Category)Enum.Parse(typeof(Category), x)).ToList();
 
+            List<string> tags = new List<string>();
+            if (Request.Form["Tags"] != String.Empty)
+            {
+                tags = Request.Form["Tags"].ToString().Split(',').Select(sValue => sValue.Trim().ToLower()).ToList();
+            }
+
             Post newPost = new Post()
             {
                 CommunityId = communityId,
@@ -189,6 +195,7 @@ namespace QuickFlip.Controllers
                 ExpirationDate = DateTime.Now.AddMonths(3),
                 Title = title,
                 Description = description,
+                Tags = tags,
                 RequiredPrice = maxPrice,
                 PostType = PostType.Buy,
                 AuctionType = auctionType,

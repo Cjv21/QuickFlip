@@ -137,8 +137,16 @@ CREATE TABLE [Category]
 (
 	PostId INT NOT NULL,
 	Category VARCHAR(30) NOT NULL,
-	Tags VARCHAR(200),
 	PRIMARY KEY (PostId, Category),
+	FOREIGN KEY (PostId) REFERENCES Post(PostId)
+)
+
+-- TAG
+CREATE TABLE [Tag]
+(
+	PostId INT NOT NULL,
+	Tag VARCHAR(30) NOT NULL,
+	PRIMARY KEY (PostId, Tag),
 	FOREIGN KEY (PostId) REFERENCES Post(PostId)
 )
 

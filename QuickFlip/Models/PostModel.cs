@@ -14,6 +14,7 @@ namespace QuickFlip.Models
 		public DateTime ExpirationDate { get; set; }
 		public string Title { get; set; }
 		public string Description { get; set; }
+        public List<string> Tags { get; set; }
 		public int? RequiredPrice { get; set; }
 		public PostType PostType  { get; set; }
 		public AuctionType AuctionType { get; set; }

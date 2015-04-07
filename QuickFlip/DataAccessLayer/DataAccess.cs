@@ -354,6 +354,12 @@ namespace QuickFlip.DataAccessLayer
                     AddPostToCategory(newPost, category);
                 }
 
+                // add post to tags
+                foreach (var tag in newPost.Tags)
+                {
+                    AddPostToTag(newPost, tag);
+                }
+
                 return newPost;
             }
             catch (Exception e)
@@ -402,12 +408,6 @@ namespace QuickFlip.DataAccessLayer
 
                     reader.Close();
 
-                    // post.Offers = GetOffersByPostId(post.PostId);
-                    // if (post.AuctionType == AuctionType.Auction)
-                    // {
-                    //      post.BestOffer = post.Offers.OrderByDescending(x => x.Amount);
-                    // }
-                    // 
                     post.PostMedia = GetPostMediaByPostId(post.PostId);
 
                     return post;
@@ -469,6 +469,7 @@ namespace QuickFlip.DataAccessLayer
                     
                     post.Categories = GetCategoriesByPostId(post.PostId);
                     post.PostMedia = GetPostMediaByPostId(post.PostId);
+                    post.Tags = GetTagsByPostId(post.PostId);
 
                     return post;
                 }
@@ -551,6 +552,8 @@ namespace QuickFlip.DataAccessLayer
                     }
 
                     post.PostMedia = GetPostMediaByPostId(post.PostId);
+
+                    post.Tags = GetTagsByPostId(post.PostId);
                 }
 
                 return posts;
@@ -636,6 +639,8 @@ namespace QuickFlip.DataAccessLayer
                     }
 
                     post.PostMedia = GetPostMediaByPostId(post.PostId);
+
+                    post.Tags = GetTagsByPostId(post.PostId);
                 }
 
                 return posts;
@@ -715,6 +720,8 @@ namespace QuickFlip.DataAccessLayer
                     }
 
                     post.PostMedia = GetPostMediaByPostId(post.PostId);
+
+                    post.Tags = GetTagsByPostId(post.PostId);
                 }
 
                 return posts;
@@ -759,6 +766,9 @@ namespace QuickFlip.DataAccessLayer
 
             // remove from categories
             DeleteFromCategories(postId);
+
+            // remove from tags
+            DeleteFromTags(postId);
 
             // delete offers
             DeleteOffersByPostId(postId);
@@ -840,8 +850,9 @@ namespace QuickFlip.DataAccessLayer
                 }
 
                 posts = posts.GroupBy(x => x.PostId).Select(group => group.First()).ToList();
+               
 
-                // get offers and post media
+                // get offers, post media, and tags
                 foreach (var post in posts)
                 {
                     post.Offers = GetOffersByPostId(post.PostId);
@@ -853,6 +864,8 @@ namespace QuickFlip.DataAccessLayer
                     }
 
                     post.PostMedia = GetPostMediaByPostId(post.PostId);
+
+                    post.Tags = GetTagsByPostId(post.PostId);
                 }
 
                 return posts;
@@ -877,14 +890,13 @@ namespace QuickFlip.DataAccessLayer
                 // form query
                 SqlCommand command = new SqlCommand(
                     "INSERT INTO [Category] " +
-                    "(PostId, Category, Tags) " +
-                    "VALUES (@PostId, @Category, @Tags)",
+                    "(PostId, Category) " +
+                    "VALUES (@PostId, @Category)",
                     Connection);
 
                 // add parameters
                 command.Parameters.AddWithValue("@PostId", post.PostId);
                 command.Parameters.AddWithValue("@Category", category.ToString());
-                command.Parameters.AddWithValue("@Tags", String.Empty); // FIXME WHEN I ADD TAGS
 
                 // execute
                 command.ExecuteNonQuery();
@@ -951,6 +963,90 @@ namespace QuickFlip.DataAccessLayer
         }
 
         #endregion 
+
+        #region Tag
+
+        public void AddPostToTag(Post post, string tag)
+        {
+            try
+            {
+                // form query
+                SqlCommand command = new SqlCommand(
+                    "INSERT INTO [Tag] " +
+                    "(PostId, Tag) " +
+                    "VALUES (@PostId, @Tag)",
+                    Connection);
+
+                // add parameters
+                command.Parameters.AddWithValue("@PostId", post.PostId);
+                command.Parameters.AddWithValue("@Tag", tag);
+
+                // execute
+                command.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+
+        public List<string> GetTagsByPostId(int postId)
+        {
+            try
+            {
+                // form query
+                SqlCommand command = new SqlCommand(
+                    "SELECT * FROM [Tag] " +
+                    "WHERE PostId = @PostId",
+                    Connection);
+
+                // add parameters
+                command.Parameters.AddWithValue("@PostId", postId);
+
+                // execute
+                SqlDataReader reader = command.ExecuteReader();
+
+                List<string> tags = new List<string>();
+
+                while (reader.Read())
+                {
+                    tags.Add(reader["Tag"].ToString());
+                }
+
+                reader.Close();
+
+                return tags;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+
+                return null;
+            }
+        }
+
+        public void DeleteFromTags(int postId)
+        {
+            try
+            {
+                // form query
+                SqlCommand command = new SqlCommand(
+                    "DELETE FROM [Tag] " +
+                    "WHERE PostId = @PostId",
+                    Connection);
+
+                // add parameters
+                command.Parameters.AddWithValue("@PostId", postId);
+                command.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+
+
+        #endregion
 
         #region PostMedia
 
