@@ -370,6 +370,65 @@ namespace QuickFlip.DataAccessLayer
             return null; 
         }
 
+        public Post EditPost(Post editedPost)
+        {
+            try
+            {
+                // form query
+                SqlCommand command = new SqlCommand(
+                    "Update [Post] " +
+                    "SET CommunityId = @CommunityId, UserId = @UserId, CreateDate = @CreateDate, ExpirationDate = @ExpirationDate, Title = @Title, Description = @Description, RequiredPrice = @RequiredPrice, PostType = @PostType, AuctionType = @AuctionType, TransactionType = @TransactionType " +
+                    "WHERE PostId = @PostId",
+                    Connection);
+
+                // add parameters
+                command.Parameters.AddWithValue("@PostId", editedPost.PostId);
+                command.Parameters.AddWithValue("@CommunityId", editedPost.CommunityId);
+                command.Parameters.AddWithValue("@UserId", editedPost.UserId);
+                command.Parameters.AddWithValue("@CreateDate", editedPost.CreateDate);
+                command.Parameters.AddWithValue("@ExpirationDate", editedPost.ExpirationDate);
+                command.Parameters.AddWithValue("@Title", editedPost.Title);
+                command.Parameters.AddWithValue("@Description", editedPost.Description);
+                command.Parameters.AddWithValue("@RequiredPrice", editedPost.RequiredPrice);
+                command.Parameters.AddWithValue("@PostType", editedPost.PostType);
+                command.Parameters.AddWithValue("@AuctionType", editedPost.AuctionType);
+                command.Parameters.AddWithValue("@TransactionType", editedPost.TransactionType);
+
+                // convert null values to DBNull
+                foreach (SqlParameter parameter in command.Parameters)
+                {
+                    if (parameter.Value == null) { parameter.Value = DBNull.Value; }
+                }
+
+                // execute
+                command.ExecuteNonQuery();
+
+                // delete old categories and tags
+                DeleteFromCategories(editedPost.PostId);
+                DeleteFromTags(editedPost.PostId);
+
+                // add post to categories
+                foreach (var category in editedPost.Categories)
+                {
+                    AddPostToCategory(editedPost, category);
+                }
+
+                // add post to tags
+                foreach (var tag in editedPost.Tags)
+                {
+                    AddPostToTag(editedPost, tag);
+                }
+
+                return editedPost;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
+            return null;
+        }
+
         public Post GetPostByCreateDate(DateTime createDate)
         {
             try

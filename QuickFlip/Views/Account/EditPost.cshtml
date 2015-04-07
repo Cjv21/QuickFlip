@@ -1,0 +1,153 @@
+﻿<!-- includes -->
+@using System.Linq
+@using QuickFlip.Models
+@using QuickFlip.BusinessLayer;
+<script src="~/Scripts/category-validate-edit.js"></script>
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+
+
+<!-- community header -->
+@if (Model.PostType == PostType.Sell)
+{
+    Community comm = BusinessLogic.GetCommunityByCommunityId(Model.CommunityId);
+    <img src="@comm.Logo.Src" class="comm-header-logo" />
+    <h2>Edit Post - For Sale @@ @((CommunityAbbrev)comm.CommunityId) </h2>
+    <hr />
+    <br />
+}
+else
+{
+    Community comm = BusinessLogic.GetCommunityByCommunityId(Model.CommunityId);
+    <img src="@comm.Logo.Src" class="comm-header-logo" />
+    <h2>Edit Post - Want to Buy @@ @((CommunityAbbrev)comm.CommunityId) </h2>
+    <hr />
+    <br />
+}
+
+@if (Request.IsAuthenticated)
+{
+    <!-- make post form -->
+    <form method="POST" enctype="multipart/form-data" action=@Url.Action("SubmitEditPost", "Account")>
+
+        <h3>Auction Type:</h3>
+        <select name="AuctionType">
+            @if (ViewData["AuctionType"].ToString() == "Auction") { <option selected value="Auction">Auction</option> }
+            else { <option value="Auction">Auction</option> }
+
+            @if (ViewData["AuctionType"].ToString() == "FavoriteOffer") { <option selected value="FavoriteOffer">Favorite Offer</option>}
+            else { <option value="FavoriteOffer">Favorite Offer</option> }
+        </select>
+        <br />
+
+        <h3>Local meetup only?</h3>
+        <select name="LocalOnly">
+            @if (ViewData["LocalOnly"].ToString() == "Yes") { <option selected value="Yes">Yes</option> }
+            else { <option value="Yes">Yes</option> }
+
+            @if (ViewData["LocalOnly"].ToString() == "No") { <option selected value="No">No</option> }
+            else { <option value="No">No</option> }
+        </select>
+        <br />
+
+        <h3>Title:</h3>
+        <input type="text" name="PostTitle" value="@Model.Title"/>
+        <br>
+
+
+        @if(Model.PostType == PostType.Sell) { <h3>Minimum price willing to sell for (optional) </h3> }
+        else { <h3>Max price willing to pay (optional):</h3> }                                                                                                                 
+        $ <input type="number" name="MaxPrice" value="@Model.RequiredPrice"/>
+        <br>
+
+        <h3>Picture of what you're looking for (optional):</h3>
+        @Html.TextBox("postImage", "", new { type = "file" })
+        <br />
+
+        <h3>Description:</h3>
+        <textarea name="PostDescription" rows="10" style="width:600px; resize:none">@Model.Description</textarea>
+        <br>
+
+        <!-- tags -->
+        @if (true)
+        {
+            string tags = String.Empty;
+
+            for (int i = 0; i < Model.Tags.Count; i++)
+            {
+                tags += Model.Tags[i];
+                if (i != Model.Tags.Count - 1) { tags += ", "; }
+            }
+
+            <h3>Tags (comma separated):</h3>
+            <input type="text" name="Tags" value="@tags"/>
+            <br />
+        }
+
+        <h3>Categories:</h3>
+        <ul class="checkbox-grid">
+            @if (ViewData["Auto"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="Auto"> Auto </li> }
+            else { <li><input type="checkbox" name="Categories" value="Auto"> Auto </li> }
+
+            @if (ViewData["Books"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="Books"> Books </li> }
+            else { <li><input type="checkbox" name="Categories" value="Books"> Books </li> }
+
+            @if (ViewData["CameraPhoto"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="CameraPhoto"> Camera & Photo </li> }
+            else { <li><input type="checkbox" name="Categories" value="CameraPhoto"> Camera & Photo </li> }
+
+            @if (ViewData["CellPhones"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="CellPhones"> Cell Phones </li> }
+            else { <li><input type="checkbox" name="Categories" value="CellPhones"> Cell Phones </li> }
+
+            @if (ViewData["ClothingShoe"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="ClothingShoe"> Clothing & Shoe </li> }
+            else { <li><input type="checkbox" name="Categories" value="ClothingShoe"> Clothing & Shoe </li> }
+
+            @if (ViewData["Computers"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="Computers"> Computers </li> }
+            else { <li><input type="checkbox" name="Categories" value="Computers"> Computers </li> }
+
+            @if (ViewData["Electronics"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="Electronics"> Electronics </li> }
+            else { <li><input type="checkbox" name="Categories" value="Electronics"> Electronics </li> }
+
+            @if (ViewData["HealthBeauty"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="HealthBeauty"> Health & Beauty </li> }
+            else { <li><input type="checkbox" name="Categories" value="HealthBeauty"> Health & Beauty </li> }
+
+            @if (ViewData["Home"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="Home"> Home </li> }
+            else { <li><input type="checkbox" name="Categories" value="Home"> Home </li> }
+
+            @if (ViewData["Jobs"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="Jobs"> Jobs </li> }
+            else { <li><input type="checkbox" name="Categories" value="Jobs"> Jobs </li> }
+
+            @if (ViewData["Movies"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="Movies"> Movies </li> }
+            else { <li><input type="checkbox" name="Categories" value="Movies"> Movies </li> }
+
+            @if (ViewData["Music"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="Music"> Music </li> }
+            else { <li><input type="checkbox" name="Categories" value="Music"> Music </li> }
+
+            @if (ViewData["MusicalInstruments"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="MusicalInstruments"> Musical Instruments </li> }
+            else { <li><input type="checkbox" name="Categories" value="MusicalInstruments"> Musical Instruments </li> }
+
+            @if (ViewData["Pets"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="Pets"> Pets </li> }
+            else { <li><input type="checkbox" name="Categories" value="Pets"> Pets </li> }
+
+            @if (ViewData["RealEstate"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="RealEstate"> Real Estate </li> }
+            else { <li><input type="checkbox" name="Categories" value="RealEstate"> Real Estate </li> }
+
+            @if (ViewData["SportingGoods"].ToString() == "1") { <li><input type="checkbox" checked="checked" name="Categories" value="SportingGoods"> Sporting Goods </li> }
+            else { <li><input type="checkbox" name="Categories" value="SportingGoods"> Sporting Goods </li> }  
+        </ul>
+
+        <input type="number" name="PostId" hidden="hidden" value="@Model.PostId" />
+        <input type="number" name="CommunityId" hidden="hidden" value="@Model.CommunityId" />
+
+        <input value="Post" type="submit" style="position:relative; margin-top:20px;"/>  
+        <label for="checkbox-validate" class="category-validate">You must select at least one category. </label>
+    </form>    
+}
+else
+{
+    <!-- login to make a post -->
+    <a href=@Url.Action("Login", "Account", new { returnUrl = Url.Action("EditPost", "Account", new { id = @Model.PostId }) }) class="make-post-link">
+        Login to Edit a Post
+    </a>
+}
+
+
+

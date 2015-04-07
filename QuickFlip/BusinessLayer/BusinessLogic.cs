@@ -129,6 +129,17 @@ namespace QuickFlip.BusinessLayer
             return newPost;
         }
 
+        public static Post EditPost(Post editedPost)
+        {
+            DataAccess da = new DataAccess();
+
+            editedPost = da.EditPost(editedPost);
+
+            da.Dispose();
+
+            return editedPost;
+        }
+
         public static Post GetPostByPostId(int postId)
         {
             DataAccess da = new DataAccess();
@@ -251,6 +262,15 @@ namespace QuickFlip.BusinessLayer
             da.Dispose();
 
             return newPostMedia;
+        }
+
+        public static void DeletePostMedia(int postId)
+        {
+            DataAccess da = new DataAccess();
+
+            da.DeletePostMedia(postId);
+
+            da.Dispose();
         }
 
         #endregion

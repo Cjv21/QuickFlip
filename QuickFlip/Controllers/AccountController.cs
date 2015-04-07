@@ -36,6 +36,126 @@ namespace QuickFlip.Controllers
             return RedirectToAction("Manage");
         }
 
+        // GET: /Account/DeletePost/
+        [InitializeSimpleMembership]
+        public ActionResult EditPost(int id)
+        {
+            Post post = BusinessLogic.GetPostByPostId(id);
+
+            if (post.UserId == WebSecurity.CurrentUserId)
+            {
+                if (post.Offers.Count != 0)
+                {
+                    TempData["UnauthorizedDelete"] = "You cannot edit a post with offers!";
+                }
+                else
+                {
+                    // set defaults
+                    ViewData["PostType"] = post.PostType == PostType.Sell ? "ForSale" : "WantToBuy";
+                    ViewData["AuctionType"] = post.AuctionType == AuctionType.Auction ? "Auction" : "FavoriteOffer";
+                    ViewData["LocalOnly"] = post.TransactionType == TransactionType.Local ? "Yes" : "No";
+
+                    var categoryEnums = Enum.GetValues(typeof(Category)).Cast<Category>();
+                    foreach (var categoryEnum in categoryEnums)
+                    {
+                        ViewData[categoryEnum.ToString()] = "0";
+                    }
+
+                    foreach (var category in post.Categories)
+                    {
+                        ViewData[category.ToString()] = "1";
+                    }
+
+
+                    ViewData["PostType"] = "DontCare";
+                    ViewData["WillShip"] = "DontCare";
+                    ViewData["HasPhoto"] = "DontCare";
+                    ViewData["AnyOffers"] = "DontCare";
+
+
+                    return View(post);
+                }
+            }
+            else
+            {
+                TempData["UnauthorizedDelete"] = "You cannot edit a post that isn't yours!";
+            }
+
+            return RedirectToAction("Manage");
+        }
+
+        [HttpPost]
+        [InitializeSimpleMembership]
+        public ActionResult SubmitEditPost(HttpPostedFileBase postImage)
+        {
+            int postId = Int32.Parse(Request.Form["PostId"]);
+
+            AuctionType auctionType = (AuctionType)Enum.Parse(
+                typeof(AuctionType), Request.Form["AuctionType"].ToString());
+
+            TransactionType transactionType = Request.Form["LocalOnly"].ToString() == "Yes"
+                ? TransactionType.Local : TransactionType.LocalOrLongDistance;
+
+            string title = Request.Form["PostTitle"].ToString();
+
+            int communityId = Int32.Parse(Request.Form["CommunityId"]);
+
+            int? maxPrice = (String.IsNullOrWhiteSpace(Request.Form["MaxPrice"]) 
+                ? (int?)null : Convert.ToInt32(Request.Form["MaxPrice"]));
+
+            string description = Request.Form["PostDescription"].ToString();
+
+            List<Category> categories = Request.Form["Categories"].ToString().Split(',').Select(
+                x => (Category)Enum.Parse(typeof(Category), x)).ToList();
+
+            List<string> tags = new List<string>();
+            if (Request.Form["Tags"] != String.Empty)
+            {
+                tags = Request.Form["Tags"].ToString().Split(',').Select(sValue => sValue.Trim().ToLower()).ToList();
+            }
+
+            Post editedPost = new Post()
+            {
+                PostId = postId,
+                CommunityId = communityId,
+                UserId = WebSecurity.CurrentUserId,
+                CreateDate = DateTime.Now,
+                ExpirationDate = DateTime.Now.AddMonths(3),
+                Title = title,
+                Description = description,
+                Tags = tags,
+                RequiredPrice = maxPrice,
+                PostType = PostType.Buy,
+                AuctionType = auctionType,
+                TransactionType = transactionType,
+                Categories = categories
+            };
+
+            BusinessLogic.EditPost(editedPost);
+
+            if (postImage != null)
+            {
+                BusinessLogic.DeletePostMedia(postId);
+
+                byte[] imageBytes = new byte[postImage.InputStream.Length];
+                long bytesRead = postImage.InputStream.Read(imageBytes, 0, (int)postImage.InputStream.Length);
+                postImage.InputStream.Close();
+                string b64EncodedImage = Convert.ToBase64String(imageBytes, 0, imageBytes.Length);
+
+                PostMedia newPostMedia = new PostMedia()
+                {
+                    PostId = postId,
+                    B64EncodedImage = b64EncodedImage
+                };
+        
+                newPostMedia = BusinessLogic.CreatePostMedia(newPostMedia);
+            }
+
+
+            return editedPost.PostType == PostType.Sell
+                ? RedirectToAction("Post", "Sell", new { id = postId })
+                : RedirectToAction("Post", "Buy", new { id = postId });
+        }
 
         // GET: /Account/Manage
         [InitializeSimpleMembership]

@@ -294,6 +294,7 @@
     <Content Include="Images\UsersIcon.png" />
     <Content Include="Images\UWM.png" />
     <Content Include="Images\NoPhotoIcon.png" />
+    <Content Include="Scripts\category-validate-edit.js" />
     <Content Include="Scripts\community-select-all.js" />
     <Content Include="Scripts\change-profilepicture.js" />
     <Content Include="Scripts\search-pricefilter-type.js" />
@@ -369,6 +370,7 @@
     <Content Include="Views\Sell\MakeSellPost.cshtml" />
     <Content Include="Views\Sell\MessageSent.cshtml" />
     <Content Include="Views\Sell\Post.cshtml" />
+    <Content Include="Views\Account\EditPost.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
