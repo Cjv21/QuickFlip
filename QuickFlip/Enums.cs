@@ -53,3 +53,10 @@ public enum Category
     RealEstate, 
     SportingGoods
 }
+
+public enum AlertMode
+{
+    Email,
+    Text,
+    Both
+}

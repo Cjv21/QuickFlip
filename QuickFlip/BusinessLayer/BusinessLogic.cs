@@ -99,6 +99,34 @@ namespace QuickFlip.BusinessLayer
 
             da.Dispose();
         }
+
+        public static void ChangeHomeCommunity(int userId, CommunityAbbrev comm)
+        {
+            DataAccess da = new DataAccess();
+
+            da.ChangeHomeCommunity(userId, comm);
+
+            da.Dispose();
+        }
+
+        public static void ChangePhone(int userId, Int64 phoneNumber)
+        {
+            DataAccess da = new DataAccess();
+
+            da.ChangePhone(userId, phoneNumber);
+
+            da.Dispose();
+        }
+
+        public static void ChangeAlertMode(int userId, AlertMode mode)
+        {
+            DataAccess da = new DataAccess();
+
+            da.ChangeAlertMode(userId, mode);
+
+            da.Dispose();
+        }
+
         #endregion
 
         #region Community
@@ -330,6 +358,16 @@ namespace QuickFlip.BusinessLayer
                           .Select(s => s[random.Next(s.Length)])
                           .ToArray());
             return nonce;
+        }
+
+        public static string PhoneNumberToString(Int64 number)
+        {
+
+            string numStr = number.ToString();
+
+            return "(" + numStr.Substring(0, 3) + ") " 
+                       + numStr.Substring(3, 3) + " " 
+                       + numStr.Substring(6, 4);
         }
 
         public static void SendEmail(string recipient, string subject, string body)

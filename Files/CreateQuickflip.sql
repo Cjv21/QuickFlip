@@ -74,6 +74,8 @@ CREATE TABLE [UserProfile]
 	Email VARCHAR(320),
 	Nonce VARCHAR(8),
 	Verified BIT NOT NULL DEFAULT 0,
+	Phone BIGINT,
+	AlertMode INT DEFAULT 0,
 	B64EncodedImage NVARCHAR(MAX),
 	PRIMARY KEY (UserId),
 	FOREIGN KEY (CommunityId) REFERENCES [Community](CommunityId)

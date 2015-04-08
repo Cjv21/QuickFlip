@@ -3,6 +3,9 @@
 @using QuickFlip.BusinessLayer
 @using QuickFlip.Models
 <script src="~/Scripts/change-profilepicture.js"></script>
+<script src="~/Scripts/change-comm.js"></script>
+<script src="~/Scripts/change-alert-mode.js"></script>
+<script src="~/Scripts/change-phone.js"></script>
 
 <hgroup class="title">
     <h1>Manage Account.</h1>
@@ -32,12 +35,37 @@
 
 
     <!-- change password -->
-    <div style="float:right; width:400px; margin-top:60px;">
+    <div style="float:right; width:450px; margin-top:60px;">
         <ul style="font-size:large;">
-            <li> @Html.ActionLink("Change password", "ChangePassword", "Account", new { style="text-decoration:none"}) </li>
-            <li> Change email </li>
-            <li> Set home community </li>
-        </ul>
+            <li style="margin-top:10px;"> <b>Home community:</b> 
+                @(BusinessLogic.GetUserByUserId(WebSecurity.CurrentUserId).CommunityId == null
+                    ? "Not set!" 
+                    : ((CommunityAbbrev)BusinessLogic.GetUserByUserId(WebSecurity.CurrentUserId).CommunityId).ToString()
+                 )
+                <img src="@(BusinessLogic.GetCommunityByCommunityId(
+                                (int)BusinessLogic.GetUserByUserId(WebSecurity.CurrentUserId).CommunityId            
+                            ).Logo.Src)"  style="max-height:20px; top:4px; position:relative; margin-left:3px;"/> 
+                <a id="changeCommunity" style="text-decoration:none; cursor:pointer; color:blue; ">[change] </a>
+            </li>
+            <li style="margin-top:10px;"> <b>Email:</b> @BusinessLogic.GetUserByUserId(WebSecurity.CurrentUserId).Email </li>
+            <li style="margin-top:10px;"> <b>Phone number:</b> 
+                @(BusinessLogic.GetUserByUserId(WebSecurity.CurrentUserId).Phone == null
+                    ? "Not set!"
+                    : BusinessLogic.PhoneNumberToString(
+                        (Int64)BusinessLogic.GetUserByUserId(WebSecurity.CurrentUserId).Phone
+                    )
+                )                
+                <a id="changePhone" style="text-decoration:none; cursor:pointer; color:blue; ">[change] </a>
+            </li>
+            <li style="margin-top:10px;">
+                <b>Alert mode:</b>
+                @(BusinessLogic.GetUserByUserId(WebSecurity.CurrentUserId).AlertMode == AlertMode.Email ? "Email"
+                    : (BusinessLogic.GetUserByUserId(WebSecurity.CurrentUserId).AlertMode == AlertMode.Text ? "Text" : "Email & Text"))
+                
+                <a id="changeAlertMode" style="text-decoration:none; cursor:pointer; color:blue; ">[change] </a>
+            </li>
+            <li style="margin-top:10px;"> @Html.ActionLink("[change password]", "ChangePassword", "Account", new { style = "text-decoration:none; color:blue;" })</li>
+</ul>
     </div>
 
 </div>
@@ -182,10 +210,71 @@
 <!-------------------- scripts -------------------->
 
     <!-- change profile picture dialog -->
-    <div id="dialog" title="Change Profile Picture">
+    <div id="prof-dialog" title="Change Profile Picture">
         <form method="POST" enctype="multipart/form-data" action="~/Account/ChangeProfilePicture">
             <div style="text-align:center; margin-top:10px">
                 @Html.TextBox("newProfilePicture", "", new { type = "file" })
+            </div>
+            <div style="text-align:center; margin-top:25px">
+                <input value="Submit" type="submit" style="align-content:center" />
+            </div>
+        </form>
+    </div>
+
+    <!-- change home community dialog -->
+    <div id="comm-dialog" title="Change Home Community">
+        <form method="POST" enctype="multipart/form-data" action="~/Account/ChangeHomeCommunity">
+            <div style="text-align:center; margin-top:10px">
+
+                <select name="Community">
+                    <option value="IU">IU</option>
+                    <option value="MSU">MSU</option>
+                    <option value="NU">NU</option>
+                    <option value="OSU">OSU</option>
+                    <option value="PSU">PSU</option>
+                    <option value="PU">PU</option>
+                    <option value="UI">UI</option>
+                    <option value="UIUC">UIUC</option>
+                    <option value="UM">UM</option>
+                    <option value="UMN">UMN</option>
+                    <option value="UNL">UNL</option>
+                    <option value="UWM">UWM</option>
+                </select>
+                <br />
+
+            </div>
+            <div style="text-align:center; margin-top:25px">
+                <input value="Submit" type="submit" style="align-content:center" />
+            </div>
+        </form>
+    </div>
+
+    <!-- change phone dialog -->
+    <div id="phone-dialog" title="Change Phone Number">
+        <form method="POST" enctype="multipart/form-data" action="~/Account/ChangePhone">
+            <div style="text-align:center; margin-top:10px">
+               ( <input type="text" name="phone_0-2" style="width:40px;" /> )
+                 <input type="text" name="phone_3-5" style="width:40px" />
+               - <input type="text" name="phone_6-9" style="width:40px" />
+            </div>
+            <div style="text-align:center; margin-top:25px">
+                <input value="Submit" type="submit" style="align-content:center" />
+            </div>
+        </form>
+    </div>
+
+    <!-- change alert mode dialog -->
+    <div id="alert-mode-dialog" title="Change Alert Mode">
+        <form method="POST" enctype="multipart/form-data" action="~/Account/ChangeAlertMode">
+            <div style="text-align:center; margin-top:10px;">
+
+                <select name="AlertMode">
+                    <option value="Email">Email</option>
+                    <option value="Phone">Text</option>
+                    <option value="Both">Email & Text</option>
+                </select>
+                <br />
+
             </div>
             <div style="text-align:center; margin-top:25px">
                 <input value="Submit" type="submit" style="align-content:center" />

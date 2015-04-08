@@ -190,6 +190,31 @@ namespace QuickFlip.DataAccessLayer
             }
         }
 
+        public void ChangeHomeCommunity(int userId, CommunityAbbrev comm)
+        {
+            try
+            {
+                // form query
+                SqlCommand command = new SqlCommand(
+                    "UPDATE [UserProfile] " +
+                    "SET CommunityId = @CommunityId " +
+                    "WHERE UserId = @UserId",
+                    Connection);
+
+                // add parameters
+                command.Parameters.AddWithValue("@UserId", userId);
+                command.Parameters.AddWithValue("@CommunityId", (int)comm);
+
+                // execute
+                command.ExecuteNonQuery();
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+
         public void ChangeProfilePicture(int userId, string b64EncodedImage)
         {
             try
@@ -243,7 +268,11 @@ namespace QuickFlip.DataAccessLayer
                     {
                         UserId = Convert.ToInt32(reader["UserId"]),
                         UserName = Convert.ToString(reader["UserName"]),
-                        //CommunityId = Convert.ToInt32(reader["CommunityId"]),
+                        CommunityId = reader["CommunityId"] == DBNull.Value
+                            ? (int?)null : Convert.ToInt32(reader["CommunityId"]),
+                        Phone = reader["Phone"] == DBNull.Value
+                            ? (Int64?)null : Convert.ToInt64(reader["Phone"]),
+                        AlertMode = (AlertMode)Int32.Parse(reader["AlertMode"].ToString()),
                         Email = Convert.ToString(reader["Email"]),
                         B64EncodedImage = Convert.ToString(reader["B64EncodedImage"])
                     };
@@ -260,6 +289,57 @@ namespace QuickFlip.DataAccessLayer
 
             return null;
         }
+
+        public void ChangePhone(int userId, Int64 phoneNumber)
+        {
+            try
+            {
+                // form query
+                SqlCommand command = new SqlCommand(
+                    "UPDATE [UserProfile] " +
+                    "SET Phone = @Phone " +
+                    "WHERE UserId = @UserId",
+                    Connection);
+
+                // add parameters
+                command.Parameters.AddWithValue("@UserId", userId);
+                command.Parameters.AddWithValue("@Phone", phoneNumber);
+
+                // execute
+                command.ExecuteNonQuery();
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+
+        public void ChangeAlertMode(int userId, AlertMode mode)
+        {
+            try
+            {
+                // form query
+                SqlCommand command = new SqlCommand(
+                    "UPDATE [UserProfile] " +
+                    "SET AlertMode = @AlertMode " +
+                    "WHERE UserId = @UserId",
+                    Connection);
+
+                // add parameters
+                command.Parameters.AddWithValue("@UserId", userId);
+                command.Parameters.AddWithValue("@AlertMode", (int)mode);
+
+                // execute
+                command.ExecuteNonQuery();
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+
 
         #endregion
 

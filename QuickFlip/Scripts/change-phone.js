@@ -1,12 +1,12 @@
 ﻿$(function () {
-    $("#prof-dialog").dialog({
+    $("#phone-dialog").dialog({
         modal: true,
         resizable: false,
         width: 400,
         height: 180,
         autoOpen: false
     });
-    $("#changeProfilePicture").on("click", function () {
-        $("#prof-dialog").dialog("open");
+    $("#changePhone").on("click", function () {
+        $("#phone-dialog").dialog("open");
     });
 });

@@ -157,6 +157,46 @@ namespace QuickFlip.Controllers
                 : RedirectToAction("Post", "Buy", new { id = postId });
         }
 
+        [InitializeSimpleMembership]
+        public ActionResult ChangeHomeCommunity()
+        {
+            int userId = WebSecurity.CurrentUserId;
+
+            CommunityAbbrev comm = (CommunityAbbrev)Enum.Parse(
+                typeof(CommunityAbbrev), Request.Form["Community"].ToString()
+            );
+
+            BusinessLogic.ChangeHomeCommunity(userId, comm);
+
+            return RedirectToAction("Manage");
+        }
+
+        [InitializeSimpleMembership]
+        public ActionResult ChangePhone()
+        {
+            int userId = WebSecurity.CurrentUserId;
+
+            string phoneStr = Request.Form["phone_0-2"] + Request.Form["phone_3-5"] + Request.Form["phone_6-9"];
+
+            Int64 phoneNumber = Int64.Parse(phoneStr);
+
+            BusinessLogic.ChangePhone(userId, phoneNumber);
+
+            return RedirectToAction("Manage");
+        }
+
+        [InitializeSimpleMembership]
+        public ActionResult ChangeAlertMode()
+        {
+            int userId = WebSecurity.CurrentUserId;
+
+            AlertMode mode = (AlertMode)Enum.Parse(typeof(AlertMode), Request.Form["AlertMode"].ToString());
+
+            BusinessLogic.ChangeAlertMode(userId, mode);
+
+            return RedirectToAction("Manage");
+        }
+
         // GET: /Account/Manage
         [InitializeSimpleMembership]
         public ActionResult Manage()

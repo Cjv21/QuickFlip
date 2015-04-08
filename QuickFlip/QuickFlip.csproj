@@ -295,6 +295,9 @@
     <Content Include="Images\UWM.png" />
     <Content Include="Images\NoPhotoIcon.png" />
     <Content Include="Scripts\category-validate-edit.js" />
+    <Content Include="Scripts\change-alert-mode.js" />
+    <Content Include="Scripts\change-phone.js" />
+    <Content Include="Scripts\change-comm.js" />
     <Content Include="Scripts\community-select-all.js" />
     <Content Include="Scripts\change-profilepicture.js" />
     <Content Include="Scripts\search-pricefilter-type.js" />
