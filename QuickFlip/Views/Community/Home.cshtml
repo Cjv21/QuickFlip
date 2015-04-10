@@ -30,6 +30,16 @@
     </li>
 
     <li style="margin-bottom: 70px;">
+        <a href="@Url.Action("Index", "Search", new { id = (CommunityAbbrev)Model.CommunityId })" class="comm-home-icons">
+            <img src="~/Images/SearchIcon.png" style="display: block; width: 75px; height: 75px;" />
+        </a>
+
+        <div class="comm-home-icons-desc">
+            <b>Search:</b> Search for content
+        </div>
+    </li>
+
+    <li style="margin-bottom: 70px;">
         <a class="comm-home-icons">
             <img src="~/Images/UsersIcon.png" style="display: block; width: 75px; height: 75px;" />
         </a>
@@ -39,15 +49,7 @@
         </div>
     </li>
 
-    <li style="margin-bottom: 70px;">
-        <a href="@Url.Action("Index", "Search", new { id = (CommunityAbbrev)Model.CommunityId })" class="comm-home-icons">
-            <img src="~/Images/SearchIcon.png" style="display: block; width: 75px; height: 75px;" />
-        </a>
 
-        <div class="comm-home-icons-desc">
-            <b>Search:</b> Search for content in @((CommunityAbbrev)Model.CommunityId)
-        </div>
-    </li>
 
 </ul>
 

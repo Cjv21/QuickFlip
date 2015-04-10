@@ -38,23 +38,24 @@
     <div style="float:right; width:450px; margin-top:60px;">
         <ul style="font-size:large;">
             <li style="margin-top:10px;"> <b>Home community:</b> 
-                @(BusinessLogic.GetUserByUserId(WebSecurity.CurrentUserId).CommunityId == null
+                @(Model.CommunityId == null
                     ? "Not set!" 
-                    : ((CommunityAbbrev)BusinessLogic.GetUserByUserId(WebSecurity.CurrentUserId).CommunityId).ToString()
+                    : ((CommunityAbbrev)Model.CommunityId).ToString()
                  )
-                <img src="@(BusinessLogic.GetCommunityByCommunityId(
-                                (int)BusinessLogic.GetUserByUserId(WebSecurity.CurrentUserId).CommunityId            
-                            ).Logo.Src)"  style="max-height:20px; top:4px; position:relative; margin-left:3px;"/> 
+                @if (Model.CommunityId != null)
+                {
+                    <img src="@(BusinessLogic.GetCommunityByCommunityId(Model.CommunityId).Logo.Src)" 
+                         style="max-height:20px; top:4px; position:relative; margin-left:3px;"/>
+                }
+ 
                 <a id="changeCommunity" style="text-decoration:none; cursor:pointer; color:blue; ">[change] </a>
             </li>
             <li style="margin-top:10px;"> <b>Email:</b> @BusinessLogic.GetUserByUserId(WebSecurity.CurrentUserId).Email </li>
             <li style="margin-top:10px;"> <b>Phone number:</b> 
-                @(BusinessLogic.GetUserByUserId(WebSecurity.CurrentUserId).Phone == null
+                @(Model.Phone == null
                     ? "Not set!"
-                    : BusinessLogic.PhoneNumberToString(
-                        (Int64)BusinessLogic.GetUserByUserId(WebSecurity.CurrentUserId).Phone
-                    )
-                )                
+                    : BusinessLogic.PhoneNumberToString(Model.Phone)
+                 )               
                 <a id="changePhone" style="text-decoration:none; cursor:pointer; color:blue; ">[change] </a>
             </li>
             <li style="margin-top:10px;">
@@ -287,5 +288,12 @@
     {
         <script type="text/javascript">
             alert(@Html.Raw(Json.Encode(TempData["UnauthorizedDelete"])));
+        </script>
+    }
+    
+    @if (TempData["InvalidPhone"] != null)
+    {
+        <script type="text/javascript">
+                alert(@Html.Raw(Json.Encode(TempData["InvalidPhone"])));
         </script>
     }

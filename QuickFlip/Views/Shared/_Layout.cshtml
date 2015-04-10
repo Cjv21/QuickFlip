@@ -10,6 +10,7 @@
         @Scripts.Render("~/bundles/jquery")
         @Scripts.Render("~/bundles/jqueryui")
         @Styles.Render("~/Content/themes/base/css")
+        @using QuickFlip.BusinessLayer
     </head>
     <body>
         <header>
@@ -24,7 +25,20 @@
                     <nav>
                         <ul id="menu">
                             <li>@Html.ActionLink("Account", "Manage", "Account")</li>
-                            <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                            @if (Request.IsAuthenticated &&
+                                 BusinessLogic.GetUserByUserId(WebSecurity.CurrentUserId).CommunityId != null)
+                            {
+                                <li>
+                                    <a href="~/Community/Home/@(((CommunityAbbrev)BusinessLogic.GetUserByUserId(WebSecurity.CurrentUserId).CommunityId).ToString())">
+                                        Home
+                                    </a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                            }
+                                
                             <li>@Html.ActionLink("About", "About", "Home")</li>
                         </ul>
                     </nav>

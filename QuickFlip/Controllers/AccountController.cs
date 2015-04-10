@@ -176,6 +176,14 @@ namespace QuickFlip.Controllers
         {
             int userId = WebSecurity.CurrentUserId;
 
+            if (Request.Form["phone_0-2"].Length != 3 ||
+                Request.Form["phone_3-5"].Length != 3 ||
+                Request.Form["phone_6-9"].Length != 4)
+            {
+                TempData["InvalidPhone"] = "Invalid phone number format!";
+                return RedirectToAction("Manage");
+            }
+            
             string phoneStr = Request.Form["phone_0-2"] + Request.Form["phone_3-5"] + Request.Form["phone_6-9"];
 
             Int64 phoneNumber = Int64.Parse(phoneStr);
