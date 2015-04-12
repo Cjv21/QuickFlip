@@ -22,6 +22,7 @@ namespace QuickFlip.Controllers
             return View();
         }
 
+        [InitializeSimpleMembership]
         public ActionResult Account()
         {
             return View();

@@ -90,8 +90,13 @@ namespace QuickFlip.Controllers
         {
             int postId = Int32.Parse(Request.Form["PostId"]);
 
+            PostType postType = (PostType)Enum.Parse(
+                typeof(PostType), Request.Form["PostType"].ToString()
+            );
+
             AuctionType auctionType = (AuctionType)Enum.Parse(
-                typeof(AuctionType), Request.Form["AuctionType"].ToString());
+                typeof(AuctionType), Request.Form["AuctionType"].ToString()
+            );
 
             TransactionType transactionType = Request.Form["LocalOnly"].ToString() == "Yes"
                 ? TransactionType.Local : TransactionType.LocalOrLongDistance;
@@ -125,7 +130,7 @@ namespace QuickFlip.Controllers
                 Description = description,
                 Tags = tags,
                 RequiredPrice = maxPrice,
-                PostType = PostType.Buy,
+                PostType = postType,
                 AuctionType = auctionType,
                 TransactionType = transactionType,
                 Categories = categories

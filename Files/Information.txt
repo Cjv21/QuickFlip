@@ -8,28 +8,21 @@
 	X community home page
 	X confirm email
 	X buy index
-	o sell index    (wait until buy is completely finished, copy over)
+	X sell index  
 	X index filter
-	o advanced search
+	X advanced search
 	X make post
-	o tags
+	X tags
 	X make offer (auction)
 	o make offer (favorite offer)
 	X accept offer auction
 	o accept offer favorite offer
 	X recommendations 
-	o activity in-application alerts
 	o activity e-mail alerts
 	o activity cell-phone alerts
-	o user profile
-	o user reviews
-	o messaging
+	o manage profile
 	X post previews
 	
-
-	o LAST: convert object mapped traversals into advanced sql queries
-
-
 ===============================================================================
 
 			FAKE USERS
@@ -96,7 +89,7 @@ Connecting to Database:
 
 	Open up SQL Server Management Studio (ssms).
 
-	Server name: qeqc5ragp7.database.windows.net,1433
+	Server name: n22hj9n95l.database.windows.net,1433
 	Authentication: SQL Server Authentication
 	Login: owner
 	Password: Quickflip411
