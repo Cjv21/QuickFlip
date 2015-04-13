@@ -13,12 +13,12 @@
 <div class="post-backboard">
 
     <!-- title -->
-    <div style="font-size:xx-large; margin-left:50px; margin-top:40px; margin-bottom:10px;">
+    <div style="font-size:xx-large; margin-left:50px; overflow:auto; width:600px; margin-right:50px; margin-top:40px; margin-bottom:10px;">
         @(String.IsNullOrWhiteSpace(Model.Title) ? "Untitled" : @Model.Title)
     </div>
 
     <!-- created on / created by -->
-    <div style="margin-left:50px; margin-top:10px; margin-bottom:10px;">
+    <div style="margin-left:50px; margin-right:50px; margin-top:10px; margin-bottom:10px;">
         @Model.CreateDate
         <br />
         Created by: <a>@BusinessLogic.GetUserNameFromUserId(Model.UserId)</a>
@@ -26,7 +26,7 @@
 
 
     <!-- auction type / max price / current offer -->
-    <div style="margin-left:50px; margin-top:20px;">
+    <div style="margin-left:50px; margin-right:50px; margin-top:20px;">
         <b style="font-size:medium;">Type:</b> @(Model.AuctionType == AuctionType.Auction ? "Reverse Auction" : "Favorite Offer")
         <br />
         <b style="font-size:medium;">Max Price:</b> @(Model.RequiredPrice == null ? "None" : "$" + Model.RequiredPrice.ToString())
@@ -42,7 +42,7 @@
     </div>
 
     <!-- transaction type flag -->
-    <div style="margin-top:20px; margin-left:50px;">
+    <div style="margin-top:20px; margin-left:50px; margin-right:50px;">
         @if (Model.TransactionType == TransactionType.Local)
         {
             <i style="color:blue">Local Meetup Only!</i>
