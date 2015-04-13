@@ -238,6 +238,12 @@
             <div class="post-preview-right-manage">
                 <div style="margin-top:20px;"> <b>In: </b> @postType </div>
                 <div style="margin-top:10px;"> <b>Categories: </b> @categories </div>
+
+                @if (post.CommunityId != Model.CommunityId)
+                {
+                    <div style="margin-top:10px;"> <b>Will Ship?: </b> @(post.TransactionType == TransactionType.LocalOrLongDistance ? "Yes" : "No") </div>
+                    <img src="@BusinessLogic.GetCommunityByCommunityId(post.CommunityId).Logo.Src" style="max-height:50px; margin-left:200px; margin-top:20px;"/>
+                }
             </div>
 
         </div>

@@ -6,19 +6,19 @@
 
 <!-- community header -->
 <img src="@ViewBag.Community.Logo.Src" class="comm-header-logo" />
-<h2>For Sale @@ @((CommunityAbbrev)ViewBag.Community.CommunityId) </h2>
+<h2 style="margin-left:25px;">For Sale @@ @((CommunityAbbrev)ViewBag.Community.CommunityId) </h2>
 <hr />
 <br />
 
 <div class="post-backboard">
 
     <!-- title -->
-    <div style="font-size:xx-large; margin:10px;">
+    <div style="font-size:xx-large; margin-left:50px; margin-top:40px; margin-bottom:10px;">
         @(String.IsNullOrWhiteSpace(Model.Title) ? "Untitled" : @Model.Title)
     </div>
 
     <!-- created on / created by -->
-    <div style="margin:10px;">
+    <div style="margin-left:50px; margin-top:10px; margin-bottom:10px;">
         @Model.CreateDate
         <br />
         Created by: <a>@BusinessLogic.GetUserNameFromUserId(Model.UserId)</a>
@@ -26,7 +26,7 @@
 
 
     <!-- auction type / max price / current offer -->
-    <div style="margin-left:10px; margin-top:20px;">
+    <div style="margin-left:50px; margin-top:20px;">
         <b style="font-size:medium;">Type:</b> @(Model.AuctionType == AuctionType.Auction ? "Auction" : "Favorite Offer")
         <br />
         <b style="font-size:medium;">Max Price:</b> @(Model.RequiredPrice == null ? "None" : "$" + Model.RequiredPrice.ToString())
@@ -41,6 +41,18 @@
         }
     </div>
 
+    <!-- transaction type flag -->
+    <div style="margin-top:20px; margin-left:50px;">
+        @if (Model.TransactionType == TransactionType.Local)
+        {
+            <i style="color:blue">Local Meetup Only!</i>
+        }
+        else
+        {
+            <i style="color:blue">Open To Shipping!</i>
+        }
+    </div>
+
     <!-- post image -->
     <div style="margin:40px;">
         @if (Model.PostMedia != null)
@@ -49,25 +61,30 @@
         }
         else
         {
-            <img src="~/Images/NoPhotoIcon.png" style="border-image-source:inherit;" />
+            <img src="~/Images/NoPhotoIcon.png" style="border-image-source:inherit;" class="post-image" />
         }
     </div>
 
     <!-- description -->
-    <div style="margin:10px;">
-        <textarea readonly rows="10" style="resize:none; height:auto;">@Model.Description </textarea>
+    <div>
+        <textarea readonly rows="10" style="resize:none; height:auto; position:relative; margin-left:auto; margin-right:auto; display:block;">@Model.Description </textarea>
     </div>
 
     <!-- categories -->
-    <div style="margin:10px;">
-        <b style="font-size:medium">In Categories: </b> 
-        <ul style="margin-top:4px; margin-bottom:25px;">
-            @foreach (var category in Model.Categories)
-            {
-                <li>@BusinessLogic.GetFullCategoryName(category)</li>
-            }
-        </ul>
-    </div>
+    @if (true)
+    {
+        string categories = String.Empty;
+
+        for (int i = 0; i < Model.Categories.Count; i++)
+        {
+            categories += BusinessLogic.GetFullCategoryName(Model.Categories[i]);
+            if (i != Model.Categories.Count - 1) { categories += ", "; }
+        }
+
+        <div style="margin-left:70px; margin-top:35px;">
+            <b style="font-size:medium">Categories: </b> @categories
+        </div>
+    }
 
     <!-- tags -->
     @if (Model.Tags.Count != 0)
@@ -80,32 +97,19 @@
             if (i != Model.Tags.Count - 1) { tags += ", "; }
         }
 
-        <div style="margin:10px;">
+        <div style="margin-left:70px; margin-top:15px;">
             <b style="font-size:medium">Tags: </b> @tags
         </div>
     }
-
-
-
-    <!-- transaction type flag -->
-    <div style="margin-top:30px;">
-        @if (Model.TransactionType == TransactionType.Local)
-        {
-            <i style="color:blue">Local Meetup Only!</i>
-        }
-        else
-        {
-            <i style="color:blue">Open To Shipping!</i>
-        }
-    </div>
+    
 
     <!-- make offer -->
-    <div style="margin-bottom: 20px;">
+    <div style="margin-bottom: 30px;">
         @if (Request.IsAuthenticated)
         {
             if (WebSecurity.CurrentUserId != @Model.UserId)
             {
-                <input type="button" id="offerButton" value="Make offer!" style="position:relative; top:20px;">
+                <input type="button" id="offerButton" value="Make offer!" style="margin-top:60px; margin-left:auto; margin-right:auto; display:block;">
 
                 if (Model.AuctionType == AuctionType.Auction)
                 {
@@ -133,7 +137,7 @@
 
                     <input value="@Model.PostId" name="PostId" hidden="hidden" />
 
-                    <input value="Accept Offer!" type="submit" style="position:relative; top:20px;" />
+                    <input value="Accept Offer!" type="submit" style="margin-top:60px; margin-left:auto; margin-right:auto; display:block;" />
        
                 </form>
             }
@@ -141,9 +145,13 @@
         else
         {
         <!-- not logged in, login to make an offer -->
-            <a href=@Url.Action("Login", "Account", new { returnUrl = Url.Action("Post", "Sell", new { id = Model.PostId }) })>
-                Login to make an offer
-            </a>
+            <div style="margin-left:240px; margin-top:60px; display:block; position:relative">
+
+                <a href=@Url.Action("Login", "Account", new { returnUrl = Url.Action("Post", "Sell", new { id = Model.PostId }) })>
+                    Login to make an offer
+                </a>
+            </div>
+
         }
     </div>
 
