@@ -109,11 +109,11 @@ namespace QuickFlip.BusinessLayer
             da.Dispose();
         }
 
-        public static void ChangePhone(int userId, Int64 phoneNumber)
+        public static void ChangePhone(int userId, Int64 phoneNumber, Carrier carrier)
         {
             DataAccess da = new DataAccess();
 
-            da.ChangePhone(userId, phoneNumber);
+            da.ChangePhone(userId, phoneNumber, carrier);
 
             da.Dispose();
         }
@@ -508,6 +508,176 @@ namespace QuickFlip.BusinessLayer
 
         #endregion
 
+        #region Alert
+
+        public static bool AnyAlerts(int userId)
+        {
+            List<Alert> alerts = GetAlertsByUserId(userId);
+
+            return (alerts.Count != 0);
+        }
+
+        public static Alert CreateAlert(int postId, int userId, int offerId, AlertType type)
+        {
+            DataAccess da = new DataAccess();
+
+            Alert alert = da.CreateAlert(postId, userId, offerId, type);
+
+            da.Dispose();
+
+            User user = GetUserByUserId(userId);
+
+            // send e-mail alert
+            if (user.AlertMode == AlertMode.Email || user.AlertMode == AlertMode.Both)
+            {
+                SendAlert(alert, AlertMode.Email);
+            }
+
+            // send text alert
+            if (user.AlertMode == AlertMode.Text || user.AlertMode == AlertMode.Both)
+            {
+                SendAlert(alert, AlertMode.Text);
+            }
+
+            return alert;
+        }
+
+        public static void SendAlert(Alert alert, AlertMode mode)
+        {
+            User user = GetUserByUserId(alert.UserId);
+
+            if (mode == AlertMode.Email)
+            {
+                SendEmail(
+                    user.Email, 
+                    GetAlertSubject(alert.Type),
+                    GetAlertBody(alert)
+               );
+            }
+            else if (mode == AlertMode.Text)
+            {
+                SendSMS(
+                    user.Phone,
+                    user.Carrier,
+                    GetAlertBody(alert)
+                );
+            }
+        }
+
+        public static string GetAlertSubject(AlertType type)
+        {
+            switch (type)
+            {
+                case AlertType.Accepted:
+                    return "Your offer was accepted!";
+                case AlertType.Lost:
+                    return "You lost the auction!";
+                case AlertType.Outbid:
+                    return "You were outbid!";
+                case AlertType.NewOffer:
+                    return "You have a new offer!";
+                default:
+                    return type.ToString();
+            }
+        }
+
+        public static string GetAlertBody(Alert alert)
+        {
+            string body = String.Empty;
+            Post post = GetPostByPostId(alert.PostId);
+
+            switch (alert.Type)
+            {
+                case AlertType.Accepted:
+                    body = "Congratulations " + 
+                        GetUserByUserId(alert.UserId).UserName +
+                        "! Your offer on post: " +
+                        post.Title +
+                        " was accepted. Expect a follow up e-mail from " +
+                        GetUserByUserId(post.UserId).UserName +
+                        " shortly.";
+                    break;
+
+                case AlertType.Lost:
+                    body = "We're sorry " +
+                        GetUserByUserId(alert.UserId).UserName +
+                        "! Your offer on post: " +
+                        post.Title +
+                        " was not accepted. Better luck next time";
+                    break;
+
+                case AlertType.Outbid:
+                    body = "Hey " +
+                        GetUserByUserId(alert.UserId).UserName +
+                        "! You were outbid on post: " +
+                        post.Title +
+                        ". Place another bid if you want the item.";
+                    break;
+
+                case AlertType.NewOffer:
+                    body = "Hey " +
+                        GetUserByUserId(alert.UserId).UserName +
+                        "! You have a new offer on post: " +
+                        post.Title;
+                    break;
+            }
+
+            return body;
+        }
+
+        public static Alert GetAlertByAlertId(int alertId)
+        {
+            DataAccess da = new DataAccess();
+
+            Alert alert = da.GetAlertByAlertId(alertId);
+
+            da.Dispose();
+
+            return alert;
+        }
+
+        public static List<Alert> GetAlertsByUserId(int userId)
+        {
+            DataAccess da = new DataAccess();
+
+            List<Alert> alertList = da.GetAlertsByUserId(userId);
+
+            da.Dispose();
+
+            return alertList;
+        }
+
+        public static List<Alert> GetAlertsByPostId(int postId)
+        {
+            DataAccess da = new DataAccess();
+
+            List<Alert> alertList = da.GetAlertsByPostId(postId);
+
+            da.Dispose();
+
+            return alertList;
+        }
+
+        public static void DeleteAlert(int alertId)
+        {
+            DataAccess da = new DataAccess();
+
+            da.DeleteAlert(alertId);
+
+            da.Dispose();
+        }
+
+        public static void DeleteAlerts(int postId)
+        {
+            DataAccess da = new DataAccess();
+
+            da.DeleteAlerts(postId);
+
+            da.Dispose();
+        }
+
+        #endregion
+
         #region Utilities
 
         public static string Generate8CharNonce()
@@ -529,6 +699,60 @@ namespace QuickFlip.BusinessLayer
             return "(" + numStr.Substring(0, 3) + ") " 
                        + numStr.Substring(3, 3) + " " 
                        + numStr.Substring(6, 4);
+        }
+
+        public static string GetFullCarrierName(Carrier? carrier)
+        {
+            switch (carrier)
+            {
+                case Carrier.ATT:
+                    return "AT&T";
+                case Carrier.Verizon:
+                    return "Verizon";
+                case Carrier.TMobile:
+                    return "T-Mobile";
+                case Carrier.Sprint:
+                    return "Sprint";
+                case Carrier.VirginMobile:
+                    return "Virgin Mobile";
+                case Carrier.USCellular:
+                    return "US Cellular";
+                case Carrier.Nextel:
+                    return "Nextel";
+                case Carrier.Boost:
+                    return "Boost";
+                case Carrier.Alltell:
+                    return "Alltell";
+                default:
+                    return carrier.ToString();
+            }
+        }
+
+        public static string GetCarrierEmail(Carrier? carrier)
+        {
+            switch (carrier)
+            {
+                case Carrier.ATT:
+                    return "txt.att.net";
+                case Carrier.Verizon:
+                    return "vtext.com";
+                case Carrier.TMobile:
+                    return "tmomail.net";
+                case Carrier.Sprint:
+                    return "messaging.sprintpcs.com";
+                case Carrier.VirginMobile:
+                    return "vmobl.com";
+                case Carrier.USCellular:
+                    return "email.uscc.net";
+                case Carrier.Nextel:
+                    return "messaging.nextel.com";
+                case Carrier.Boost:
+                    return "myboostmobile.com";
+                case Carrier.Alltell:
+                    return "message.alltel.com";
+                default:
+                    return carrier.ToString();
+            }
         }
 
         public static void SendEmail(string recipient, string subject, string body)
@@ -559,22 +783,12 @@ namespace QuickFlip.BusinessLayer
 
         }
 
-        public static void SendSMS()
+        public static void SendSMS(Int64? phone, Carrier? carrier, string body)
         {
-           /* 
-            * AT&T – cellnumber@txt.att.net
-            * Verizon – cellnumber@vtext.com
-            * T-Mobile – cellnumber@tmomail.net
-            * Sprint PCS - cellnumber@messaging.sprintpcs.com
-            * Virgin Mobile – cellnumber@vmobl.com
-            * US Cellular – cellnumber@email.uscc.net
-            * Nextel - cellnumber@messaging.nextel.com
-            * Boost - cellnumber@myboostmobile.com
-            * Alltel – cellnumber@message.alltel.com
-            */
+            string address = phone.ToString() + "@" + GetCarrierEmail(carrier);
+            SendEmail(address, "", body);
         }
 
-     
         public static List<string> GetKeywords(Post post)
         {
             string text = post.Title + " " + post.Description;

@@ -29,7 +29,7 @@
     <div style="margin-left:50px; margin-top:20px;">
         <b style="font-size:medium;">Type:</b> @(Model.AuctionType == AuctionType.Auction ? "Auction" : "Favorite Offer")
         <br />
-        <b style="font-size:medium;">Max Price:</b> @(Model.RequiredPrice == null ? "None" : "$" + Model.RequiredPrice.ToString())
+        <b style="font-size:medium;">Starting Price:</b> @(Model.RequiredPrice == null ? "None" : "$" + Model.RequiredPrice.ToString())
         <br />
         @if (Model.AuctionType == AuctionType.Auction)
         {
@@ -117,8 +117,13 @@
                     <div id="dialog" title="Make Offer">
                         <form method="POST" enctype="multipart/form-data" action="~/Sell/MakeOffer">
                             <div style="text-align:center; margin-top:10px">
-                                $<input type="number" name="OfferAmount" min=@( @Model.Offers.Count == 0 ? @Model.RequiredPrice : @Model.BestOffer.Amount + 1) required="required" />
-                            </div>
+                                $<input type="number" name="OfferAmount"
+                                        min = "@( @Model.Offers.Count == 0
+                                                ? (@Model.RequiredPrice == null ? 0 : Model.RequiredPrice)
+                                                : @Model.BestOffer.Amount + 1)" 
+                                        max = "@Int32.MaxValue" 
+                                        required="required" />                        
+                             </div>
                             <input type="number" name="PostId" hidden="hidden" value="@Model.PostId" />
                             <div style="text-align:center; margin-top:25px">
                                 <input value="Submit" type="submit" style="align-content:center" />

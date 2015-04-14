@@ -3,7 +3,7 @@
         modal: true,
         resizable: false,
         width: 400,
-        height: 180,
+        height: 250,
         autoOpen: false
     });
     $("#changePhone").on("click", function () {

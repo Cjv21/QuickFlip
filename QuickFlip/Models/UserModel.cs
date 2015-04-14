@@ -12,6 +12,7 @@ namespace QuickFlip.Models
         public int? CommunityId { get; set; }
         public string Email { get; set; }
         public Int64? Phone { get; set; }
+        public Carrier? Carrier { get; set; }
         public AlertMode AlertMode { get; set; }
         public string B64EncodedImage { get; set; }
     }

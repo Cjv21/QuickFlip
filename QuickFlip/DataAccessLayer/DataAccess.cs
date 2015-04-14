@@ -272,6 +272,8 @@ namespace QuickFlip.DataAccessLayer
                             ? (int?)null : Convert.ToInt32(reader["CommunityId"]),
                         Phone = reader["Phone"] == DBNull.Value
                             ? (Int64?)null : Convert.ToInt64(reader["Phone"]),
+                        Carrier = reader["Carrier"] == DBNull.Value
+                            ? (Carrier?)null : (Carrier)Int32.Parse(reader["Carrier"].ToString()),
                         AlertMode = (AlertMode)Int32.Parse(reader["AlertMode"].ToString()),
                         Email = Convert.ToString(reader["Email"]),
                         B64EncodedImage = Convert.ToString(reader["B64EncodedImage"])
@@ -290,20 +292,21 @@ namespace QuickFlip.DataAccessLayer
             return null;
         }
 
-        public void ChangePhone(int userId, Int64 phoneNumber)
+        public void ChangePhone(int userId, Int64 phoneNumber, Carrier carrier)
         {
             try
             {
                 // form query
                 SqlCommand command = new SqlCommand(
                     "UPDATE [UserProfile] " +
-                    "SET Phone = @Phone " +
+                    "SET Phone = @Phone, Carrier = @Carrier " +
                     "WHERE UserId = @UserId",
                     Connection);
 
                 // add parameters
                 command.Parameters.AddWithValue("@UserId", userId);
                 command.Parameters.AddWithValue("@Phone", phoneNumber);
+                command.Parameters.AddWithValue("@Carrier", carrier);
 
                 // execute
                 command.ExecuteNonQuery();
@@ -1346,8 +1349,8 @@ namespace QuickFlip.DataAccessLayer
                         OfferId = Convert.ToInt32(reader["OfferId"]),
                         PostId = Convert.ToInt32(reader["PostId"]),
                         UserId = Convert.ToInt32(reader["UserId"]),
-                        Amount = reader["RequiredPrice"] == DBNull.Value
-                            ? (int?)null : Convert.ToInt32(reader["RequiredPrice"]),
+                        Amount = reader["Amount"] == DBNull.Value
+                            ? (int?)null : Convert.ToInt32(reader["Amount"]),
                         Description = Convert.ToString(reader["Description"]),
                         CreateDate = Convert.ToDateTime(reader["CreateDate"]),
                         Accepted = Convert.ToBoolean(reader["Accepted"])
@@ -1473,6 +1476,250 @@ namespace QuickFlip.DataAccessLayer
 
                 // add parameters
                 command.Parameters.AddWithValue("@OfferId", offerId);
+                command.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+
+        #endregion
+
+        #region Alert
+
+        public Alert CreateAlert(
+            int postId,
+            int userId,
+            int offerId,
+            AlertType type)
+        {
+            try
+            {
+                SqlCommand command = new SqlCommand(
+                    "INSERT INTO [Alert] " +
+                    "(PostId, UserId, OfferId, AlertType, CreateDate) " +
+                    "VALUES (@PostId, @UserId, @OfferId, @AlertType, @CreateDate)", 
+                    Connection);
+
+                DateTime createDate = DateTime.Now;
+                command.Parameters.AddWithValue("@PostId", postId);
+                command.Parameters.AddWithValue("@UserId", userId);
+                command.Parameters.AddWithValue("@OfferId", offerId);
+                command.Parameters.AddWithValue("@AlertType", (int)type);
+                command.Parameters.AddWithValue("@CreateDate", createDate);
+
+                command.ExecuteNonQuery();
+
+                return GetAlertByCreateDate(createDate);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+
+                return null;
+            }
+
+        }
+
+        public Alert GetAlertByAlertId(int alertId)
+        {
+            try
+            {
+                SqlCommand command = new SqlCommand(
+                    "SELECT * FROM [Alert] "+
+                    "WHERE AlertId = @AlertId", 
+                    Connection);
+
+                command.Parameters.AddWithValue("@AlertId", alertId);
+
+                SqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Alert alert = new Alert
+                    {
+                        AlertId = Convert.ToInt32(reader["AlertId"]),
+                        PostId = Convert.ToInt32(reader["PostId"]),
+                        UserId = Convert.ToInt32(reader["UserId"]),
+                        OfferId = Convert.ToInt32(reader["OfferId"]),
+                        Type = (AlertType)reader["AlertType"],
+                        CreateDate = Convert.ToDateTime(reader["CreateDate"])
+                    };
+
+                    reader.Close();
+
+                    return alert;
+                }
+
+                reader.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
+            return null;
+        }
+
+        public Alert GetAlertByCreateDate(DateTime createDate)
+        {
+            try
+            {
+                SqlCommand command = new SqlCommand(
+                    "SELECT * FROM [Alert] " +
+                    "WHERE CreateDate = @CreateDate", 
+                    Connection);
+
+                command.Parameters.AddWithValue("@CreateDate", createDate);
+
+                SqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Alert alert = new Alert
+                    {
+                        AlertId = Convert.ToInt32(reader["AlertId"]),
+                        PostId = Convert.ToInt32(reader["PostId"]),
+                        UserId = Convert.ToInt32(reader["UserId"]),
+                        OfferId = Convert.ToInt32(reader["OfferId"]),
+                        Type = (AlertType)reader["AlertType"],
+                        CreateDate = Convert.ToDateTime(reader["CreateDate"])
+                    };
+
+                    reader.Close();
+
+                    return alert;
+                }
+
+                reader.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
+            return null;
+        }
+
+
+        public List<Alert> GetAlertsByUserId(int userId)
+        {
+            try
+            {
+                SqlCommand command = new SqlCommand(
+                    "SELECT * FROM [Alert] " +
+                    "WHERE UserId = @UserId",
+                    Connection);
+
+                command.Parameters.AddWithValue("@UserId", userId);
+
+                SqlDataReader reader = command.ExecuteReader();
+
+                List<Alert> alertList = new List<Alert>();
+
+                while (reader.Read())
+                {
+                    Alert alert = new Alert
+                    {
+                        AlertId = Convert.ToInt32(reader["AlertId"]),
+                        PostId = Convert.ToInt32(reader["PostId"]),
+                        UserId = Convert.ToInt32(reader["UserId"]),
+                        OfferId = Convert.ToInt32(reader["OfferId"]),
+                        Type = (AlertType)reader["AlertType"],
+                        CreateDate = Convert.ToDateTime(reader["CreateDate"])
+                    };
+
+                    alertList.Add(alert);
+                }
+
+                reader.Close();
+
+                return alertList;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
+            return null;
+        }
+
+        public List<Alert> GetAlertsByPostId(int postId)
+        {
+            try
+            {
+                SqlCommand command = new SqlCommand(
+                    "SELECT * FROM [Alert] " +
+                    "WHERE PostId = @PostId", 
+                    Connection);
+
+                command.Parameters.AddWithValue("@PostId", postId);
+
+                SqlDataReader reader = command.ExecuteReader();
+
+                List<Alert> alertList = new List<Alert>();
+
+                while (reader.Read())
+                {
+                    Alert alert = new Alert
+                    {
+                        AlertId = Convert.ToInt32(reader["AlertId"]),
+                        PostId = Convert.ToInt32(reader["PostId"]),
+                        UserId = Convert.ToInt32(reader["UserId"]),
+                        OfferId = Convert.ToInt32(reader["OfferId"]),
+                        Type = (AlertType)reader["AlertType"],
+                        CreateDate = Convert.ToDateTime(reader["CreateDate"])
+                    };
+
+                    alertList.Add(alert);
+                }
+
+                reader.Close();
+
+                return alertList;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
+            return null;
+        }
+
+        public void DeleteAlert(int alertId)
+        {
+            try
+            {
+                SqlCommand command = new SqlCommand(
+                    "DELETE FROM [Alert] " +
+                    "WHERE AlertId = @AlertId", 
+                    Connection);
+
+                command.Parameters.AddWithValue("@AlertId", alertId);
+
+                command.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+
+        public void DeleteAlerts(int postId)
+        {
+            try
+            {
+                // form query
+                SqlCommand command = new SqlCommand(
+                    "DELETE FROM [Alert] " +
+                    "WHERE PostId = @PostId", 
+                Connection);
+
+                // add parameters
+                command.Parameters.AddWithValue("@PostId", postId);
+
+                // execute
                 command.ExecuteNonQuery();
             }
             catch (Exception e)

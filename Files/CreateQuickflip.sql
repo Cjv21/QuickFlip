@@ -75,6 +75,7 @@ CREATE TABLE [UserProfile]
 	Nonce VARCHAR(8),
 	Verified BIT NOT NULL DEFAULT 0,
 	Phone BIGINT,
+	Carrier INT, 
 	AlertMode INT DEFAULT 0,
 	B64EncodedImage NVARCHAR(MAX),
 	PRIMARY KEY (UserId),

@@ -193,7 +193,9 @@ namespace QuickFlip.Controllers
 
             Int64 phoneNumber = Int64.Parse(phoneStr);
 
-            BusinessLogic.ChangePhone(userId, phoneNumber);
+            Carrier carrier = (Carrier)Enum.Parse(typeof(Carrier), Request.Form["Carrier"].ToString());
+
+            BusinessLogic.ChangePhone(userId, phoneNumber, carrier);
 
             return RedirectToAction("Manage");
         }
@@ -215,6 +217,14 @@ namespace QuickFlip.Controllers
         public ActionResult Manage()
         {
             User user = BusinessLogic.GetUserByUserId(WebSecurity.CurrentUserId);
+
+            if ((user.AlertMode == AlertMode.Text || user.AlertMode == AlertMode.Both) && 
+                (user.Carrier == null || user.Phone == null))
+            {
+                TempData["TextAlertImpossible"] = "NOTE: You will need to supply your phone number and provider to get text alerts.";
+            }
+
+
             return View(user);
         }
 

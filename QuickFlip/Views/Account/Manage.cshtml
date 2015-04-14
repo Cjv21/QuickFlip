@@ -14,7 +14,7 @@
 <hr />
 
 
-<div style="width:700px; height:350px">
+<div style="width:700px; height:350px; margin-left:100px;">
 
     <!-- profile picture -->
     <div style="width:220px; margin:15px; float:left;">
@@ -34,7 +34,7 @@
     </div>
 
 
-    <!-- change password -->
+    <!-- change settings -->
     <div style="float:right; width:450px; margin-top:60px;">
         <ul style="font-size:large;">
             <li style="margin-top:10px;"> <b>Home community:</b> 
@@ -51,13 +51,20 @@
                 <a id="changeCommunity" style="text-decoration:none; cursor:pointer; color:blue; ">[change] </a>
             </li>
             <li style="margin-top:10px;"> <b>Email:</b> @BusinessLogic.GetUserByUserId(WebSecurity.CurrentUserId).Email </li>
-            <li style="margin-top:10px;"> <b>Phone number:</b> 
+            <li style="margin-top:10px;">
+                <b>Phone number:</b>
                 @(Model.Phone == null
-                    ? "Not set!"
-                    : BusinessLogic.PhoneNumberToString(Model.Phone)
-                 )               
+                                ? "Not set!"
+                                : BusinessLogic.PhoneNumberToString(Model.Phone)
+                )
                 <a id="changePhone" style="text-decoration:none; cursor:pointer; color:blue; ">[change] </a>
             </li>
+            @if (Model.Carrier != null)
+            {
+                <li style="margin-top:10px;">
+                    <b>Carrier:</b> @BusinessLogic.GetFullCarrierName(Model.Carrier)
+                </li>
+            }
             <li style="margin-top:10px;">
                 <b>Alert mode:</b>
                 @(BusinessLogic.GetUserByUserId(WebSecurity.CurrentUserId).AlertMode == AlertMode.Email ? "Email"
@@ -66,7 +73,7 @@
                 <a id="changeAlertMode" style="text-decoration:none; cursor:pointer; color:blue; ">[change] </a>
             </li>
             <li style="margin-top:10px;"> @Html.ActionLink("[change password]", "ChangePassword", "Account", new { style = "text-decoration:none; color:blue;" })</li>
-</ul>
+        </ul>
     </div>
 
 </div>
@@ -76,7 +83,7 @@
 <hr />
 <div style="margin:20px;">
 
-    <h2 style="margin-left:150px; margin-bottom:25px;"> My Posts:</h2>
+    <h2 style="text-align:center; margin-bottom:25px;"> My Posts:</h2>
 
     <!-- post list -->
         @foreach (var post in BusinessLogic.GetPostsByUserId(WebSecurity.CurrentUserId))
@@ -138,7 +145,7 @@
 <!-- my offers -->
 <hr style="margin-top:50px;"/>
 <div style="margin:20px;">
-    <h2 style="margin-left:150px; margin-bottom:25px;"> My Offers:</h2>
+    <h2 style="text-align:center; margin-bottom:25px;"> My Offers:</h2>
 
     <!-- post list -->
     @foreach (var post in BusinessLogic.GetPostsByBidderId(WebSecurity.CurrentUserId))
@@ -200,7 +207,7 @@
 <!-- my recommendations -->
 <hr style="margin-top:50px;" />
 <div style="margin:20px;">
-    <h2 style="margin-left:150px; margin-bottom:25px;"> My Recommendations:</h2>
+    <h2 style="text-align:center; margin-bottom:25px;"> My Recommendations:</h2>
 
     <!-- post list -->
     @foreach (var post in BusinessLogic.GetRecommendationsByUserId(WebSecurity.CurrentUserId))
@@ -296,11 +303,27 @@
     <!-- change phone dialog -->
     <div id="phone-dialog" title="Change Phone Number">
         <form method="POST" enctype="multipart/form-data" action="~/Account/ChangePhone">
-            <div style="text-align:center; margin-top:10px">
-               ( <input type="text" name="phone_0-2" style="width:40px;" /> )
-                 <input type="text" name="phone_3-5" style="width:40px" />
-               - <input type="text" name="phone_6-9" style="width:40px" />
+
+            <b style="margin-left:80px;">Carrier: </b>
+            <select name="Carrier" style="margin-top:20px; margin-left:20px;" required>
+                <option value="ATT">ATT</option>
+                <option value="Verizon">Verizon</option>
+                <option value="TMobile">TMobile</option>
+                <option value="Sprint">Sprint</option>
+                <option value="VirginMobile">VirginMobile</option>
+                <option value="USCellular">USCellular</option>
+                <option value="Nextel">Nextel</option>
+                <option value="Boost">Boost</option>
+                <option value="Alltell">Alltell</option>
+            </select>
+
+            <div style="text-align:center; margin-top:20px">
+               ( <input type="text" name="phone_0-2" style="width:40px;" required/> )
+                <input type="text" name="phone_3-5" style="width:40px" required />
+               - <input type="text" name="phone_6-9" style="width:40px" required />
             </div>
+           
+
             <div style="text-align:center; margin-top:25px">
                 <input value="Submit" type="submit" style="align-content:center" />
             </div>
@@ -314,7 +337,7 @@
 
                 <select name="AlertMode">
                     <option value="Email">Email</option>
-                    <option value="Phone">Text</option>
+                    <option value="Text">Text</option>
                     <option value="Both">Email & Text</option>
                 </select>
                 <br />
@@ -338,5 +361,12 @@
     {
         <script type="text/javascript">
                 alert(@Html.Raw(Json.Encode(TempData["InvalidPhone"])));
+        </script>
+    }
+    
+    @if (TempData["TextAlertImpossible"] != null)
+    {
+        <script type="text/javascript">
+                alert(@Html.Raw(Json.Encode(TempData["TextAlertImpossible"])));
         </script>
     }

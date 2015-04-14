@@ -117,7 +117,12 @@
                     <div id="dialog" title="Make Offer">
                         <form method="POST" enctype="multipart/form-data" action="~/Buy/MakeOffer">
                             <div style="text-align:center; margin-top:10px">
-                                $<input type="number" name="OfferAmount" min=@( @Model.Offers.Count == 0 ? @Model.RequiredPrice : @Model.BestOffer.Amount + 1) required="required" />
+                                $<input type="number" name="OfferAmount" 
+                                        max = "@( @Model.Offers.Count == 0 
+                                                ? (@Model.RequiredPrice == null ? Int32.MaxValue : Model.RequiredPrice)
+                                                : @Model.BestOffer.Amount - 1)"
+                                        min = "0" 
+                                        required="required" />
                             </div>
                             <input type="number" name="PostId" hidden="hidden" value="@Model.PostId" />
                             <div style="text-align:center; margin-top:25px">

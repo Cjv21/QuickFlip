@@ -236,7 +236,7 @@ namespace QuickFlip.Controllers
             Post post = BusinessLogic.GetPostByPostId(postId);
 
             // delete old offers from the same user
-            if (post.Offers != null)
+            if (post.Offers.Count != 0)
             {
                 foreach (var offer in post.Offers)
                 {
@@ -258,7 +258,6 @@ namespace QuickFlip.Controllers
                 Accepted = false
             };
 
-            newOffer = BusinessLogic.CreateOffer(newOffer);
 
             //if (offerImage != null)
             //{
@@ -277,10 +276,33 @@ namespace QuickFlip.Controllers
             //}
 
             // delete old new offer and outbid alerts for this post
+            List<Alert> oldAlerts = BusinessLogic.GetAlertsByPostId(postId);
+
+            // delete old new offer and outbid for this post
+            foreach (var alert in oldAlerts)
+            {
+                if (alert.Type == AlertType.NewOffer || alert.Type == AlertType.Outbid)
+                {
+                    BusinessLogic.DeleteAlert(alert.AlertId); 
+                }
+            }
 
             // send previous highest bidder an alert saying they were outbid
+            if (post.AuctionType == AuctionType.Auction)
+            {
+                Offer oldBestOffer = post.BestOffer;
+                
+                if (oldBestOffer != null && oldBestOffer.UserId != newOffer.UserId)
+                {
+                    BusinessLogic.CreateAlert(postId, oldBestOffer.UserId, oldBestOffer.OfferId, AlertType.Outbid);
+                }
+            }
+
+            // make new offer
+            newOffer = BusinessLogic.CreateOffer(newOffer);
 
             // send pos owner an alert saying a new offer arrived
+            BusinessLogic.CreateAlert(postId, post.UserId, newOffer.OfferId, AlertType.NewOffer);
 
             return RedirectToAction("Index", new { id = (CommunityAbbrev)post.CommunityId });
         }

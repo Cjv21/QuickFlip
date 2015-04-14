@@ -208,6 +208,7 @@
     <Compile Include="Models\OfferModel.cs" />
     <Compile Include="Models\PostMediaModel.cs" />
     <Compile Include="Models\PostModel.cs" />
+    <Compile Include="Models\AlertModel.cs" />
     <Compile Include="Models\UserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
