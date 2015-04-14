@@ -267,6 +267,7 @@
     <Content Include="Content\themes\base\minified\jquery.ui.slider.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
+    <Content Include="Images\AlertIcon.png" />
     <Content Include="Images\BestOfferIcon.png" />
     <Content Include="Images\BuyIcon.png" />
     <Content Include="Images\DeleteIcon.png" />
@@ -296,6 +297,7 @@
     <Content Include="Images\UWM.png" />
     <Content Include="Images\NoPhotoIcon.png" />
     <Content Include="Scripts\category-select-all.js" />
+    <Content Include="Scripts\alert-modal.js" />
     <Content Include="Scripts\category-validate-edit.js" />
     <Content Include="Scripts\change-alert-mode.js" />
     <Content Include="Scripts\change-phone.js" />

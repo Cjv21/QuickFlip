@@ -278,10 +278,34 @@ namespace QuickFlip.Controllers
             //}
 
             // delete old new offer and outbid alerts for this post
+            List<Alert> oldAlerts = BusinessLogic.GetAlertsByPostId(postId);
+
+            // delete old new offer and outbid for this post
+            foreach (var alert in oldAlerts)
+            {
+                if (alert.Type == AlertType.NewOffer || 
+                    (alert.Type == AlertType.Outbid && alert.UserId == newOffer.UserId))
+                {
+                    BusinessLogic.DeleteAlert(alert.AlertId); 
+                }
+            }
 
             // send previous highest bidder an alert saying they were outbid
+            if (post.AuctionType == AuctionType.Auction)
+            {
+                Offer oldBestOffer = post.BestOffer;
+                
+                if (oldBestOffer != null && oldBestOffer.UserId != newOffer.UserId)
+                {
+                    BusinessLogic.CreateAlert(postId, oldBestOffer.UserId, oldBestOffer.OfferId, AlertType.Outbid);
+                }
+            }
 
-            // send pos owner an alert saying a new offer arrived
+            // make new offer
+            newOffer = BusinessLogic.CreateOffer(newOffer);
+
+            // send post owner an alert saying a new offer arrived
+            BusinessLogic.CreateAlert(postId, post.UserId, newOffer.OfferId, AlertType.NewOffer);
 
             return RedirectToAction("Index", new { id = (CommunityAbbrev)post.CommunityId });
         }

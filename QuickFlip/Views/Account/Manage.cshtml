@@ -86,7 +86,7 @@
     <h2 style="text-align:center; margin-bottom:25px;"> My Posts:</h2>
 
     <!-- post list -->
-        @foreach (var post in BusinessLogic.GetPostsByUserId(WebSecurity.CurrentUserId))
+        @foreach (var post in BusinessLogic.GetPostsByUserId(WebSecurity.CurrentUserId).OrderByDescending(x => x.CreateDate))
         {
             <!-- capture post information -->
             string postTitle = String.IsNullOrWhiteSpace((string)post.Title) ? "Untitled" : (string)post.Title;
@@ -148,7 +148,8 @@
     <h2 style="text-align:center; margin-bottom:25px;"> My Offers:</h2>
 
     <!-- post list -->
-    @foreach (var post in BusinessLogic.GetPostsByBidderId(WebSecurity.CurrentUserId))
+    @foreach (var post in BusinessLogic.GetPostsByBidderId(WebSecurity.CurrentUserId).OrderByDescending(x => 
+        x.Offers.Where(o => o.UserId == WebSecurity.CurrentUserId).FirstOrDefault().CreateDate))
     {
             <!-- capture post information -->
         string postTitle = String.IsNullOrWhiteSpace((string)post.Title) ? "Untitled" : (string)post.Title;
@@ -210,7 +211,7 @@
     <h2 style="text-align:center; margin-bottom:25px;"> My Recommendations:</h2>
 
     <!-- post list -->
-    @foreach (var post in BusinessLogic.GetRecommendationsByUserId(WebSecurity.CurrentUserId))
+    @foreach (var post in BusinessLogic.GetRecommendationsByUserId(WebSecurity.CurrentUserId).OrderByDescending(x => x.CreateDate))
     {
             <!-- capture post information -->
         string postTitle = String.IsNullOrWhiteSpace((string)post.Title) ? "Untitled" : (string)post.Title;
@@ -349,6 +350,47 @@
         </form>
     </div>
 
+
+@foreach (var alert in BusinessLogic.GetAlertsByUserId(WebSecurity.CurrentUserId))
+{
+    <script src="~/Scripts/alert-modal.js"></script>
+
+    if (alert.Type == AlertType.NewOffer)
+    {
+        <div id="dialog" title="New Offer!">
+            <form method="POST" enctype="multipart/form-data" action="~/Account/NewOfferResponse">
+                <p>
+                    An offer was made on your post:
+                    <i>@BusinessLogic.GetPostByPostId(alert.PostId).Title</i> <br /> <br />
+                    The amount offered was:
+                    <i>$@BusinessLogic.GetPostByPostId(alert.PostId).BestOffer.Amount.ToString()</i> <br />
+                </p>
+                <input type="number" name="alertId" value="@alert.AlertId" hidden="hidden" />
+                <input type="submit" name="choice" value="Accept" />
+                <input type="submit" name="choice" value="Wait" />
+            </form>
+        </div>
+    }
+
+    else if (alert.Type == AlertType.Outbid)
+    {
+        <div id="dialog" title="You Were Outbid!">
+            <form method="POST" enctype="multipart/form-data" action="~/Account/OutbidResponse">
+                <p>
+                    A higher offer was made on a post you bid on:
+                    <i>@BusinessLogic.GetPostByPostId(alert.PostId).Title</i> <br /> <br />
+                    The amount offered was:
+                    <i>$@BusinessLogic.GetPostByPostId(alert.PostId).BestOffer.Amount.ToString()</i> <br />
+                </p>
+                <input type="number" name="alertId" value="@alert.AlertId" hidden="hidden" />
+
+                <input type="submit" name="choice" value="Go To Post" />
+                <input type="submit" name="choice" value="Wait" />
+            </form>
+        </div>
+    }
+}
+    
 
     @if (TempData["UnauthorizedDelete"] != null)
     {

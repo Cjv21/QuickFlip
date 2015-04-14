@@ -212,6 +212,51 @@ namespace QuickFlip.Controllers
             return RedirectToAction("Manage");
         }
 
+        [HttpPost]
+        public ActionResult NewOfferResponse()
+        {
+            int alertId = Convert.ToInt32(Request.Form["alertId"]);
+
+            if (Request.Form["choice"] == "Accept")
+            {
+                Alert alert = BusinessLogic.GetAlertByAlertId(alertId);
+
+                Post post = BusinessLogic.GetPostByPostId(alert.PostId);
+
+                BusinessLogic.AcceptOffer(post.BestOffer.OfferId);
+
+                return post.PostType == PostType.Buy
+                    ? RedirectToAction("AcceptOffer", "Buy", new { id = post.PostId })
+                    : RedirectToAction("AcceptOffer", "Sell", new { id = post.PostId });
+            }
+
+            BusinessLogic.DeleteAlert(alertId);
+
+            return RedirectToAction("Manage");
+        }
+
+        [HttpPost]
+        public ActionResult OutbidResponse()
+        {
+            int alertId = Convert.ToInt32(Request.Form["alertId"]);
+
+            if (Request.Form["choice"] == "Go To Post")
+            {
+                Alert alert = BusinessLogic.GetAlertByAlertId(alertId);
+                Post post = BusinessLogic.GetPostByPostId(alert.PostId);
+
+                BusinessLogic.DeleteAlert(alertId);
+
+                return post.PostType == PostType.Buy
+                    ? RedirectToAction("Post", "Buy", new { id = post.PostId })
+                    : RedirectToAction("Post", "Sell", new { id = post.PostId });
+            }
+
+            BusinessLogic.DeleteAlert(alertId);
+
+            return RedirectToAction("Manage");
+        }
+
         // GET: /Account/Manage
         [InitializeSimpleMembership]
         public ActionResult Manage()
