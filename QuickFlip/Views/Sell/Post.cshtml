@@ -3,6 +3,7 @@
 @using QuickFlip.BusinessLayer
 @using QuickFlip.Models
 <script src="~/Scripts/makeoffer-modal.js"></script>
+<script src="~/Scripts/makeoffer-fav-offer-modal.js"></script>
 
 <!-- community header -->
 <img src="@ViewBag.Community.Logo.Src" class="comm-header-logo" />
@@ -23,7 +24,6 @@
         <br />
         Created by: <a>@BusinessLogic.GetUserNameFromUserId(Model.UserId)</a>
     </div>
-
 
     <!-- auction type / max price / current offer -->
     <div style="margin-left:50px; margin-top:20px;">
@@ -71,49 +71,53 @@
     </div>
 
     <!-- categories -->
-    @if (true)
-    {
-        string categories = String.Empty;
-
-        for (int i = 0; i < Model.Categories.Count; i++)
+    <div>
+        @if (true)
         {
-            categories += BusinessLogic.GetFullCategoryName(Model.Categories[i]);
-            if (i != Model.Categories.Count - 1) { categories += ", "; }
-        }
+            string categories = String.Empty;
 
-        <div style="margin-left:70px; margin-top:35px;">
-            <b style="font-size:medium">Categories: </b> @categories
-        </div>
-    }
+            for (int i = 0; i < Model.Categories.Count; i++)
+            {
+                categories += BusinessLogic.GetFullCategoryName(Model.Categories[i]);
+                if (i != Model.Categories.Count - 1) { categories += ", "; }
+            }
+
+            <div style="margin-left:70px; margin-top:35px;">
+                <b style="font-size:medium">Categories: </b> @categories
+            </div>
+        }
+    </div>
 
     <!-- tags -->
-    @if (Model.Tags.Count != 0)
-    {
-        string tags = String.Empty;
-
-        for (int i = 0; i < Model.Tags.Count; i++)
+    <div>
+        @if (Model.Tags.Count != 0)
         {
-            tags += Model.Tags[i];
-            if (i != Model.Tags.Count - 1) { tags += ", "; }
+            string tags = String.Empty;
+
+            for (int i = 0; i < Model.Tags.Count; i++)
+            {
+                tags += Model.Tags[i];
+                if (i != Model.Tags.Count - 1) { tags += ", "; }
+            }
+
+            <div style="margin-left:70px; margin-top:15px;">
+                <b style="font-size:medium">Tags: </b> @tags
+            </div>
         }
+    </div>
 
-        <div style="margin-left:70px; margin-top:15px;">
-            <b style="font-size:medium">Tags: </b> @tags
-        </div>
-    }
-    
-
-    <!-- make offer -->
+    <!-- make offer dialogs -->
     <div style="margin-bottom: 30px;">
         @if (Request.IsAuthenticated)
         {
+            <!-- not post owner, make offer -->
             if (WebSecurity.CurrentUserId != @Model.UserId)
             {
                 <input type="button" id="offerButton" value="Make offer!" style="margin-top:60px; margin-left:auto; margin-right:auto; display:block;">
-
+                
+                <!-- make offer (auction) -->
                 if (Model.AuctionType == AuctionType.Auction)
                 {
-                    <!-- make offer dialog -->
                     <div id="dialog" title="Make Offer">
                         <form method="POST" enctype="multipart/form-data" action="~/Sell/MakeOffer">
                             <div style="text-align:center; margin-top:10px">
@@ -131,13 +135,30 @@
                         </form>
                     </div>
                 }
-                else
+                else 
                 {
-                    
+                     <!-- make offer (favorite offer) -->
+                    <div id="dialog-fav-offer" title="Make Offer">
+                        <form method="POST" enctype="multipart/form-data" action="~/Sell/MakeOffer">
+
+
+                            <h3 style="margin-left:77px;">Picture of offer (optional):</h3>
+                            @Html.TextBox("offerImage", "", new { type = "file", style = "margin-left:auto; margin-right:auto; display:block;" })
+
+                            <h3 style="margin-left:77px; margin-top:30px; margin-bottom:10px;">Offer description:</h3>
+                            <textarea name="OfferDescription" rows="6" style="width:400px; resize:none; margin-left:auto; margin-right: auto; display:block;"> </textarea>
+
+                            <input type="number" name="PostId" hidden="hidden" value="@Model.PostId" />
+                            <div style="text-align:center; margin-top:25px">
+                                <input value="Submit" type="submit" style="align-content:center" />
+                            </div>
+                        </form>
+                    </div>
                 }
             }
             else if (Model.AuctionType == AuctionType.Auction && Model.BestOffer != null)
             {
+                <!-- accept offer (auction) -->
                 <form method="POST" enctype="multipart/form-data" action=@Url.Action("AcceptOffer", "Sell")>
 
                     <input value="@Model.PostId" name="PostId" hidden="hidden" />

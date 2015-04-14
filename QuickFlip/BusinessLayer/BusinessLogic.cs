@@ -347,6 +347,30 @@ namespace QuickFlip.BusinessLayer
 
         #endregion
 
+        #region OfferMedia
+
+        public static OfferMedia CreateOfferMedia(OfferMedia newOfferMedia)
+        {
+            DataAccess da = new DataAccess();
+
+            newOfferMedia = da.CreateOfferMedia(newOfferMedia);
+
+            da.Dispose();
+
+            return newOfferMedia;
+        }
+
+        public static void DeleteOfferMedia(int offerMedia)
+        {
+            DataAccess da = new DataAccess();
+
+            da.DeleteOfferMedia(offerMedia);
+
+            da.Dispose();
+        }
+
+        #endregion
+
         #region Recommendations
         public static List<Post> GetRecommendationsByUserId(int userId)
         {

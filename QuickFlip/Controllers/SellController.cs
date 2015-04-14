@@ -167,7 +167,7 @@ namespace QuickFlip.Controllers
             AuctionType auctionType = (AuctionType)Enum.Parse(
                 typeof(AuctionType), Request.Form["Type"].ToString());
 
-            TransactionType transactionType = Request.Form["LocalOnly"].ToString() == "Yes"
+            TransactionType transactionType = Request.Form["WillShip"].ToString() == "No"
                 ? TransactionType.Local : TransactionType.LocalOrLongDistance;
 
             string title = Request.Form["PostTitle"].ToString();
@@ -228,13 +228,18 @@ namespace QuickFlip.Controllers
         // POST: /Sell/MakeOffer
         [HttpPost]
         [InitializeSimpleMembership]
-        public ActionResult MakeOffer()
+        public ActionResult MakeOffer(HttpPostedFileBase offerImage)
         {
-            int amount = Convert.ToInt32(Request.Form["OfferAmount"]);
-
             int postId = Convert.ToInt32(Request.Form["PostId"]);
-
             Post post = BusinessLogic.GetPostByPostId(postId);
+
+            string description = String.Empty;
+            int? amount = null;
+            if (post.AuctionType == AuctionType.FavoriteOffer)
+            {
+                description = Request.Form["Description"];
+                amount = Convert.ToInt32(Request.Form["OfferAmount"]);
+            }
 
             // delete old offers from the same user
             if (post.Offers != null)
@@ -254,26 +259,10 @@ namespace QuickFlip.Controllers
                 PostId = postId,
                 UserId = WebSecurity.CurrentUserId,
                 Amount = amount,
-                //Description = description,
+                Description = description,
                 CreateDate = DateTime.Now,
                 Accepted = false
             };
-
-            //if (offerImage != null)
-            //{
-            //    byte[] imageBytes = new byte[offerImage.InputStream.Length];
-            //    long bytesRead = offerImage.InputStream.Read(imageBytes, 0, (int)offerImage.InputStream.Length);
-            //    offerImage.InputStream.Close();
-            //    string b64EncodedImage = Convert.ToBase64String(imageBytes, 0, imageBytes.Length);
-
-            //    OfferMedia newOfferMedia = new OfferMedia()
-            //    {
-            //        OfferId = newOffer.OfferId,
-            //        B64EncodedImage = b64EncodedImage
-            //    };
-
-            //    newOfferMedia = BusinessLogic.CreateOfferMedia(newOfferMedia);
-            //}
 
             // delete old new offer and outbid alerts for this post
             List<Alert> oldAlerts = BusinessLogic.GetAlertsByPostId(postId);
@@ -301,6 +290,23 @@ namespace QuickFlip.Controllers
 
             // make new offer
             newOffer = BusinessLogic.CreateOffer(newOffer);
+
+            // create offer media
+            if (post.AuctionType == AuctionType.FavoriteOffer && offerImage != null)
+            {
+                byte[] imageBytes = new byte[offerImage.InputStream.Length];
+                long bytesRead = offerImage.InputStream.Read(imageBytes, 0, (int)offerImage.InputStream.Length);
+                offerImage.InputStream.Close();
+                string b64EncodedImage = Convert.ToBase64String(imageBytes, 0, imageBytes.Length);
+
+                OfferMedia newOfferMedia = new OfferMedia()
+                {
+                    OfferId = newOffer.OfferId,
+                    B64EncodedImage = b64EncodedImage
+                };
+
+                newOfferMedia = BusinessLogic.CreateOfferMedia(newOfferMedia);
+            }
 
             // send post owner an alert saying a new offer arrived
             BusinessLogic.CreateAlert(postId, post.UserId, newOffer.OfferId, AlertType.NewOffer);
