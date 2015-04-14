@@ -225,6 +225,8 @@ namespace QuickFlip.Controllers
 
                 BusinessLogic.AcceptOffer(post.BestOffer.OfferId);
 
+                BusinessLogic.DeleteAlert(alert.AlertId);
+
                 return post.PostType == PostType.Buy
                     ? RedirectToAction("AcceptOffer", "Buy", new { id = post.PostId })
                     : RedirectToAction("AcceptOffer", "Sell", new { id = post.PostId });
@@ -251,6 +253,26 @@ namespace QuickFlip.Controllers
                     ? RedirectToAction("Post", "Buy", new { id = post.PostId })
                     : RedirectToAction("Post", "Sell", new { id = post.PostId });
             }
+
+            BusinessLogic.DeleteAlert(alertId);
+
+            return RedirectToAction("Manage");
+        }
+
+        [HttpPost]
+        public ActionResult LostResponse()
+        {
+            int alertId = Convert.ToInt32(Request.Form["alertId"]);
+
+            BusinessLogic.DeleteAlert(alertId);
+
+            return RedirectToAction("Manage");
+        }
+
+        [HttpPost]
+        public ActionResult AcceptedResponse()
+        {
+            int alertId = Convert.ToInt32(Request.Form["alertId"]);
 
             BusinessLogic.DeleteAlert(alertId);
 

@@ -320,14 +320,62 @@ namespace QuickFlip.Controllers
 
             BusinessLogic.AcceptOffer(postToSettle.BestOffer.OfferId);
 
-            return RedirectToAction("AcceptOffer", new { id = postToSettle.PostId });
+            foreach (var alert in BusinessLogic.GetAlertsByPostId(postId))
+            {
+                if (alert.Type == AlertType.NewOffer || alert.Type == AlertType.Outbid)
+                {
+                    BusinessLogic.DeleteAlert(alert.AlertId);
+                }
+            }
+
+            BusinessLogic.CreateAlert(
+                postId, postToSettle.BestOffer.UserId, postToSettle.BestOffer.OfferId, AlertType.Accepted
+            );
+
+            foreach (var offer in postToSettle.Offers)
+            {
+                if (offer.UserId != postToSettle.BestOffer.UserId)
+                {
+                    BusinessLogic.CreateAlert(
+                        postId, offer.UserId, offer.OfferId, AlertType.Lost
+                    );
+                }
+            }
+
+            return View(postToSettle);
         }
 
         public ActionResult AcceptOffer(int id)
         {
-            Post post = BusinessLogic.GetPostByPostId(id);
+            Post postToSettle = BusinessLogic.GetPostByPostId(id);
 
-            return View(post);
+            BusinessLogic.SettlePost(id);
+
+            BusinessLogic.AcceptOffer(postToSettle.BestOffer.OfferId);
+
+            foreach (var alert in BusinessLogic.GetAlertsByPostId(id))
+            {
+                if (alert.Type == AlertType.NewOffer || alert.Type == AlertType.Outbid)
+                {
+                    BusinessLogic.DeleteAlert(alert.AlertId);
+                }
+            }
+
+            BusinessLogic.CreateAlert(
+                id, postToSettle.BestOffer.UserId, postToSettle.BestOffer.OfferId, AlertType.Accepted
+            );
+
+            foreach (var offer in postToSettle.Offers)
+            {
+                if (offer.UserId != postToSettle.BestOffer.UserId)
+                {
+                    BusinessLogic.CreateAlert(
+                        id, offer.UserId, offer.OfferId, AlertType.Lost
+                    );
+                }
+            }
+
+            return View(postToSettle);
         }
 
         [HttpPost]
