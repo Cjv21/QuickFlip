@@ -270,6 +270,7 @@
     <Content Include="Images\AlertIcon.png" />
     <Content Include="Images\BestOfferIcon.png" />
     <Content Include="Images\BuyIcon.png" />
+    <Content Include="Images\ComingSoonLogo.png" />
     <Content Include="Images\DeleteIcon.png" />
     <Content Include="Images\EditIcon.png" />
     <Content Include="Images\favicon.ico" />
