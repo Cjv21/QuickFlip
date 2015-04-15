@@ -165,7 +165,7 @@ namespace QuickFlip.DataAccessLayer
                 // form query
                 SqlCommand command = new SqlCommand(
                     "UPDATE [UserProfile] " +
-                    "SET Email = @Email, Nonce = @Nonce " +
+                    "SET Email = @Email, Nonce = @Nonce, AlertMode = 0 " +
                     "WHERE UserName = @UserName",
                     Connection);
 
