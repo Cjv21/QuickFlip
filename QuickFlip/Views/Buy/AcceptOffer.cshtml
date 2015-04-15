@@ -1,9 +1,10 @@
-﻿@using QuickFlip.Models
+﻿@using System.Linq
+@using QuickFlip.Models
 @using QuickFlip.BusinessLayer
 
 <h2>Accept Offer.</h2>
 
-@if (Model != null && Model.BestOffer.Accepted)
+@if (Model != null && Model.Settled)
 {
     <p>
         Congratulations! You have accepted an offer on your post. <br />
@@ -15,26 +16,58 @@
 
         <input type="number" name="PostId" hidden="hidden" value="@Model.PostId" />
 
-        <textarea name="AcceptMessage" rows="18" style="width:650px;">
-            Congratulations!
 
-            You were the highest bidder for item "@(String.IsNullOrWhiteSpace(@Model.Title) ? "Untitled" : Model.Title)".
+        @if (Model.AuctionType == AuctionType.Auction)
+        {
+            <textarea name="AcceptMessage" rows="18" style="width:650px;">
+                Congratulations!
 
-            The amount agreed upon was $@Model.BestOffer.Amount.ToString().
+                You were the highest bidder for item "@(String.IsNullOrWhiteSpace(@Model.Title) ? "Untitled" : Model.Title)".
 
-            I would like to meet...
+                The amount agreed upon was $@Model.BestOffer.Amount.ToString().
 
-            WHEN: Tomorrow (@DateTime.UtcNow.AddDays(1.0).ToShortDateString()) at 12:00 PM.
+                I would like to meet...
 
-            WHERE: @BusinessLogic.GetCommunityByCommunityId(Model.CommunityId).DefaultMeetingLocation
+                WHEN: Tomorrow (@DateTime.UtcNow.AddDays(1.0).ToShortDateString()) at 12:00 PM.
 
-            Let me know if this works for you.
+                WHERE: @BusinessLogic.GetCommunityByCommunityId(Model.CommunityId).DefaultMeetingLocation
 
-            You can email me back at @BusinessLogic.GetUserByUserId(Model.UserId).Email
+                Let me know if this works for you.
 
-            Thank you!
+                You can email me back at @BusinessLogic.GetUserByUserId(Model.UserId).Email
 
-        </textarea>
+                Thank you!
+
+            </textarea>
+        }
+        else
+        {
+
+            string description = BusinessLogic.GetAcceptedOfferIdFromPostId(Model.PostId).Description;
+
+            <textarea name="AcceptMessage" rows="18" style="width:650px;">
+
+                Congratulations!
+
+                Your offer was accepted for item "@(String.IsNullOrWhiteSpace(@Model.Title) ? "Untitled" : Model.Title)".
+
+                You described your offer as:  "@description"
+
+                I would like to meet...
+
+                WHEN: Tomorrow (@DateTime.UtcNow.AddDays(1.0).ToShortDateString()) at 12:00 PM.
+
+                WHERE: @BusinessLogic.GetCommunityByCommunityId(Model.CommunityId).DefaultMeetingLocation
+
+                Let me know if this works for you.
+
+                You can email me back at @BusinessLogic.GetUserByUserId(Model.UserId).Email
+
+                Thank you!
+
+            </textarea>
+        }
+
         <br />
         <input value="Send" type="submit" />
     </form>

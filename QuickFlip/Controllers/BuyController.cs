@@ -24,14 +24,14 @@ namespace QuickFlip.Controllers
             Community comm = BusinessLogic.GetCommunityByCommunityId((int)id);
             ViewBag.Community = comm;
 
-            List<Post> buyPosts = BusinessLogic.GetPostsByPostTypeAndCommunity(PostType.Buy, id);
-            buyPosts.RemoveAll(x => x.Settled == true);
+            List<Post> BuyPosts = BusinessLogic.GetPostsByPostTypeAndCommunity(PostType.Buy, id);
+            BuyPosts.RemoveAll(x => x.Settled == true);
 
             if (Request.Form["Filtered"] == "1")
             {
                 // category filter
                 List<string> categories = new List<string>();
-                if (Request.Form["Categories"] == null) { buyPosts.RemoveAll(x => true); }
+                if (Request.Form["Categories"] == null) { BuyPosts.RemoveAll(x => true); }
                 else
                 {
                     categories = Request.Form["Categories"].Split(',').Select(sValue => sValue.Trim()).ToList();
@@ -40,7 +40,7 @@ namespace QuickFlip.Controllers
                     List<Post> categoryFiltered = new List<Post>();
                     foreach (var category in categories)
                     {
-                        foreach (var post in buyPosts)
+                        foreach (var post in BuyPosts)
                         {
                             if (post.Categories.Contains((Category)Enum.Parse(typeof(Category), category)))
                             {
@@ -49,47 +49,47 @@ namespace QuickFlip.Controllers
                         }
                     }
 
-                    buyPosts = categoryFiltered.GroupBy(x => x.PostId).Select(group => group.First()).ToList();
+                    BuyPosts = categoryFiltered.GroupBy(x => x.PostId).Select(group => group.First()).ToList();
                 }
 
                 // max price filter
                 if (Request.Form["MaxPriceFilter"] != String.Empty)
                 {
-                    buyPosts.RemoveAll(x => x.RequiredPrice < UInt32.Parse(Request.Form["MaxPriceFilter"]));
+                    BuyPosts.RemoveAll(x => x.RequiredPrice > UInt32.Parse(Request.Form["MaxPriceFilter"]));
                 }
 
                 // will ship filter
                 if (Request.Form["WillShip"] == "No")
                 {
-                    buyPosts.RemoveAll(x => x.TransactionType == TransactionType.Local);
+                    BuyPosts.RemoveAll(x => x.TransactionType == TransactionType.Local);
                 }
 
                 // has photo filter
                 if (Request.Form["HasPhoto"] == "Yes")
                 {
-                    buyPosts.RemoveAll(x => x.PostMedia == null);
+                    BuyPosts.RemoveAll(x => x.PostMedia == null);
                 }
 
                 // any offers filter
                 if (Request.Form["AnyOffers"] == "No")
                 {
-                    buyPosts.RemoveAll(x => x.Offers.Count == 0);
+                    BuyPosts.RemoveAll(x => x.Offers.Count == 0);
                 }
 
                 // order by filter
                 switch (Request.Form["OrderBy"])
                 {
                     case "MostRecent":
-                        buyPosts = buyPosts.OrderByDescending(x => x.CreateDate).ToList();
+                        BuyPosts = BuyPosts.OrderByDescending(x => x.CreateDate).ToList();
                         break;
                     case "LeastRecent":
-                        buyPosts = buyPosts.OrderBy(x => x.CreateDate).ToList();
+                        BuyPosts = BuyPosts.OrderBy(x => x.CreateDate).ToList();
                         break;
                     case "AscendingPrice":
-                        buyPosts = buyPosts.OrderBy(x => x.RequiredPrice).ToList();
+                        BuyPosts = BuyPosts.OrderBy(x => x.RequiredPrice).ToList();
                         break;
                     case "DescendingPrice":
-                        buyPosts = buyPosts.OrderByDescending(x => x.RequiredPrice).ToList();
+                        BuyPosts = BuyPosts.OrderByDescending(x => x.RequiredPrice).ToList();
                         break;
                 }
 
@@ -107,7 +107,7 @@ namespace QuickFlip.Controllers
                     ViewData[category.ToString()] = "1";
                 }
                 ViewData["Any"] = (categories.Count == Enum.GetValues(typeof(Category)).Length) ? "1" : "0";
-                
+
                 ViewData["MaxPriceFilter"] = Request.Form["MaxPriceFilter"];
                 ViewData["WillShip"] = Request.Form["WillShip"];
                 ViewData["HasPhoto"] = Request.Form["HasPhoto"];
@@ -115,7 +115,7 @@ namespace QuickFlip.Controllers
             }
             else
             {
-                buyPosts = buyPosts.OrderByDescending(x => x.CreateDate).ToList();
+                BuyPosts = BuyPosts.OrderByDescending(x => x.CreateDate).ToList();
 
                 // default filter selections
                 ViewData["OrderBy"] = "MostRecent";
@@ -131,10 +131,10 @@ namespace QuickFlip.Controllers
                 ViewData["WillShip"] = "DontCare";
                 ViewData["HasPhoto"] = "DontCare";
                 ViewData["AnyOffers"] = "DontCare";
-            
+
             }
 
-            return View(buyPosts);
+            return View(BuyPosts);
         }
 
         // GET: /Buy/Post/id
@@ -148,6 +148,7 @@ namespace QuickFlip.Controllers
 
             return View(post);
         }
+
 
         // GET: /Buy/MakeBuyPost
         public ActionResult MakeBuyPost(CommunityAbbrev id)
@@ -166,14 +167,14 @@ namespace QuickFlip.Controllers
             AuctionType auctionType = (AuctionType)Enum.Parse(
                 typeof(AuctionType), Request.Form["Type"].ToString());
 
-            TransactionType transactionType = Request.Form["LocalOnly"].ToString() == "Yes"
+            TransactionType transactionType = Request.Form["WillShip"].ToString() == "No"
                 ? TransactionType.Local : TransactionType.LocalOrLongDistance;
 
             string title = Request.Form["PostTitle"].ToString();
 
             int communityId = Int32.Parse(Request.Form["CommunityId"]);
 
-            int? maxPrice = (String.IsNullOrWhiteSpace(Request.Form["MaxPrice"]) 
+            int? maxPrice = (String.IsNullOrWhiteSpace(Request.Form["MaxPrice"])
                 ? (int?)null : Convert.ToInt32(Request.Form["MaxPrice"]));
 
             string description = Request.Form["PostDescription"].ToString();
@@ -217,7 +218,7 @@ namespace QuickFlip.Controllers
                     PostId = newPost.PostId,
                     B64EncodedImage = b64EncodedImage
                 };
-        
+
                 newPostMedia = BusinessLogic.CreatePostMedia(newPostMedia);
             }
 
@@ -227,16 +228,21 @@ namespace QuickFlip.Controllers
         // POST: /Buy/MakeOffer
         [HttpPost]
         [InitializeSimpleMembership]
-        public ActionResult MakeOffer()
+        public ActionResult MakeOffer(HttpPostedFileBase offerImage)
         {
-            int amount = Convert.ToInt32(Request.Form["OfferAmount"]);
-
             int postId = Convert.ToInt32(Request.Form["PostId"]);
-
             Post post = BusinessLogic.GetPostByPostId(postId);
 
+            string description = String.Empty;
+            int? amount = null;
+            if (post.AuctionType == AuctionType.FavoriteOffer)
+            {
+                description = Request.Form["Description"];
+                amount = Convert.ToInt32(Request.Form["OfferAmount"]);
+            }
+
             // delete old offers from the same user
-            if (post.Offers.Count != 0)
+            if (post.Offers != null)
             {
                 foreach (var offer in post.Offers)
                 {
@@ -246,34 +252,17 @@ namespace QuickFlip.Controllers
                     }
                 }
             }
-            
+
             // create new offer
             Offer newOffer = new Offer()
             {
                 PostId = postId,
                 UserId = WebSecurity.CurrentUserId,
                 Amount = amount,
-                //Description = description,
+                Description = description,
                 CreateDate = DateTime.Now,
                 Accepted = false
             };
-
-
-            //if (offerImage != null)
-            //{
-            //    byte[] imageBytes = new byte[offerImage.InputStream.Length];
-            //    long bytesRead = offerImage.InputStream.Read(imageBytes, 0, (int)offerImage.InputStream.Length);
-            //    offerImage.InputStream.Close();
-            //    string b64EncodedImage = Convert.ToBase64String(imageBytes, 0, imageBytes.Length);
-
-            //    OfferMedia newOfferMedia = new OfferMedia()
-            //    {
-            //        OfferId = newOffer.OfferId,
-            //        B64EncodedImage = b64EncodedImage
-            //    };
-
-            //    newOfferMedia = BusinessLogic.CreateOfferMedia(newOfferMedia);
-            //}
 
             // delete old new offer and outbid alerts for this post
             List<Alert> oldAlerts = BusinessLogic.GetAlertsByPostId(postId);
@@ -281,10 +270,10 @@ namespace QuickFlip.Controllers
             // delete old new offer and outbid for this post
             foreach (var alert in oldAlerts)
             {
-                if (alert.Type == AlertType.NewOffer || 
+                if (alert.Type == AlertType.NewOffer ||
                     (alert.Type == AlertType.Outbid && alert.UserId == newOffer.UserId))
                 {
-                    BusinessLogic.DeleteAlert(alert.AlertId); 
+                    BusinessLogic.DeleteAlert(alert.AlertId);
                 }
             }
 
@@ -292,7 +281,7 @@ namespace QuickFlip.Controllers
             if (post.AuctionType == AuctionType.Auction)
             {
                 Offer oldBestOffer = post.BestOffer;
-                
+
                 if (oldBestOffer != null && oldBestOffer.UserId != newOffer.UserId)
                 {
                     BusinessLogic.CreateAlert(postId, oldBestOffer.UserId, oldBestOffer.OfferId, AlertType.Outbid);
@@ -301,6 +290,23 @@ namespace QuickFlip.Controllers
 
             // make new offer
             newOffer = BusinessLogic.CreateOffer(newOffer);
+
+            // create offer media
+            if (post.AuctionType == AuctionType.FavoriteOffer && offerImage != null)
+            {
+                byte[] imageBytes = new byte[offerImage.InputStream.Length];
+                long bytesRead = offerImage.InputStream.Read(imageBytes, 0, (int)offerImage.InputStream.Length);
+                offerImage.InputStream.Close();
+                string b64EncodedImage = Convert.ToBase64String(imageBytes, 0, imageBytes.Length);
+
+                OfferMedia newOfferMedia = new OfferMedia()
+                {
+                    OfferId = newOffer.OfferId,
+                    B64EncodedImage = b64EncodedImage
+                };
+
+                newOfferMedia = BusinessLogic.CreateOfferMedia(newOfferMedia);
+            }
 
             // send post owner an alert saying a new offer arrived
             BusinessLogic.CreateAlert(postId, post.UserId, newOffer.OfferId, AlertType.NewOffer);
@@ -312,13 +318,29 @@ namespace QuickFlip.Controllers
         [HttpPost]
         public ActionResult AcceptOffer()
         {
-            int postId = Convert.ToInt32(Request.Form["PostId"]);
+            int postId;
 
-            Post postToSettle = BusinessLogic.GetPostByPostId(postId);
+            // favorite offer method
+            int offerId;
+            if (Request.Form["PostId"] == null)
+            {
+                offerId = Convert.ToInt32(Request.Form["OfferId"]);
+                Offer acceptedOffer = BusinessLogic.GetOfferByOfferId(offerId);
+                postId = acceptedOffer.PostId;
+            }
+            else // auction mode
+            {
+                postId = Convert.ToInt32(Request.Form["PostId"]);
+                offerId = BusinessLogic.GetPostByPostId(postId).BestOffer.OfferId;
+            }
 
             BusinessLogic.SettlePost(postId);
 
-            BusinessLogic.AcceptOffer(postToSettle.BestOffer.OfferId);
+            Post settledPost = BusinessLogic.GetPostByPostId(postId);
+
+            BusinessLogic.AcceptOffer(offerId);
+
+            Offer offerAccepted = BusinessLogic.GetOfferByOfferId(offerId);
 
             foreach (var alert in BusinessLogic.GetAlertsByPostId(postId))
             {
@@ -329,12 +351,12 @@ namespace QuickFlip.Controllers
             }
 
             BusinessLogic.CreateAlert(
-                postId, postToSettle.BestOffer.UserId, postToSettle.BestOffer.OfferId, AlertType.Accepted
+                postId, offerAccepted.UserId, offerAccepted.OfferId, AlertType.Accepted
             );
 
-            foreach (var offer in postToSettle.Offers)
+            foreach (var offer in settledPost.Offers)
             {
-                if (offer.UserId != postToSettle.BestOffer.UserId)
+                if (offer.UserId != offerAccepted.UserId)
                 {
                     BusinessLogic.CreateAlert(
                         postId, offer.UserId, offer.OfferId, AlertType.Lost
@@ -342,7 +364,7 @@ namespace QuickFlip.Controllers
                 }
             }
 
-            return View(postToSettle);
+            return View(settledPost);
         }
 
         public ActionResult AcceptOffer(int id)
