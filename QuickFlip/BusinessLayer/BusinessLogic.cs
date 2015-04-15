@@ -327,6 +327,43 @@ namespace QuickFlip.BusinessLayer
             return offers;
         }
 
+        public static Offer GetAcceptedOfferIdFromPostId(int postId)
+        {
+            DataAccess da = new DataAccess();
+
+            Post post = GetPostByPostId(postId);
+
+            Offer acceptedOffer = new Offer();
+
+            if  (post.Settled)
+            {
+                if (post.AuctionType == AuctionType.Auction)
+                {
+                    return post.BestOffer;
+                }
+                else // favorite offer
+                {
+                    foreach (var offer in post.Offers)
+                    {
+                        if (offer.Accepted) { return offer;  }
+                    }
+                }
+            }
+
+            return acceptedOffer;
+        }
+
+        public static Offer GetOfferByOfferId(int offerId)
+        {
+            DataAccess da = new DataAccess();
+
+            Offer offers = da.GetOfferByOfferId(offerId);
+
+            da.Dispose();
+
+            return offers;
+        }
+
         public static void AcceptOffer(int offerId)
         {
             DataAccess da = new DataAccess();
@@ -341,6 +378,30 @@ namespace QuickFlip.BusinessLayer
             DataAccess da = new DataAccess();
 
             da.DeleteOffer(offerId);
+
+            da.Dispose();
+        }
+
+        #endregion
+
+        #region OfferMedia
+
+        public static OfferMedia CreateOfferMedia(OfferMedia newOfferMedia)
+        {
+            DataAccess da = new DataAccess();
+
+            newOfferMedia = da.CreateOfferMedia(newOfferMedia);
+
+            da.Dispose();
+
+            return newOfferMedia;
+        }
+
+        public static void DeleteOfferMedia(int offerMedia)
+        {
+            DataAccess da = new DataAccess();
+
+            da.DeleteOfferMedia(offerMedia);
 
             da.Dispose();
         }

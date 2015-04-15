@@ -596,7 +596,8 @@ namespace QuickFlip.DataAccessLayer
                             ? (int?)null : Convert.ToInt32(reader["RequiredPrice"]),
                         PostType = (PostType)reader["PostType"],
                         AuctionType = (AuctionType)reader["AuctionType"],
-                        TransactionType = (TransactionType)reader["TransactionType"]
+                        TransactionType = (TransactionType)reader["TransactionType"],
+                        Settled = Convert.ToBoolean(reader["Settled"])
                     };
 
                     reader.Close();
@@ -1358,7 +1359,52 @@ namespace QuickFlip.DataAccessLayer
 
                     reader.Close();
 
-                    //offer.OfferMedia = GetOfferMediaByOfferId(offer.OfferId);
+                    offer.OfferMedia = GetOfferMediaByOfferId(offer.OfferId);
+
+                    return offer;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
+            return null;
+        }
+
+        public Offer GetOfferByOfferId(int offerId)
+        {
+            try
+            {
+                // form query
+                SqlCommand command = new SqlCommand(
+                    "SELECT * FROM [Offer] " +
+                    "WHERE OfferId = @OfferId",
+                    Connection);
+
+                // add parameters
+                command.Parameters.AddWithValue("@OfferId", offerId);
+
+                // execute
+                SqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Offer offer = new Offer()
+                    {
+                        OfferId = Convert.ToInt32(reader["OfferId"]),
+                        PostId = Convert.ToInt32(reader["PostId"]),
+                        UserId = Convert.ToInt32(reader["UserId"]),
+                        Amount = reader["Amount"] == DBNull.Value
+                            ? (int?)null : Convert.ToInt32(reader["Amount"]),
+                        Description = Convert.ToString(reader["Description"]),
+                        CreateDate = Convert.ToDateTime(reader["CreateDate"]),
+                        Accepted = Convert.ToBoolean(reader["Accepted"])
+                    };
+
+                    reader.Close();
+
+                    offer.OfferMedia = GetOfferMediaByOfferId(offer.OfferId);
 
                     return offer;
                 }
@@ -1403,12 +1449,15 @@ namespace QuickFlip.DataAccessLayer
                         Accepted = Convert.ToBoolean(reader["Accepted"])
                     };
 
-                    //offer.OfferMedia = GetOfferMediaByOfferId(offer.OfferId);
-
                     offers.Add(offer);
                 }
 
                 reader.Close();
+
+                foreach (var offer in offers)
+                {
+                    offer.OfferMedia = GetOfferMediaByOfferId(offer.OfferId);
+                }
 
                 return offers;
             }
@@ -1471,6 +1520,98 @@ namespace QuickFlip.DataAccessLayer
                 // form query
                 SqlCommand command = new SqlCommand(
                     "DELETE FROM [Offer] " +
+                    "WHERE OfferId = @OfferId",
+                    Connection);
+
+                // add parameters
+                command.Parameters.AddWithValue("@OfferId", offerId);
+                command.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+
+        #endregion
+
+        #region OfferMedia
+
+        public OfferMedia CreateOfferMedia(OfferMedia newOfferMedia)
+        {
+            try
+            {
+                // form query
+                SqlCommand command = new SqlCommand(
+                    "INSERT INTO [OfferMedia] " +
+                    "(OfferId, B64EncodedImage) " +
+                    "VALUES (@OfferId, @B64EncodedImage)",
+                    Connection);
+
+                // add parameters
+                command.Parameters.AddWithValue("@OfferId", newOfferMedia.OfferId);
+                command.Parameters.AddWithValue("@B64EncodedImage", newOfferMedia.B64EncodedImage);
+
+                // execute
+                command.ExecuteNonQuery();
+
+                return GetOfferMediaByOfferId(newOfferMedia.OfferId);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
+            return null;
+        }
+
+        public OfferMedia GetOfferMediaByOfferId(int offerId)
+        {
+            try
+            {
+                // form query
+                SqlCommand command = new SqlCommand(
+                    "SELECT * FROM [OfferMedia] " +
+                    "WHERE OfferId = @OfferId",
+                    Connection);
+
+                // add parameters
+                command.Parameters.AddWithValue("@OfferId", offerId);
+
+                // execute
+                SqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    OfferMedia offerMedia = new OfferMedia()
+                    {
+                        OfferMediaId = Convert.ToInt32(reader["OfferMediaId"]),
+                        OfferId = Convert.ToInt32(reader["OfferId"]),
+                        B64EncodedImage = reader["B64EncodedImage"].ToString()
+                    };
+
+                    reader.Close();
+
+                    return offerMedia;
+                }
+
+                reader.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
+            return null;
+        }
+
+        public void DeleteOfferMedia(int offerId)
+        {
+            try
+            {
+                // form query
+                SqlCommand command = new SqlCommand(
+                    "DELETE FROM [OfferMedia] " +
                     "WHERE OfferId = @OfferId",
                     Connection);
 

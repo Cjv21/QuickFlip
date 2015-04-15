@@ -27,7 +27,7 @@
         }
         else
         {
-            <img src="~/Images/NoPhotoIcon.png" class="profile-picture" />
+            <img src="~/Images/UsersIcon.png" class="profile-picture" />
         }
 
         <input type="button" id="changeProfilePicture" value="Change Picture" style="margin-top:15px; text-align:center; display:block; position:relative; margin-left:auto; margin-right:auto;">
@@ -123,8 +123,9 @@
                     <div style="margin-top:10px;"> <b>Categories: </b> @categories </div>
 
                     <div style="margin-top: 20px;">
-                        <div style="float:left; margin-left:20px;">
-
+                        @if (!post.Settled)
+                        {
+                          <div style="float:left; margin-left:20px;">
                             <a href="@Url.Action("EditPost", "Account", new { id = post.PostId })" style="height:50px; width:50px; display:block;">
                                 <img src="~/Images/EditIcon.png" style="height:50px; width:50px;" />
                             </a>
@@ -135,6 +136,12 @@
                                 <img src="~/Images/DeleteIcon.png" style="height:50px; width:50px;" />
                             </a>
                         </div>
+                        }
+                        else
+                        {
+                            <img src="~/Images/SettledIcon.png" style="height:40px; width:auto;"/>
+                        }
+
                     </div>
                 </div>
             </div>
@@ -185,16 +192,47 @@
                 <div style="margin-top:20px;"> <b>In: </b> @postType </div>
                 <div style="margin-top:10px;"> <b>Categories: </b> @categories </div>
                 <div style="margin-top:20px;"> 
-                
-                    @if (post.BestOffer.UserId == WebSecurity.CurrentUserId)
+
+                    @if (post.AuctionType == AuctionType.Auction)
                     {
-                        <img src="~/Images/BestOfferIcon.png" style="height:40px; width:auto;"/>
+                        if (post.BestOffer.UserId == WebSecurity.CurrentUserId)
+                        {
+                            if (post.Settled)
+                            {
+                                <img src="~/Images/AcceptedIcon.png" style="height:40px; width:auto;"/>
+                            }
+                            else
+                            {
+                                <img src="~/Images/BestOfferIcon.png" style="height:40px; width:auto;" />
+                            }
+                        }
+                        else
+                        {
+                            <img src="~/Images/OutbidIcon.png" style="height:40px; width:auto;" />
+                        }
                     }
                     else
                     {
-                        <img src="~/Images/OutbidIcon.png" style="height:40px; width:auto;"/>
+                        if (post.Settled)
+                        {
+                            if (post.Offers.Where(x =>
+                                x.UserId == WebSecurity.CurrentUserId)
+                                .SingleOrDefault()
+                                .Accepted)
+                            {
+                                <img src="~/Images/AcceptedIcon.png" style="height:40px; width:auto;"/>
+                            }
+                            else
+                            {
+                                <img src="~/Images/LostIcon.png" style="height:40px; width:auto;"/>
+                            }
+                        }
+                        else
+                        {
+                            <img src="~/Images/UndecidedIcon.png" style="height:40px; width:auto;"/>
+                        }
                     }
-                
+              
                 </div>
 
 
@@ -361,12 +399,10 @@
             <form method="POST" enctype="multipart/form-data" action="~/Account/NewOfferResponse">
                 <p>
                     An offer was made on your post:
-                    <i>@BusinessLogic.GetPostByPostId(alert.PostId).Title</i> <br /> <br />
-                    The amount offered was:
-                    <i>$@BusinessLogic.GetPostByPostId(alert.PostId).BestOffer.Amount.ToString()</i> <br />
+                    <i>@BusinessLogic.GetPostByPostId(alert.PostId).Title</i> 
                 </p>
                 <input type="number" name="alertId" value="@alert.AlertId" hidden="hidden" />
-                <input type="submit" name="choice" value="Accept" />
+                <input type="submit" name="choice" value="Go to post" />
                 <input type="submit" name="choice" value="Wait" />
             </form>
         </div>
@@ -378,13 +414,11 @@
             <form method="POST" enctype="multipart/form-data" action="~/Account/OutbidResponse">
                 <p>
                     A higher offer was made on a post you bid on:
-                    <i>@BusinessLogic.GetPostByPostId(alert.PostId).Title</i> <br /> <br />
-                    The amount offered was:
-                    <i>$@BusinessLogic.GetPostByPostId(alert.PostId).BestOffer.Amount.ToString()</i> <br />
+                    <i>@BusinessLogic.GetPostByPostId(alert.PostId).Title</i> 
                 </p>
-                <input type="number" name="alertId" value="@alert.AlertId" hidden="hidden" />
 
-                <input type="submit" name="choice" value="Go To Post" />
+                <input type="number" name="alertId" value="@alert.AlertId" hidden="hidden" />
+                <input type="submit" name="choice" value="Go to post" />
                 <input type="submit" name="choice" value="Wait" />
             </form>
         </div>
@@ -395,7 +429,7 @@
         <div id="dialog" title="Offer Not Accepted!">
             <form method="POST" enctype="multipart/form-data" action="~/Account/LostResponse">
                 <p>
-                    We're sorry, your offer on post:
+                    We're sorry, your offer on post::
                     <i>@BusinessLogic.GetPostByPostId(alert.PostId).Title</i> <br /> <br />
                     was not accepted. Better luck next time!
                      <br />
@@ -414,9 +448,12 @@
                 <p>
                     Congratulations! 
                     <br /> <br />
-                    Your offer on post:
+                    Your offer on post: 
                     <i>@BusinessLogic.GetPostByPostId(alert.PostId).Title</i>
-                    was accepted. Expect a follow up e-mail from
+                    <br />
+                    was accepted. 
+                    <br />
+                    Expect a follow up e-mail from
                     <i>@BusinessLogic.GetUserByUserId(
                             BusinessLogic.GetPostByPostId(alert.PostId).UserId
                        ).UserName

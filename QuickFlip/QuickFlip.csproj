@@ -267,9 +267,11 @@
     <Content Include="Content\themes\base\minified\jquery.ui.slider.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
+    <Content Include="Images\AcceptedIcon.png" />
     <Content Include="Images\AlertIcon.png" />
     <Content Include="Images\BestOfferIcon.png" />
     <Content Include="Images\BuyIcon.png" />
+    <Content Include="Images\ComingSoonLogo.png" />
     <Content Include="Images\DeleteIcon.png" />
     <Content Include="Images\EditIcon.png" />
     <Content Include="Images\favicon.ico" />
@@ -278,6 +280,7 @@
     <None Include="Properties\PublishProfiles\quickflip - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
     <Content Include="Images\IU.png" />
+    <Content Include="Images\LostIcon.png" />
     <Content Include="Images\MSU.png" />
     <Content Include="Images\NU.png" />
     <Content Include="Images\Oops.png" />
@@ -287,10 +290,12 @@
     <Content Include="Images\PU.png" />
     <Content Include="Images\SearchIcon.png" />
     <Content Include="Images\SellIcon.png" />
+    <Content Include="Images\SettledIcon.png" />
     <Content Include="Images\UI.png" />
     <Content Include="Images\UIUC.png" />
     <Content Include="Images\UM.png" />
     <Content Include="Images\UMN.png" />
+    <Content Include="Images\UndecidedIcon.png" />
     <Content Include="Images\UnitedStatesMap.png" />
     <Content Include="Images\UNL.png" />
     <Content Include="Images\UsersIcon.png" />
@@ -304,6 +309,7 @@
     <Content Include="Scripts\change-comm.js" />
     <Content Include="Scripts\community-select-all.js" />
     <Content Include="Scripts\change-profilepicture.js" />
+    <Content Include="Scripts\makeoffer-fav-offer-modal.js" />
     <Content Include="Scripts\search-pricefilter-type.js" />
     <Content Include="Scripts\jquery-1.8.2.js" />
     <Content Include="Scripts\jquery-1.8.2.min.js" />
