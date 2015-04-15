@@ -1150,7 +1150,6 @@ img.uwm {
     margin-right:auto;
     display:block;
     position:relative;    
-
 }
 
 /* Manage Account */
@@ -1197,5 +1196,61 @@ img.uwm {
     max-width: 85px;
     width: auto;
     max-height: 85px;
+    height: auto;
+}
+
+/* favorite offer */
+ .offer-backboard {
+    background-color: #999;
+    background-image: -ms-linear-gradient(right, #999 0%, #333 100%);
+    background-image: -moz-linear-gradient(right, #999, #333);
+    background-image: -o-linear-gradient(right, #999 0%, #333 100%);
+    background-image: -webkit-gradient(linear, right, left, color-stop(0, #999), color-stop(1, #333));
+    background-image: -webkit-linear-gradient(right, #999 0%, #333 100%);
+    background-image: linear-gradient(right, #999 0%, #333 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#999',endColorstr='#333');
+    background-color: #fff;
+    border: 2px solid; 
+    width:700px;
+    border-radius: 5px;
+    margin-top:30px; 
+    margin-left:auto;
+    margin-right:auto;
+    padding-bottom:40px;
+    display:table;
+    position:relative;    
+
+}
+
+.offer {
+    border: 2px solid;
+    border-radius: 5px;
+    background-color: white;
+    height: 280px;
+    width: 600px;
+    margin-top:40px;
+    margin-left:auto;
+    margin-right:auto;
+    display:block;
+}
+
+.offer-left {
+    text-align: center; 
+    float: left;
+    width: 120px;
+    margin-left: 40px;
+}
+
+.offer-right {
+    float: right;
+    width: 300px;
+    margin-left: 10px;
+}
+
+.offer-image {
+    margin-top: 15px;
+    max-width: 200px;
+    width: auto;
+    max-height: 200px;
     height: auto;
 }

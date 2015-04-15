@@ -318,13 +318,29 @@ namespace QuickFlip.Controllers
         [HttpPost]
         public ActionResult AcceptOffer()
         {
-            int postId = Convert.ToInt32(Request.Form["PostId"]);
+            int postId;
 
-            Post postToSettle = BusinessLogic.GetPostByPostId(postId);
+            // favorite offer method
+            int offerId;
+            if (Request.Form["PostId"] == null)
+            {
+                offerId = Convert.ToInt32(Request.Form["OfferId"]);
+                Offer acceptedOffer = BusinessLogic.GetOfferByOfferId(offerId);
+                postId = acceptedOffer.PostId;
+            }
+            else // auction mode
+            {
+                postId = Convert.ToInt32(Request.Form["PostId"]);
+                offerId = BusinessLogic.GetPostByPostId(postId).BestOffer.OfferId;
+            }
 
             BusinessLogic.SettlePost(postId);
 
-            BusinessLogic.AcceptOffer(postToSettle.BestOffer.OfferId);
+            Post settledPost = BusinessLogic.GetPostByPostId(postId);
+
+            BusinessLogic.AcceptOffer(offerId);
+
+            Offer offerAccepted = BusinessLogic.GetOfferByOfferId(offerId);
 
             foreach (var alert in BusinessLogic.GetAlertsByPostId(postId))
             {
@@ -335,12 +351,12 @@ namespace QuickFlip.Controllers
             }
 
             BusinessLogic.CreateAlert(
-                postId, postToSettle.BestOffer.UserId, postToSettle.BestOffer.OfferId, AlertType.Accepted
+                postId, offerAccepted.UserId, offerAccepted.OfferId, AlertType.Accepted
             );
 
-            foreach (var offer in postToSettle.Offers)
+            foreach (var offer in settledPost.Offers)
             {
-                if (offer.UserId != postToSettle.BestOffer.UserId)
+                if (offer.UserId != offerAccepted.UserId)
                 {
                     BusinessLogic.CreateAlert(
                         postId, offer.UserId, offer.OfferId, AlertType.Lost
@@ -348,7 +364,7 @@ namespace QuickFlip.Controllers
                 }
             }
 
-            return View(postToSettle);
+            return View(settledPost);
         }
 
         public ActionResult AcceptOffer(int id)
