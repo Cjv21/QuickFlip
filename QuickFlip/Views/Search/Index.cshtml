@@ -268,7 +268,7 @@
 
                         <!-- left column, post title and picture -->
                         <div class="post-preview-left">
-                            <h3>@Html.ActionLink(postTitle, "Post", @type, new { id = post.PostId }, new { style = "text-decoration:none;" })</h3>
+                            <h3 style="width:120px; overflow:hidden;">@Html.ActionLink(postTitle, "Post", @type, new { id = post.PostId }, new { style = "text-decoration:none;" })</h3>
 
                             @if (post.PostMedia != null)
                             {
